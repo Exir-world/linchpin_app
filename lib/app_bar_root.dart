@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:linchpin_app/gen/fonts.gen.dart';
 
 AppBar appBarRoot() {
   return AppBar(
@@ -16,6 +17,7 @@ AppBar appBarRoot() {
             fontWeight: FontWeight.w500,
             fontSize: 14,
             color: Color(0xff861C8C),
+            fontFamily: FontFamily.iRANSansXVF,
           ),
         ),
         SizedBox(width: 2),
@@ -34,6 +36,7 @@ AppBar appBarRoot() {
             fontWeight: FontWeight.w500,
             fontSize: 14,
             color: Color(0xff861C8C),
+            fontFamily: FontFamily.iRANSansXVF,
           ),
         ),
         SizedBox(width: 2),
