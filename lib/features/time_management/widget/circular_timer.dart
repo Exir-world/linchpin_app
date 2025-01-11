@@ -75,8 +75,8 @@ class _CircularTimerState extends State<CircularTimer> {
   // تابعی برای محاسبه رنگ هر سگمنت از سه رنگ
   Color _getSegmentColor(int index) {
     double progress = index / (segments - 1);
-
     // استفاده از lerp برای ایجاد تغییرات رنگی بین سه رنگ
+
     if (progress < 0.5) {
       return Color.lerp(activeColorStart, activeColorMiddle, progress * 2)!;
     } else {

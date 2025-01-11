@@ -1,59 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/gen/fonts.gen.dart';
+import 'package:linchpin_app/core/common/icon_widget.dart';
+import 'package:linchpin_app/core/common/text_widgets.dart';
 
 AppBar appBarRoot() {
   return AppBar(
     backgroundColor: Colors.white,
     title: Row(
       children: [
-        Icon(
-          Icons.calendar_month_outlined,
-          color: Color(0xff861C8C),
-        ),
+        NormalIcon(Icons.calendar_month_outlined),
         SizedBox(width: 8),
-        Text(
-          "10:23:30",
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 14,
-            color: Color(0xff861C8C),
-            fontFamily: FontFamily.iRANSansXVF,
-          ),
-        ),
+        NormalMedium("10:23:30"),
         SizedBox(width: 2),
-        Text(
-          "|",
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 14,
-            color: Color(0xff861C8C),
-          ),
-        ),
+        NormalMedium("|"),
         SizedBox(width: 2),
-        Text(
-          "دی",
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 14,
-            color: Color(0xff861C8C),
-            fontFamily: FontFamily.iRANSansXVF,
-          ),
-        ),
+        NormalMedium("دی"),
         SizedBox(width: 2),
-        Text(
-          "22",
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 14,
-            color: Color(0xff861C8C),
-          ),
-        ),
+        NormalMedium("22"),
         Spacer(),
-        Icon(
-          Icons.add_circle_outline_sharp,
-          color: Color(0xff861C8C),
-          size: 30,
-        ),
+        NormalIcon(Icons.add_circle_outline_sharp),
       ],
     ),
   );

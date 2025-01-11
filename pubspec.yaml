@@ -82,10 +82,18 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: IRANSansXVF
+    - family: IRANSansXFA-Regular
       fonts:
-        - asset: assets/fonts/IRANSansXVF.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+        - asset: assets/fonts/IRANSansXFaNum-Regular.ttf
+    - family: IRANSansXFA-Medium
+      fonts:
+        - asset: assets/fonts/IRANSansXFaNum-Medium.ttf
+    - family: IRANSansXFA-DemiBold
+      fonts:
+        - asset: assets/fonts/IRANSansXFaNum-DemiBold.ttf
+    - family: IRANSansXFA-Bold
+      fonts:
+        - asset: assets/fonts/IRANSansXFaNum-Bold.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

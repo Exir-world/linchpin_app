@@ -10,6 +10,15 @@
 class FontFamily {
   FontFamily._();
 
-  /// Font family: IRANSansXVF
-  static const String iRANSansXVF = 'IRANSansXVF';
+  /// Font family: IRANSansXFA-Bold
+  static const String iRANSansXFABold = 'IRANSansXFA-Bold';
+
+  /// Font family: IRANSansXFA-DemiBold
+  static const String iRANSansXFADemiBold = 'IRANSansXFA-DemiBold';
+
+  /// Font family: IRANSansXFA-Medium
+  static const String iRANSansXFAMedium = 'IRANSansXFA-Medium';
+
+  /// Font family: IRANSansXFA-Regular
+  static const String iRANSansXFARegular = 'IRANSansXFA-Regular';
 }
