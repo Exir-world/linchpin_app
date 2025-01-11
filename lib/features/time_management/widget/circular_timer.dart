@@ -6,11 +6,9 @@ class CircularTimer extends StatefulWidget {
   final DateTime initTime; // The first log of the day
   final DateTime endTime; // The last output that the user must register
   final DateTime openAppTime; // Current server time
-  final int timeStamp;
 
   const CircularTimer({
     super.key,
-    required this.timeStamp,
     required this.initTime,
     required this.endTime,
     required this.openAppTime,

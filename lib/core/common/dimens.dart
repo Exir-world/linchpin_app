@@ -51,6 +51,9 @@ const double TEXT_SIZE_VERY_HUGE = 24.0;
 // ارتفاع بین تکست ها
 const double TEXT_HEIGHT = 1.5;
 
+const double ICON_SIZE_NORMAL = 24.0;
+const double ICON_SIZE_BIG = 30.0;
+
 // BorderRadius
 const double RADIUS_1x = 2.0;
 const double RADIUS_2x = 4.0;

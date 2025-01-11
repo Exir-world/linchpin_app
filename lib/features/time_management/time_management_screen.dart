@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/app_bar_root.dart';
+import 'package:linchpin_app/core/common/dimens.dart';
+import 'package:linchpin_app/core/common/text_widgets.dart';
+import 'package:linchpin_app/features/root/app_bar_root.dart';
 import 'package:linchpin_app/features/time_management/widget/circular_timer.dart';
 
 class TimeManagementScreen extends StatelessWidget {
@@ -13,32 +15,17 @@ class TimeManagementScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: VERTICAL_SPACING_5x),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'محمدحسین',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xff540E5C),
-                  ),
-                ),
+                BigBold('محمدحسین'),
                 SizedBox(width: 4),
-                Text(
-                  'روز بخیر',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xff540E5C),
-                  ),
-                ),
+                BigRegular('روز بخیر'),
               ],
             ),
-            SizedBox(height: 24),
+            SizedBox(height: VERTICAL_SPACING_6x),
             CircularTimer(
-              timeStamp: 2000,
               initTime: DateTime(2025, 01, 8, 13, 00),
               endTime: DateTime(2025, 01, 8, 14, 00),
               openAppTime: DateTime(2025, 01, 8, 13, 50, 23),

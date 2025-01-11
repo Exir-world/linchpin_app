@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:linchpin_app/core/common/colors.dart';
 import 'package:linchpin_app/core/common/text_styles.dart';
 import 'package:linchpin_app/core/extension/context_extension.dart';
 
@@ -27,7 +28,7 @@ abstract class BaseTextWidget extends StatelessWidget {
   Color getTextColor(BuildContext context) {
     return context.isDarkBrightness
         ? textColorInDark ?? Colors.white
-        : textColorInLight ?? Color(0xff540E5C);
+        : textColorInLight ?? TEXT_LIGHT_COLOR;
   }
 
   @override

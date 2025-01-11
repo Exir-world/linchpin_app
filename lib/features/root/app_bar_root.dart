@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:linchpin_app/core/common/colors.dart';
 import 'package:linchpin_app/core/common/icon_widget.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 
 AppBar appBarRoot() {
   return AppBar(
-    backgroundColor: Colors.white,
+    backgroundColor: BACKGROUND_LIGHT_APP_BAR_COLOR,
     title: Row(
       children: [
         NormalIcon(Icons.calendar_month_outlined),

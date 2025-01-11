@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:linchpin_app/core/common/colors.dart';
+import 'package:linchpin_app/core/common/dimens.dart';
 import 'package:linchpin_app/core/extension/context_extension.dart';
 
 abstract class BaseIconWidget extends StatelessWidget {
@@ -16,7 +18,7 @@ abstract class BaseIconWidget extends StatelessWidget {
   Color getIconColor(BuildContext context) {
     return context.isDarkBrightness
         ? iconColorInDark ?? Colors.white
-        : iconColorInLight ?? Color(0xff861C8C);
+        : iconColorInLight ?? ICON_COLOR;
   }
 
   @override
@@ -38,7 +40,7 @@ class NormalIcon extends BaseIconWidget {
   Widget build(BuildContext context) {
     return Icon(
       iconData,
-      size: 24,
+      size: ICON_SIZE_NORMAL,
       color: getIconColor(context),
     );
   }
@@ -57,7 +59,7 @@ class BigIcon extends BaseIconWidget {
   Widget build(BuildContext context) {
     return Icon(
       iconData,
-      size: 30,
+      size: ICON_SIZE_BIG,
       color: getIconColor(context),
     );
   }
