@@ -17,7 +17,7 @@ AppBar appBarRoot() {
         SizedBox(width: 2),
         NormalMedium("22"),
         Spacer(),
-        NormalIcon(Icons.add_circle_outline_sharp),
+        BigIcon(Icons.add_circle_outline_sharp),
       ],
     ),
   );

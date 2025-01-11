@@ -5,13 +5,11 @@ abstract class BaseIconWidget extends StatelessWidget {
   final IconData iconData;
   final Color? iconColorInDark;
   final Color? iconColorInLight;
-  final double size;
 
   const BaseIconWidget(
     this.iconData, {
     this.iconColorInDark,
     this.iconColorInLight,
-    this.size = 24.0,
     super.key,
   });
 
@@ -34,14 +32,32 @@ class NormalIcon extends BaseIconWidget {
     super.key,
     super.iconColorInDark,
     super.iconColorInLight,
-    super.size,
   });
 
   @override
   Widget build(BuildContext context) {
     return Icon(
       iconData,
-      size: size,
+      size: 24,
+      color: getIconColor(context),
+    );
+  }
+}
+
+/// BIG ICON
+class BigIcon extends BaseIconWidget {
+  const BigIcon(
+    super.iconData, {
+    super.key,
+    super.iconColorInDark,
+    super.iconColorInLight,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Icon(
+      iconData,
+      size: 30,
       color: getIconColor(context),
     );
   }
