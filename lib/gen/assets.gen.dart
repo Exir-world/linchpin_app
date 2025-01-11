@@ -15,27 +15,37 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
-  /// File path: assets/icons/Calendar - Iconly Pro.svg
-  SvgGenImage get calendarIconlyPro =>
-      const SvgGenImage('assets/icons/Calendar - Iconly Pro.svg');
+  /// File path: assets/icons/calendar.svg
+  SvgGenImage get calendar => const SvgGenImage('assets/icons/calendar.svg');
 
-  /// File path: assets/icons/Docs - Iconly Pro.svg
-  SvgGenImage get docsIconlyPro =>
-      const SvgGenImage('assets/icons/Docs - Iconly Pro.svg');
+  /// File path: assets/icons/docs.svg
+  SvgGenImage get docs => const SvgGenImage('assets/icons/docs.svg');
 
-  /// File path: assets/icons/Ringing 2 - Iconly Pro.svg
-  SvgGenImage get ringing2IconlyPro =>
-      const SvgGenImage('assets/icons/Ringing 2 - Iconly Pro.svg');
+  /// File path: assets/icons/ringing.svg
+  SvgGenImage get ringing => const SvgGenImage('assets/icons/ringing.svg');
 
   /// List of all assets
-  List<SvgGenImage> get values =>
-      [calendarIconlyPro, docsIconlyPro, ringing2IconlyPro];
+  List<SvgGenImage> get values => [calendar, docs, ringing];
+}
+
+class $AssetsTranslationsGen {
+  const $AssetsTranslationsGen();
+
+  /// File path: assets/translations/en.json
+  String get en => 'assets/translations/en.json';
+
+  /// File path: assets/translations/fa.json
+  String get fa => 'assets/translations/fa.json';
+
+  /// List of all assets
+  List<String> get values => [en, fa];
 }
 
 class Assets {
   Assets._();
 
   static const $AssetsIconsGen icons = $AssetsIconsGen();
+  static const $AssetsTranslationsGen translations = $AssetsTranslationsGen();
 }
 
 class SvgGenImage {
