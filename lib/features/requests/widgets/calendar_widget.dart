@@ -186,6 +186,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                       return _buildDayView();
                     } else if (type == 'month') {
                       return _buildMonthView();
+                    } else if (type == 'year') {
+                      return _buildYearView();
                     } else {
                       return Container();
                     }
@@ -440,6 +442,138 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         },
       ),
     );
+  }
+
+  List<int> _getYearsForView() {
+    int currentYear = _currentDate.year;
+    return List.generate(
+        12, (index) => currentYear + index); // فقط سال جاری و 11 سال بعد
+  }
+
+  Widget _buildYearView() {
+    return Container(
+      key: _calendarKey,
+      height: 340,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: EdgeInsets.all(12),
+      child: Column(
+        children: [
+          Container(
+            height: 36,
+            decoration: BoxDecoration(
+              color: Color(0xffF1F3F5),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            padding: EdgeInsets.all(2),
+            margin: EdgeInsets.only(bottom: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _BoxIncreaseDecrease(
+                  icon: GestureDetector(
+                    onTap: () => _changeYear(1), // ماه به جلو
+                    child: Icon(
+                      Icons.add,
+                      size: 20,
+                      color: Color(0xff4B5563),
+                    ),
+                  ),
+                ),
+                ValueListenableBuilder<String>(
+                  valueListenable: _persianDateNotifier,
+                  builder: (context, persianDate, child) {
+                    return GestureDetector(
+                      onTap: () {
+                        if (_isTypeCalenderNotifier.value == 'day') {
+                          _isTypeCalenderNotifier.value = 'month';
+                        } else if (_isTypeCalenderNotifier.value == 'month') {
+                          _isTypeCalenderNotifier.value = 'year';
+                        }
+                      },
+                      child: Text(persianDate),
+                    );
+                  },
+                ),
+                _BoxIncreaseDecrease(
+                  icon: GestureDetector(
+                    onTap: () => _changeYear(-1), // ماه به جلو
+                    child: Icon(
+                      Icons.remove,
+                      size: 20,
+                      color: Color(0xff4B5563),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ValueListenableBuilder(
+            valueListenable: _daysOfMonthNotifier,
+            builder: (context, value, child) {
+              return Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    double spacing = 8.0; // فاصله بین آیتم‌ها
+                    int crossAxisCount = 4; // تعداد ستون‌ها
+                    double itemWidth = (constraints.maxWidth -
+                            (crossAxisCount - 1) * spacing) /
+                        crossAxisCount;
+                    double itemHeight = itemWidth;
+                    return Wrap(
+                      spacing: spacing, // فاصله بین آیتم‌ها
+                      runSpacing: spacing, // فاصله بین ردیف‌ها
+                      direction: Axis.horizontal,
+                      children: List.generate(12, (index) {
+                        int year = _getYearsForView()[index];
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _currentDate =
+                                  Jalali(year, _currentDate.month, 1);
+                              _isTypeCalenderNotifier.value = 'month';
+                            });
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: itemWidth,
+                            height: itemHeight,
+                            decoration: BoxDecoration(
+                              color: Color(0xffF1F3F5),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: SmallMedium('$year'),
+                          ),
+                        );
+                      }),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _changeYear(int increment) {
+    setState(() {
+      // تغییر سال و بروزرسانی تاریخ
+      _currentDate =
+          Jalali(_currentDate.year + increment, _currentDate.month, 1);
+
+      // بروزرسانی تاریخ فارسی
+      _persianDateNotifier.value = _getPersianDate(_currentDate);
+
+      // بروزرسانی روزهای ماه جدید
+      _daysOfMonthNotifier.value = _getDaysOfMonth(_currentDate);
+
+      // ریست کردن روز انتخاب‌شده به null
+      _selectedDayNotifier.value = null;
+    });
   }
 
   @override
