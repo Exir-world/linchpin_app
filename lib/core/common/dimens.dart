@@ -35,7 +35,7 @@ const double VERTICAL_SPACING_30x = 120.0;
 
 // پدینگ پیش فرض تمام صفحات از کناره های دیوایس
 // Padding All Page
-const double padding_Horizantalx = 16.0;
+const double padding_Horizantalx = 24.0;
 
 // اندازه تکست های اپ
 // Text Sizes

@@ -1,6 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:linchpin_app/core/common/colors.dart';
+import 'package:linchpin_app/core/common/text_widgets.dart';
+import 'package:linchpin_app/core/extension/context_extension.dart';
+import 'package:linchpin_app/gen/assets.gen.dart';
 
 class CircularTimer extends StatefulWidget {
   final DateTime initTime; // The first log of the day
@@ -89,21 +93,18 @@ class _CircularTimerState extends State<CircularTimer> {
       alignment: Alignment.topCenter, // مرکز چین کردن تمام ویجت‌های داخل Stack
       children: [
         SizedBox(
-          width: MediaQuery.sizeOf(context).width * 0.7,
-          child: Container(
-            color: Colors.red,
-            child: CustomPaint(
-              painter: SegmentedCircularPainter(
-                segments: segments,
-                completedSegments: completedSegments,
-                getSegmentColor: _getSegmentColor,
-                inactiveColor: Colors.grey.shade300,
-              ),
+          width: context.screenWidth * 0.7,
+          child: CustomPaint(
+            painter: SegmentedCircularPainter(
+              segments: segments,
+              completedSegments: completedSegments,
+              getSegmentColor: _getSegmentColor,
+              inactiveColor: Colors.grey.shade300,
             ),
           ),
         ),
         SizedBox(
-          height: MediaQuery.sizeOf(context).width * 0.7,
+          height: context.screenWidth * 0.7,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -111,21 +112,17 @@ class _CircularTimerState extends State<CircularTimer> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('صدا: روشن'),
+                  Assets.icons.ringing.svg(),
                   SizedBox(width: 5),
-                  Icon(Icons.notifications_active_outlined),
+                  NormalRegular('صدا: روشن'),
                 ],
               ),
               SizedBox(height: 8),
-              Text(
-                '۰۰:۰۰:۰۰',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 54,
-                  color: Color(0xff861C8C),
-                ),
+              MegaBold(
+                '00:00:00',
+                textColorInLight: TEXT_LIGHT_CHRONOMETER_COLOR,
               ),
-              Text('8 ساعت باقی مانده'),
+              LargeRegular('8 ساعت، باقی مانده'),
             ],
           ),
         ),

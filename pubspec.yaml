@@ -43,12 +43,16 @@ dependencies:
   shared_preferences: ^2.3.5
   flutter_svg: ^2.0.16
   easy_localization: ^3.0.7
+  shamsi_date: ^1.0.4
+  # calendar_pro_farhad:
+  #   path: ../calendar_pro_farhad
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner:
   flutter_gen_runner:
+  injectable_generator:
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

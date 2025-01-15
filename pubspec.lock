@@ -450,6 +450,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.5.0"
+  injectable_generator:
+    dependency: "direct dev"
+    description:
+      name: injectable_generator
+      sha256: af403d76c7b18b4217335e0075e950cd0579fd7f8d7bd47ee7c85ada31680ba1
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.2"
   intl:
     dependency: transitive
     description:
@@ -706,6 +714,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+  recase:
+    dependency: transitive
+    description:
+      name: recase
+      sha256: e4eb4ec2dcdee52dcf99cb4ceabaffc631d7424ee55e56f280bc039737f89213
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   rxdart:
     dependency: transitive
     description:
@@ -714,6 +730,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.28.0"
+  shamsi_date:
+    dependency: "direct main"
+    description:
+      name: shamsi_date
+      sha256: "4614789ed11bfffe5ba0aa157a20f2857ab6328528401766e0d924e453c866bd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -791,6 +815,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  source_gen:
+    dependency: transitive
+    description:
+      name: source_gen
+      sha256: "14658ba5f669685cd3d63701d01b31ea748310f7ab854e471962670abcf57832"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.0"
   source_span:
     dependency: transitive
     description:

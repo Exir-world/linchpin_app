@@ -206,4 +206,29 @@ class TextStyles {
     fontFamily: FontFamily.iRANSansXFABold,
     height: TEXT_HEIGHT,
   );
+
+  // MEGA
+  static TextStyle megaRegular = defaultStyle.copyWith(
+    fontSize: 54,
+    fontFamily: FontFamily.iRANSansXFARegular,
+    height: TEXT_HEIGHT,
+  );
+
+  static TextStyle megaMedium = defaultStyle.copyWith(
+    fontSize: 54,
+    fontFamily: FontFamily.iRANSansXFAMedium,
+    height: TEXT_HEIGHT,
+  );
+
+  static TextStyle megaDemiBold = defaultStyle.copyWith(
+    fontSize: 54,
+    fontFamily: FontFamily.iRANSansXFADemiBold,
+    height: TEXT_HEIGHT,
+  );
+
+  static TextStyle megaBold = defaultStyle.copyWith(
+    fontSize: 54,
+    fontFamily: FontFamily.iRANSansXFABold,
+    height: TEXT_HEIGHT,
+  );
 }

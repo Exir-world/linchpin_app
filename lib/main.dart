@@ -1,10 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/features/time_management/time_management_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:linchpin_app/core/locator/di/di.dart';
+import 'package:linchpin_app/features/root/presentation/bloc/root_bloc.dart';
+import 'package:linchpin_app/features/root/presentation/root_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  // locator مربوط به گت ایت و
+  await configureDependencies(environment: Env.prod);
   runApp(
     EasyLocalization(
       supportedLocales: [Locale('en'), Locale('fa')],
@@ -21,13 +26,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      theme: ThemeData(useMaterial3: true),
-      home: const TimeManagementScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt<RootBloc>(),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        theme: ThemeData(useMaterial3: true),
+        home: const RootScreen(),
+      ),
     );
   }
 }

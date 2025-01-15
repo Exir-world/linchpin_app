@@ -1004,3 +1004,124 @@ class VeryHugeBold extends BaseTextWidget {
     );
   }
 }
+
+/// MEGA
+class MegaRegular extends BaseTextWidget {
+  const MegaRegular(
+    super.data, {
+    super.key,
+    super.textColorInDark,
+    super.textColorInLight,
+    super.maxLines,
+    super.decoration,
+    super.textAlign,
+    super.overflow,
+    super.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      data,
+      maxLines: maxLines,
+      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+      textAlign: textAlign,
+      style: TextStyles.megaRegular.copyWith(
+        color: getTextColor(context),
+        decoration: decoration,
+        overflow: overflow,
+        height: height,
+      ),
+    );
+  }
+}
+
+class MegaMedium extends BaseTextWidget {
+  const MegaMedium(
+    super.data, {
+    super.key,
+    super.textColorInDark,
+    super.textColorInLight,
+    super.maxLines,
+    super.decoration,
+    super.textAlign,
+    super.overflow,
+    super.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      data,
+      maxLines: maxLines,
+      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+      textAlign: textAlign,
+      style: TextStyles.megaMedium.copyWith(
+        color: getTextColor(context),
+        decoration: decoration,
+        overflow: overflow,
+        height: height,
+      ),
+    );
+  }
+}
+
+class MegaDemiBold extends BaseTextWidget {
+  const MegaDemiBold(
+    super.data, {
+    super.key,
+    super.textColorInDark,
+    super.textColorInLight,
+    super.maxLines,
+    super.decoration,
+    super.textAlign,
+    super.overflow,
+    super.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      data,
+      maxLines: maxLines,
+      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+      textAlign: textAlign,
+      style: TextStyles.megaDemiBold.copyWith(
+        color: getTextColor(context),
+        decoration: decoration,
+        overflow: overflow,
+        height: height,
+      ),
+    );
+  }
+}
+
+class MegaBold extends BaseTextWidget {
+  const MegaBold(
+    super.data, {
+    super.key,
+    super.textColorInDark,
+    super.textColorInLight,
+    super.maxLines,
+    super.decoration,
+    super.textAlign,
+    super.overflow,
+    super.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      data,
+      maxLines: maxLines,
+      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+      textAlign: textAlign,
+      style: TextStyles.megaBold.copyWith(
+        color: getTextColor(context),
+        decoration: decoration,
+        overflow: overflow,
+        height: height,
+      ),
+    );
+  }
+}

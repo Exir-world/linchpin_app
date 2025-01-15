@@ -15,17 +15,101 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/activity-a.svg
+  SvgGenImage get activityA => const SvgGenImage('assets/icons/activity-a.svg');
+
+  /// File path: assets/icons/activity.svg
+  SvgGenImage get activity => const SvgGenImage('assets/icons/activity.svg');
+
+  /// File path: assets/icons/autumn.svg
+  SvgGenImage get autumn => const SvgGenImage('assets/icons/autumn.svg');
+
+  /// File path: assets/icons/board-tasks-a.svg
+  SvgGenImage get boardTasksA =>
+      const SvgGenImage('assets/icons/board-tasks-a.svg');
+
+  /// File path: assets/icons/board-tasks.svg
+  SvgGenImage get boardTasks =>
+      const SvgGenImage('assets/icons/board-tasks.svg');
+
   /// File path: assets/icons/calendar.svg
   SvgGenImage get calendar => const SvgGenImage('assets/icons/calendar.svg');
+
+  /// File path: assets/icons/chevron-up-down.svg
+  SvgGenImage get chevronUpDown =>
+      const SvgGenImage('assets/icons/chevron-up-down.svg');
+
+  /// File path: assets/icons/clock-add-plus-a.svg
+  SvgGenImage get clockAddPlusA =>
+      const SvgGenImage('assets/icons/clock-add-plus-a.svg');
+
+  /// File path: assets/icons/clock-add-plus.svg
+  SvgGenImage get clockAddPlus =>
+      const SvgGenImage('assets/icons/clock-add-plus.svg');
+
+  /// File path: assets/icons/combined.svg
+  SvgGenImage get combined => const SvgGenImage('assets/icons/combined.svg');
 
   /// File path: assets/icons/docs.svg
   SvgGenImage get docs => const SvgGenImage('assets/icons/docs.svg');
 
+  /// File path: assets/icons/plus.svg
+  SvgGenImage get plus => const SvgGenImage('assets/icons/plus.svg');
+
   /// File path: assets/icons/ringing.svg
   SvgGenImage get ringing => const SvgGenImage('assets/icons/ringing.svg');
 
+  /// File path: assets/icons/spring.svg
+  SvgGenImage get spring => const SvgGenImage('assets/icons/spring.svg');
+
+  /// File path: assets/icons/summer.svg
+  SvgGenImage get summer => const SvgGenImage('assets/icons/summer.svg');
+
+  /// File path: assets/icons/tag.svg
+  SvgGenImage get tag => const SvgGenImage('assets/icons/tag.svg');
+
+  /// File path: assets/icons/timer-tick-2.svg
+  SvgGenImage get timerTick2 =>
+      const SvgGenImage('assets/icons/timer-tick-2.svg');
+
+  /// File path: assets/icons/timer-tick-3.svg
+  SvgGenImage get timerTick3 =>
+      const SvgGenImage('assets/icons/timer-tick-3.svg');
+
+  /// File path: assets/icons/timer-tick-4.svg
+  SvgGenImage get timerTick4 =>
+      const SvgGenImage('assets/icons/timer-tick-4.svg');
+
+  /// File path: assets/icons/timer-tick.svg
+  SvgGenImage get timerTick => const SvgGenImage('assets/icons/timer-tick.svg');
+
+  /// File path: assets/icons/winter.svg
+  SvgGenImage get winter => const SvgGenImage('assets/icons/winter.svg');
+
   /// List of all assets
-  List<SvgGenImage> get values => [calendar, docs, ringing];
+  List<SvgGenImage> get values => [
+        activityA,
+        activity,
+        autumn,
+        boardTasksA,
+        boardTasks,
+        calendar,
+        chevronUpDown,
+        clockAddPlusA,
+        clockAddPlus,
+        combined,
+        docs,
+        plus,
+        ringing,
+        spring,
+        summer,
+        tag,
+        timerTick2,
+        timerTick3,
+        timerTick4,
+        timerTick,
+        winter
+      ];
 }
 
 class $AssetsTranslationsGen {
