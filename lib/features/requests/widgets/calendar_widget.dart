@@ -243,52 +243,7 @@ class _PersianCalendarState extends State<PersianCalendar> {
       child: Column(
         children: [
           // پنل انتخاب ماه
-          Container(
-            decoration: BoxDecoration(
-              color: Color(0xffF1F3F5),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            padding: EdgeInsets.all(2),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _BoxIncreaseDecrease(
-                  icon: GestureDetector(
-                    onTap: () => _changeMonth(1), // ماه به جلو
-                    child: Icon(
-                      Icons.add,
-                      size: 20,
-                      color: Color(0xff4B5563),
-                    ),
-                  ),
-                ),
-                ValueListenableBuilder<String>(
-                  valueListenable: _persianDateNotifier,
-                  builder: (context, persianDate, child) {
-                    return GestureDetector(
-                        onTap: () {
-                          if (_isTypeCalenderNotifier.value == 'day') {
-                            _changeCalendarType('month');
-                          } else if (_isTypeCalenderNotifier.value == 'month') {
-                            _changeCalendarType('year');
-                          }
-                        },
-                        child: SmallMedium(persianDate));
-                  },
-                ),
-                _BoxIncreaseDecrease(
-                  icon: GestureDetector(
-                    onTap: () => _changeMonth(-1), // ماه به عقب
-                    child: Icon(
-                      Icons.remove,
-                      size: 20,
-                      color: Color(0xff4B5563),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _buildHeader("day"),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
             child: Row(
@@ -359,13 +314,14 @@ class _PersianCalendarState extends State<PersianCalendar> {
                                     width: double.infinity,
                                     height: double.infinity,
                                     alignment: Alignment.center,
+                                    margin: EdgeInsets.all(6),
                                     decoration: BoxDecoration(
                                       color: (selectedDay == day &&
                                               !isPreviousMonthDay &&
                                               !isNextMonthDay)
                                           ? Color(0xff861C8C)
                                           : null,
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: NormalMedium(
                                       '$day',
@@ -417,21 +373,20 @@ class _PersianCalendarState extends State<PersianCalendar> {
       padding: EdgeInsets.all(12),
       child: Column(
         children: [
-          _buildHeader(),
+          _buildHeader("month"),
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
                 double spacing = 8.0; // فاصله بین آیتم‌ها
-                int crossAxisCount = 4; // تعداد ستون‌ها
+                int crossAxisCount = 3; // تعداد ستون‌ها
                 double itemWidth =
                     (constraints.maxWidth - (crossAxisCount - 1) * spacing) /
                         crossAxisCount;
-                double itemHeight = itemWidth;
-
+                double itemHeight = itemWidth / 1.8;
                 return Wrap(
                   spacing: spacing,
                   runSpacing: spacing,
-                  direction: Axis.vertical,
+                  direction: Axis.horizontal,
                   children: List.generate(months.length, (index) {
                     return GestureDetector(
                       onTap: () {
@@ -463,31 +418,142 @@ class _PersianCalendarState extends State<PersianCalendar> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(String calendarType) {
     return Container(
-      height: 36,
+      height: 44,
       decoration: BoxDecoration(
         color: Color(0xffF1F3F5),
         borderRadius: BorderRadius.circular(6),
       ),
-      padding: EdgeInsets.all(2),
+      padding: EdgeInsets.all(6),
       margin: EdgeInsets.only(bottom: 16),
       alignment: Alignment.center,
-      child: ValueListenableBuilder<String>(
-        valueListenable: _persianDateNotifier,
-        builder: (context, persianDate, child) {
-          return GestureDetector(
-            onTap: () {
-              if (_isTypeCalenderNotifier.value == 'day') {
-                _isTypeCalenderNotifier.value = 'month';
-              } else if (_isTypeCalenderNotifier.value == 'month') {
-                _isTypeCalenderNotifier.value = 'year';
-              }
-            },
-            child: Text(persianDate),
-          );
-        },
-      ),
+      child: calendarType == 'day'
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _BoxIncreaseDecrease(
+                  icon: GestureDetector(
+                    onTap: () => _changeMonth(1), // ماه به جلو
+                    child: Icon(
+                      Icons.add,
+                      size: 20,
+                      color: Color(0xff861C8C),
+                    ),
+                  ),
+                ),
+                ValueListenableBuilder<String>(
+                  valueListenable: _persianDateNotifier,
+                  builder: (context, persianDate, child) {
+                    return GestureDetector(
+                      onTap: () {
+                        if (_isTypeCalenderNotifier.value == 'day') {
+                          _changeCalendarType('month');
+                        } else if (_isTypeCalenderNotifier.value == 'month') {
+                          _changeCalendarType('year');
+                        }
+                      },
+                      child: Container(
+                        color: Colors.transparent,
+                        width: 150,
+                        height: double.infinity,
+                        alignment: Alignment.center,
+                        child: SmallMedium(
+                          persianDate,
+                          textColorInLight: Color(0xff861C8C),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                _BoxIncreaseDecrease(
+                  icon: GestureDetector(
+                    onTap: () => _changeMonth(-1), // ماه به عقب
+                    child: Icon(
+                      Icons.remove,
+                      size: 20,
+                      color: Color(0xff861C8C),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : calendarType == 'month'
+              ? ValueListenableBuilder<String>(
+                  valueListenable: _persianDateNotifier,
+                  builder: (context, persianDate, child) {
+                    RegExp regExp = RegExp(r'\d+');
+
+                    // پیدا کردن اولین عدد
+                    Match? match = regExp.firstMatch(persianDate);
+                    String date = match != null ? match.group(0)! : '';
+                    return GestureDetector(
+                      onTap: () {
+                        if (_isTypeCalenderNotifier.value == 'day') {
+                          _changeCalendarType('month');
+                        } else if (_isTypeCalenderNotifier.value == 'month') {
+                          _changeCalendarType('year');
+                        }
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        color: Colors.transparent,
+                        alignment: Alignment.center,
+                        child: SmallMedium(
+                          date,
+                          textColorInLight: Color(0xff861C8C),
+                        ),
+                      ),
+                    );
+                  },
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _BoxIncreaseDecrease(
+                      icon: GestureDetector(
+                        onTap: () => _changeYear(1), // ماه به جلو
+                        child: Icon(
+                          Icons.add,
+                          size: 20,
+                          color: Color(0xff861C8C),
+                        ),
+                      ),
+                    ),
+                    ValueListenableBuilder<String>(
+                      valueListenable: _persianDateNotifier,
+                      builder: (context, persianDate, child) {
+                        RegExp regExp = RegExp(r'\d+');
+
+                        // پیدا کردن اولین عدد
+                        Match? match = regExp.firstMatch(persianDate);
+                        String date = match != null ? match.group(0)! : '';
+                        return GestureDetector(
+                          onTap: () {
+                            if (_isTypeCalenderNotifier.value == 'day') {
+                              _isTypeCalenderNotifier.value = 'month';
+                            } else if (_isTypeCalenderNotifier.value ==
+                                'month') {
+                              _isTypeCalenderNotifier.value = 'year';
+                            }
+                          },
+                          child: SmallMedium(date),
+                        );
+                      },
+                    ),
+                    _BoxIncreaseDecrease(
+                      icon: GestureDetector(
+                        onTap: () => _changeYear(-1), // ماه به جلو
+                        child: Icon(
+                          Icons.remove,
+                          size: 20,
+                          color: Color(0xff861C8C),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
     );
   }
 
@@ -500,7 +566,7 @@ class _PersianCalendarState extends State<PersianCalendar> {
   Widget _buildYearView() {
     return Container(
       key: _calendarKey,
-      height: 360,
+      height: 350,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -508,55 +574,7 @@ class _PersianCalendarState extends State<PersianCalendar> {
       padding: EdgeInsets.all(12),
       child: Column(
         children: [
-          Container(
-            height: 36,
-            decoration: BoxDecoration(
-              color: Color(0xffF1F3F5),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            padding: EdgeInsets.all(2),
-            margin: EdgeInsets.only(bottom: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _BoxIncreaseDecrease(
-                  icon: GestureDetector(
-                    onTap: () => _changeYear(1), // ماه به جلو
-                    child: Icon(
-                      Icons.add,
-                      size: 20,
-                      color: Color(0xff4B5563),
-                    ),
-                  ),
-                ),
-                ValueListenableBuilder<String>(
-                  valueListenable: _persianDateNotifier,
-                  builder: (context, persianDate, child) {
-                    return GestureDetector(
-                      onTap: () {
-                        if (_isTypeCalenderNotifier.value == 'day') {
-                          _isTypeCalenderNotifier.value = 'month';
-                        } else if (_isTypeCalenderNotifier.value == 'month') {
-                          _isTypeCalenderNotifier.value = 'year';
-                        }
-                      },
-                      child: Text(persianDate),
-                    );
-                  },
-                ),
-                _BoxIncreaseDecrease(
-                  icon: GestureDetector(
-                    onTap: () => _changeYear(-1), // ماه به جلو
-                    child: Icon(
-                      Icons.remove,
-                      size: 20,
-                      color: Color(0xff4B5563),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _buildHeader("year"),
           ValueListenableBuilder(
             valueListenable: _daysOfMonthNotifier,
             builder: (context, value, child) {
@@ -698,6 +716,7 @@ class _BoxIncreaseDecrease extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
             offset: Offset(0, 1),

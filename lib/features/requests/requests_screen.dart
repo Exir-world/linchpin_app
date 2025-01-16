@@ -34,7 +34,10 @@ class RequestsScreen extends StatelessWidget {
                       children: [
                         Assets.icons.plus.svg(),
                         SizedBox(width: 8),
-                        NormalMedium('ثبت درخواست جدید'),
+                        NormalMedium(
+                          'ثبت درخواست جدید',
+                          textColorInLight: Color(0xff861C8C),
+                        ),
                       ],
                     ),
                   ),

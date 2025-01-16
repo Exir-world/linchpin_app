@@ -12,7 +12,7 @@ AppBar appBarRoot(BuildContext context, bool isRequestScreen) {
             icon: Icon(
               Icons.arrow_back,
               color: Color(0xff861C8C),
-              size: 30,
+              size: 26,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -30,7 +30,7 @@ AppBar appBarRoot(BuildContext context, bool isRequestScreen) {
                         builder: (context) => RequestsScreen(),
                       ));
                 },
-                child: Assets.icons.docs.svg(),
+                child: Assets.icons.docs.svg(height: 26),
               )
             : SizedBox.shrink(),
         Spacer(),

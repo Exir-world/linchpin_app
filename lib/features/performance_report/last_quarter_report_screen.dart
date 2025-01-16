@@ -19,7 +19,10 @@ class LastQuarterReportScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 LargeDemiBold("گزارش عملکرد 3 ماهه"),
-                NormalMedium('مشاهده همه'),
+                NormalMedium(
+                  'مشاهده همه',
+                  textColorInLight: Color(0xff861C8C),
+                ),
               ],
             ),
             SizedBox(height: VERTICAL_SPACING_6x),
