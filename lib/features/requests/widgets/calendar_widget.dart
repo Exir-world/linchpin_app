@@ -3,18 +3,24 @@ import 'package:linchpin_app/core/common/text_widgets.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
-class CalendarWidget extends StatefulWidget {
+class PersianCalendar extends StatefulWidget {
   final DateTime initialDate; // تاریخ اولیه ورودی از بیرون
-  const CalendarWidget({
+  final Function(
+    String? persianDateSlash,
+    String? persianDateHyphen,
+    String? englishDateIso8601,
+  )? onDateSelected;
+  const PersianCalendar({
     super.key,
     required this.initialDate, // نیاز به تاریخ ابتدایی برای راه‌اندازی ویجت
+    this.onDateSelected,
   });
 
   @override
-  State<CalendarWidget> createState() => _CalendarWidgetState();
+  State<PersianCalendar> createState() => _PersianCalendarState();
 }
 
-class _CalendarWidgetState extends State<CalendarWidget> {
+class _PersianCalendarState extends State<PersianCalendar> {
   // نوتیفایرها برای مدیریت وضعیت‌های مختلف
   late ValueNotifier<bool> _isCalenderOpenNotifier; // وضعیت باز بودن تقویم
   OverlayEntry? _dropdownOverlay; // برای اضافه کردن ویجت تقویم به صفحه
@@ -27,7 +33,10 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       _isTypeCalenderNotifier; // نوتیفایر برای نوع تقویم (روز، ماه، سال)
 
   final GlobalKey _calendarKey = GlobalKey(); // کلید برای شناسایی ویجت تقویم
-
+  String? _persianDateSlash;
+  String? _persianDateHyphen;
+  DateTime? _englishDate;
+  String? _englishDateIso8601;
   @override
   void initState() {
     super.initState();
@@ -35,10 +44,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     _isCalenderOpenNotifier = ValueNotifier<bool>(false);
     // تنظیم تاریخ شمسی از تاریخ ورودی
     _currentDate = Jalali.fromDateTime(widget.initialDate);
-
     // بررسی ماه و سال تاریخ ورودی
     _currentDate = Jalali(_currentDate.year, _currentDate.month, 1);
-
     _persianDateNotifier = ValueNotifier<String>(_getPersianDate(_currentDate));
     _daysOfMonthNotifier =
         ValueNotifier<List<int?>>(_getDaysOfMonth(_currentDate));
@@ -55,6 +62,26 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     _selectedDayNotifier.dispose();
     _isTypeCalenderNotifier.dispose();
     super.dispose();
+  }
+
+  // وقتی تاریخ جدیدی انتخاب می‌شود، این متد صدا می‌شود
+  void _onDateSelected(String? persianDateSlash, String? persianDateHyphen,
+      String? englishDateIso8601) {
+    setState(() {
+      _persianDateSlash = persianDateSlash;
+      _persianDateHyphen = persianDateHyphen;
+
+      _englishDateIso8601 = englishDateIso8601;
+    });
+
+    // ارسال تاریخ به بیرون از ویجت از طریق callback
+    if (widget.onDateSelected != null) {
+      widget.onDateSelected!(
+        _persianDateSlash,
+        _persianDateHyphen,
+        _englishDateIso8601,
+      );
+    }
   }
 
   // محاسبه اولین روز ماه (روز هفته)
@@ -207,7 +234,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   Widget _buildDayView() {
     return Container(
       key: _calendarKey,
-      height: 340,
+      height: 360,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -304,6 +331,26 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                   ? null
                                   : () {
                                       _selectedDayNotifier.value = day;
+                                      _persianDateSlash =
+                                          "${_currentDate.year}/${_currentDate.month}/$day";
+                                      _persianDateHyphen =
+                                          "${_currentDate.year}-${_currentDate.month}-$day";
+
+                                      Jalali persianDatet = Jalali(
+                                          _currentDate.year,
+                                          _currentDate.month,
+                                          day);
+                                      // تبدیل به تاریخ میلادی
+                                      _englishDate = persianDatet.toDateTime();
+                                      _englishDateIso8601 = _englishDate
+                                          ?.toUtc()
+                                          .toIso8601String();
+                                      _onDateSelected(
+                                        _persianDateSlash,
+                                        _persianDateHyphen,
+                                        _englishDateIso8601,
+                                      );
+                                      _closeDropdown();
                                     },
                               child: ValueListenableBuilder<int?>(
                                 valueListenable: _selectedDayNotifier,
@@ -362,7 +409,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
     return Container(
       key: _calendarKey,
-      height: 340,
+      height: 360,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -453,7 +500,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   Widget _buildYearView() {
     return Container(
       key: _calendarKey,
-      height: 340,
+      height: 360,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -622,10 +669,12 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                               Color(0xffCAC4CF), BlendMode.srcIn),
                         ),
                         SizedBox(width: 8),
-                        NormalRegular(
-                          "تاریخ",
-                          textColorInLight: Color(0xffCAC4CF),
-                        ),
+                        _persianDateSlash == null
+                            ? NormalRegular(
+                                "تاریخ",
+                                textColorInLight: Color(0xffCAC4CF),
+                              )
+                            : NormalRegular(_persianDateSlash!),
                       ],
                     ),
                   ),
@@ -652,7 +701,7 @@ class _BoxIncreaseDecrease extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             offset: Offset(0, 1),
-            color: Color(0xff030712).withOpacity(0.12),
+            color: Color(0xff030712).withValues(alpha: 0.12),
             blurRadius: 2,
           ),
         ],

@@ -28,8 +28,17 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
               SizedBox(height: 24),
               BoxRequestType(),
               SizedBox(height: 24),
-              CalendarWidget(
+              PersianCalendar(
                 initialDate: DateTime(2025, 1, 14),
+                onDateSelected: (
+                  persianDateSlash,
+                  persianDateHyphen,
+                  englishDateIso8601,
+                ) {
+                  print(persianDateSlash);
+                  print(persianDateHyphen);
+                  print(englishDateIso8601);
+                },
               ),
             ],
           ),
