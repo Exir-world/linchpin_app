@@ -23,7 +23,7 @@ class _RootScreenState extends State<RootScreen> {
     PrefService prefService = PrefService();
     prefService.createCacheString(
       SharedKey.jwtToken,
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6IlVzZXIiLCJpYXQiOjE3MzcwMjQ1ODQsImV4cCI6MTczNzExMDk4NH0.QvCKQiugpFgwTJbgrDlJ2wpXVJTTrgDTkoKcxECdkPU",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6IlVzZXIiLCJpYXQiOjE3MzcyNjUyNTUsImV4cCI6MTczNzM1MTY1NX0.Lkr_ORKj15uzdT_OgbYRfZx6lRfZOjx_4-2zv2yAzDE",
     );
     BlocProvider.of<RootBloc>(context).add(DailyEvent());
     super.initState();
