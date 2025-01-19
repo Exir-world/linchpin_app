@@ -4,6 +4,7 @@ import 'package:shamsi_date/shamsi_date.dart';
 import 'persian_calendar.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 
+/// ویجت MonthView برای نمایش ماه‌های سال به صورت گرید و انتخاب یک ماه خاص
 class MonthView extends StatefulWidget {
   const MonthView({super.key});
 
@@ -14,6 +15,7 @@ class MonthView extends StatefulWidget {
 class _MonthViewState extends State<MonthView> {
   @override
   Widget build(BuildContext context) {
+    // لیست ماه‌های سال به زبان فارسی
     const months = [
       'فروردین',
       'اردیبهشت',
@@ -30,57 +32,63 @@ class _MonthViewState extends State<MonthView> {
     ];
 
     return Container(
-      height: 360,
+      height: 360, // ارتفاع ویجت
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.white, // رنگ پس‌زمینه
+        borderRadius: BorderRadius.circular(8), // گوشه‌های گرد
       ),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12), // فاصله داخلی
       child: Column(
         children: [
-          // نمایش نام ماه جاری
+          // هدر تقویم که نوع ماه را نمایش می‌دهد
           CalendarHeader(calendarType: 'month'),
 
-          // نمایش روزهای ماه
+          // نمایش ماه‌ها در قالب گرید
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                double spacing = 8.0; // فاصله بین آیتم‌ها
+                double spacing = 8.0; // فاصله بین ماه‌ها
                 int crossAxisCount = 3; // تعداد ستون‌ها
+                // محاسبه عرض و ارتفاع هر آیتم (ماه)
                 double itemWidth =
                     (constraints.maxWidth - (crossAxisCount - 1) * spacing) /
                         crossAxisCount;
-                double itemHeight = itemWidth / 1.8;
+                double itemHeight = itemWidth / 1.8; // تنظیم نسبت ارتفاع به عرض
+
                 return Wrap(
-                  spacing: spacing,
-                  runSpacing: spacing,
-                  direction: Axis.horizontal,
+                  spacing: spacing, // فاصله افقی بین ماه‌ها
+                  runSpacing: spacing, // فاصله عمودی بین ماه‌ها
+                  direction: Axis.horizontal, // جهت نمایش ماه‌ها به صورت افقی
                   children: List.generate(months.length, (index) {
                     return GestureDetector(
+                      // هنگام کلیک روی یک ماه، تاریخ روز اول آن ماه انتخاب می‌شود
                       onTap: () {
                         PersianCalendar.currentDate.value = Jalali(
                             PersianCalendar.currentDate.value!.year,
-                            index + 1,
-                            1);
-                        PersianCalendar.isTypeCalenderNotifier.value = 'day';
+                            index + 1, // ماه انتخابی
+                            1); // روز اول ماه
+                        PersianCalendar.isTypeCalenderNotifier.value =
+                            'day'; // تغییر نوع تقویم به روز
                         PersianCalendar.persianDateNotifier.value =
-                            PersianCalendar.getPersianDate(
-                                PersianCalendar.currentDate.value!);
+                            PersianCalendar.getPersianDate(PersianCalendar
+                                .currentDate.value!); // به‌روزرسانی تاریخ فارسی
                         PersianCalendar.daysOfMonthNotifier.value =
-                            PersianCalendar.getDaysOfMonth(
-                                PersianCalendar.currentDate.value!);
+                            PersianCalendar.getDaysOfMonth(PersianCalendar
+                                .currentDate.value!); // به‌روزرسانی روزهای ماه
                         PersianCalendar.persianDateSlashNotifier.value =
-                            '${PersianCalendar.currentDate.value!.year}/${PersianCalendar.currentDate.value!.month}/${PersianCalendar.currentDate.value!.day}';
+                            '${PersianCalendar.currentDate.value!.year}/${PersianCalendar.currentDate.value!.month}/${PersianCalendar.currentDate.value!.day}'; // به‌روزرسانی تاریخ با فرمت اسلش
                       },
                       child: Container(
-                        width: itemWidth,
-                        height: itemHeight,
-                        alignment: Alignment.center,
+                        width: itemWidth, // عرض هر ماه
+                        height: itemHeight, // ارتفاع هر ماه
+                        alignment:
+                            Alignment.center, // تراز کردن نام ماه در مرکز
                         decoration: BoxDecoration(
-                          color: Color(0xffF1F3F5),
-                          borderRadius: BorderRadius.circular(8),
+                          color: Color(0xffF1F3F5), // رنگ پس‌زمینه هر ماه
+                          borderRadius:
+                              BorderRadius.circular(8), // گوشه‌های گرد
                         ),
-                        child: SmallMedium(months[index]),
+                        child: SmallMedium(months[index]), // نمایش نام ماه
                       ),
                     );
                   }),

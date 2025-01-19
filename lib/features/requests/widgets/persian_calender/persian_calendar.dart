@@ -7,12 +7,12 @@ import 'month_view.dart';
 import 'year_view.dart';
 
 /// ویجت اصلی PersianCalendar که به عنوان یک تقویم شمسی عمل می‌کند.
-/// قابلیت انتخاب تاریخ شمسی و ارسال آن به صورت شمسی و میلادی را دارد.
+/// این ویجت به کاربر امکان انتخاب تاریخ شمسی و میلادی را می‌دهد و تاریخ‌های انتخابی را از طریق یک callback به بیرون ارسال می‌کند.
 class PersianCalendar extends StatefulWidget {
-  /// تاریخ اولیه که هنگام ساخت ویجت از بیرون دریافت می‌شود.
+  /// تاریخ اولیه که از بیرون به ویجت ارسال می‌شود.
   final DateTime initialDate;
 
-  /// Callback برای ارسال تاریخ‌های انتخاب‌شده به بیرون از ویجت.
+  /// Callback که برای ارسال تاریخ‌های انتخاب‌شده به بیرون از ویجت استفاده می‌شود.
   final Function(
     String? persianDateSlash, // تاریخ شمسی با فرمت اسلش.
     String? persianDateHyphen, // تاریخ شمسی با فرمت خط فاصله.
@@ -21,19 +21,19 @@ class PersianCalendar extends StatefulWidget {
 
   const PersianCalendar({
     super.key,
-    required this.initialDate,
-    this.onDateSelected,
+    required this.initialDate, // مقدار اولیه تاریخ که از بیرون وارد می‌شود.
+    this.onDateSelected, // می‌توان این callback را به دلخواه ارسال کرد.
   });
 
-  /// نوتیفایر برای وضعیت باز یا بسته بودن تقویم.
+  /// نوتیفایر برای بررسی وضعیت باز یا بسته بودن تقویم.
   static final ValueNotifier<bool> isCalenderOpenNotifier =
       ValueNotifier<bool>(false);
 
-  /// نوتیفایر برای تاریخ شمسی جاری که به UI منعکس می‌شود.
+  /// نوتیفایر برای ذخیره تاریخ شمسی جاری که در UI منعکس می‌شود.
   static final ValueNotifier<String> persianDateNotifier =
       ValueNotifier<String>('');
 
-  /// نوتیفایر برای لیست روزهای ماه جاری.
+  /// نوتیفایر برای ذخیره لیست روزهای ماه جاری.
   static final ValueNotifier<List<int?>> daysOfMonthNotifier =
       ValueNotifier<List<int?>>([]);
 
@@ -53,6 +53,7 @@ class PersianCalendar extends StatefulWidget {
   static ValueNotifier<Jalali?> currentDate = ValueNotifier(null);
 
   /// تغییر سال با افزایش یا کاهش مقدار.
+  /// این متد سال جاری را تغییر می‌دهد و اطلاعات تاریخ و روزها را به‌روزرسانی می‌کند.
   static void changeYear(Jalali currentDate, int increment) {
     final newDate = currentDate.addYears(increment);
     persianDateNotifier.value = getPersianDate(newDate);
@@ -61,6 +62,7 @@ class PersianCalendar extends StatefulWidget {
   }
 
   /// تغییر ماه با افزایش یا کاهش مقدار.
+  /// این متد ماه جاری را تغییر می‌دهد و اطلاعات تاریخ و روزها را به‌روزرسانی می‌کند.
   static void changeMonth(Jalali currentDate, int increment) {
     final newDate = currentDate.addMonths(increment);
     persianDateNotifier.value = getPersianDate(newDate);
@@ -69,6 +71,7 @@ class PersianCalendar extends StatefulWidget {
   }
 
   /// بستن باکس Dropdown تقویم.
+  /// این متد، باکس تقویم باز شده را می‌بندد.
   static void closeDropdown(OverlayEntry? dropdownOverlay) {
     if (dropdownOverlay != null) {
       dropdownOverlay.remove();
@@ -77,7 +80,8 @@ class PersianCalendar extends StatefulWidget {
     }
   }
 
-  /// دریافت نام فارسی ماه بر اساس شماره ماه.
+  /// دریافت نام ماه شمسی بر اساس شماره ماه.
+  /// این متد، نام ماه شمسی را برای یک شماره ماه خاص برمی‌گرداند.
   static String getPersianMonth(int month) {
     const months = [
       'فروردین',
@@ -96,18 +100,21 @@ class PersianCalendar extends StatefulWidget {
     return months[month - 1];
   }
 
-  /// تولید فرمت فارسی تاریخ از یک تاریخ جلالی.
+  /// تولید تاریخ شمسی از یک تاریخ جلالی.
+  /// این متد، تاریخ جلالی را به فرمت شمسی تبدیل می‌کند.
   static String getPersianDate(Jalali jalaliDate) {
     String monthName = getPersianMonth(jalaliDate.month);
     return '$monthName ${jalaliDate.year}';
   }
 
-  /// پیدا کردن اولین روز ماه (روز هفته).
+  /// پیدا کردن اولین روز ماه به‌صورت روز هفته.
+  /// این متد روز هفته اولین روز ماه را پیدا می‌کند.
   static int getFirstDayOfMonth(Jalali date) {
     return date.weekDay - 1;
   }
 
-  /// تولید لیست روزهای ماه جاری (شامل روزهای قبل و بعد از ماه جاری).
+  /// تولید لیست روزهای ماه جاری.
+  /// این متد، لیست روزهای ماه جاری را تولید می‌کند، شامل روزهای قبل و بعد از ماه جاری.
   static List<int?> getDaysOfMonth(Jalali date) {
     int daysInMonth = date.monthLength;
     int startDay = getFirstDayOfMonth(date);
@@ -134,14 +141,15 @@ class PersianCalendar extends StatefulWidget {
   State<PersianCalendar> createState() => _PersianCalendarState();
 }
 
-/// State مربوط به PersianCalendar که مدیریت وضعیت و رفتارهای داخلی تقویم را بر عهده دارد.
+/// کلاس State مربوط به ویجت PersianCalendar که مدیریت وضعیت و رفتارهای داخلی تقویم را انجام می‌دهد.
 class _PersianCalendarState extends State<PersianCalendar> {
   @override
   void initState() {
     super.initState();
-    PersianCalendar.currentDate.value = null;
+    PersianCalendar.currentDate.value = null; // مقداردهی اولیه تاریخ
     PersianCalendar.persianDateSlashNotifier.value = null;
-    PersianCalendar.currentDate.value = Jalali.fromDateTime(widget.initialDate);
+    PersianCalendar.currentDate.value =
+        Jalali.fromDateTime(widget.initialDate); // تنظیم تاریخ اولیه
     PersianCalendar.currentDate.value = Jalali(
         PersianCalendar.currentDate.value!.year,
         PersianCalendar.currentDate.value!.month,
@@ -154,7 +162,8 @@ class _PersianCalendarState extends State<PersianCalendar> {
         PersianCalendar.getDaysOfMonth(PersianCalendar.currentDate.value!);
   }
 
-  /// باز کردن Dropdown تقویم و نمایش حالت جاری آن.
+  /// باز کردن تقویم و نمایش حالت جاری آن.
+  /// این متد تقویم را به‌صورت Dropdown نمایش می‌دهد.
   void _openCalender(BuildContext context) {
     final overlay = Overlay.of(context);
     final renderBox = context.findRenderObject() as RenderBox;
@@ -180,13 +189,14 @@ class _PersianCalendarState extends State<PersianCalendar> {
                 valueListenable: PersianCalendar.isTypeCalenderNotifier,
                 builder: (context, type, child) {
                   if (type == 'day') {
-                    return DayView(onDateSelected: widget.onDateSelected);
+                    return DayView(
+                        onDateSelected: widget.onDateSelected); // نمایش روزها
                   } else if (type == 'month') {
-                    return MonthView();
+                    return MonthView(); // نمایش ماه‌ها
                   } else if (type == 'year') {
-                    return YearView();
+                    return YearView(); // نمایش سال‌ها
                   } else {
-                    return Container();
+                    return Container(); // نمایش هیچ‌چیز
                   }
                 },
               ),
@@ -197,7 +207,7 @@ class _PersianCalendarState extends State<PersianCalendar> {
     );
 
     overlay.insert(PersianCalendar.dropdownOverlay.value!);
-    PersianCalendar.isCalenderOpenNotifier.value = true;
+    PersianCalendar.isCalenderOpenNotifier.value = true; // تقویم باز شده است
   }
 
   @override

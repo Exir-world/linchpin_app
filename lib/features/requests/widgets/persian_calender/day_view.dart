@@ -4,12 +4,17 @@ import 'package:shamsi_date/shamsi_date.dart';
 import 'persian_calendar.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 
+/// ویجت DayView که روزهای ماه را نمایش می‌دهد.
+/// این ویجت به کاربر این امکان را می‌دهد که یک روز خاص را از تقویم انتخاب کند
+/// و تاریخ انتخابی را به خارج از ویجت ارسال نماید.
 class DayView extends StatefulWidget {
+  /// کال‌بک برای ارسال تاریخ‌های مختلف به خارج از ویجت
   final Function(
     String? persianDateSlash,
     String? persianDateHyphen,
     String? englishDateIso8601,
-  )? onDateSelected; // تعریف callback
+  )? onDateSelected;
+
   const DayView({super.key, this.onDateSelected});
 
   @override
@@ -17,52 +22,56 @@ class DayView extends StatefulWidget {
 }
 
 class _DayViewState extends State<DayView> {
-  /// انتخاب روز خاص و ارسال اطلاعات تاریخ به بیرون از ویجت.
+  /// متد selectDay برای انتخاب روز خاص و ارسال تاریخ به خارج از ویجت.
+  /// این متد تاریخ‌های مختلف (فارسی و انگلیسی) را به فرمت‌های مختلف تبدیل کرده
+  /// و به کال‌بک ارسال می‌کند.
   void selectDay(int day) {
+    // ایجاد تاریخ جدید بر اساس روز انتخاب‌شده
     final selectedDate = Jalali(PersianCalendar.currentDate.value!.year,
         PersianCalendar.currentDate.value!.month, day);
     final englishDate = selectedDate.toDateTime();
 
-    // مقداردهی به فرمت‌های مختلف تاریخ
+    // فرمت‌بندی تاریخ به شکل‌های مختلف
     final persianDateSlash =
         '${PersianCalendar.currentDate.value!.year}/${PersianCalendar.currentDate.value!.month}/$day';
     final persianDateHyphen =
         '${PersianCalendar.currentDate.value!.year}-${PersianCalendar.currentDate.value!.month}-$day';
     final englishDateIso8601 = englishDate.toUtc().toIso8601String();
 
-    // بروزرسانی نوتیفایرها
+    // بروزرسانی نوتیفایرهای تقویم
     PersianCalendar.persianDateSlashNotifier.value =
-        persianDateSlash; // اضافه شده
+        persianDateSlash; // به‌روزرسانی تاریخ فارسی با جداکننده اسلش
     PersianCalendar.selectedDayNotifier.value = day;
 
-    // ارسال تاریخ به Callback
+    // ارسال تاریخ‌های مختلف به کال‌بک
     widget.onDateSelected?.call(
       persianDateSlash,
       persianDateHyphen,
       englishDateIso8601,
     );
 
-    // بستن Dropdown تقویم
+    // بستن منوی کشویی تقویم پس از انتخاب تاریخ
     PersianCalendar.closeDropdown(PersianCalendar.dropdownOverlay.value);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 360,
+      height: 360, // ارتفاع ویجت DayView
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.white, // رنگ پس‌زمینه
+        borderRadius: BorderRadius.circular(8), // گوشه‌های گرد
       ),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12), // فاصله داخلی
       child: Column(
         children: [
-          // Header
+          // هدر تقویم
           CalendarHeader(calendarType: 'day'),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween, // فاصله مساوی بین روزهای هفته
               children: const [
                 SmallMedium('ش', textColorInLight: Color(0xff9CA3AF)),
                 SmallMedium('ی', textColorInLight: Color(0xff9CA3AF)),
@@ -74,60 +83,71 @@ class _DayViewState extends State<DayView> {
               ],
             ),
           ),
+          // نمایش روزهای ماه در یک Grid
           Expanded(
             child: ValueListenableBuilder<List<int?>>(
               valueListenable: PersianCalendar.daysOfMonthNotifier,
               builder: (context, days, child) {
                 return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 7,
-                    childAspectRatio: 1.0,
+                    crossAxisCount: 7, // تعداد ستون‌ها برابر با روزهای هفته
+                    childAspectRatio: 1.0, // تناسب ابعاد هر خانه
                   ),
-                  itemCount: days.length,
-                  padding: EdgeInsets.zero,
+                  itemCount: days.length, // تعداد روزهای ماه
+                  padding: EdgeInsets.zero, // حذف فاصله داخلی
                   itemBuilder: (context, index) {
-                    int? day = days[index];
+                    int? day = days[index]; // روز جاری در ایندکس مشخص
                     int startDay = PersianCalendar.getFirstDayOfMonth(
-                        PersianCalendar.currentDate.value!);
+                        PersianCalendar.currentDate.value!); // روز شروع ماه
                     int endDayStartIndex = startDay +
-                        PersianCalendar.currentDate.value!.monthLength;
-                    bool isPreviousMonthDay = index < startDay;
-                    bool isNextMonthDay = index >= endDayStartIndex;
+                        PersianCalendar
+                            .currentDate.value!.monthLength; // آخرین روز ماه
+                    bool isPreviousMonthDay =
+                        index < startDay; // آیا این روز از ماه قبلی است؟
+                    bool isNextMonthDay = index >=
+                        endDayStartIndex; // آیا این روز از ماه بعدی است؟
 
                     return Center(
                       child: day == null
-                          ? Container()
+                          ? Container() // اگر روز نباشد، هیچ چیزی نمایش داده نمی‌شود
                           : GestureDetector(
                               onTap: isPreviousMonthDay || isNextMonthDay
-                                  ? null
+                                  ? null // اگر روز متعلق به ماه قبلی یا بعدی باشد، قابلیت انتخاب ندارد
                                   : () {
-                                      selectDay(day);
+                                      selectDay(day); // انتخاب روز
                                     },
                               child: ValueListenableBuilder<int?>(
                                 valueListenable:
                                     PersianCalendar.selectedDayNotifier,
                                 builder: (context, selectedDay, child) {
                                   return Container(
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    alignment: Alignment.center,
-                                    margin: const EdgeInsets.all(6),
+                                    width: double.infinity, // عرض خانه
+                                    height: double.infinity, // ارتفاع خانه
+                                    alignment: Alignment
+                                        .center, // تراز کردن روز در مرکز
+                                    margin: const EdgeInsets.all(
+                                        6), // فاصله بین خانه‌ها
                                     decoration: BoxDecoration(
                                       color: (selectedDay == day &&
                                               !isPreviousMonthDay &&
                                               !isNextMonthDay)
-                                          ? const Color(0xff861C8C)
+                                          ? const Color(
+                                              0xff861C8C) // رنگ پس‌زمینه روز انتخابی
                                           : null,
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(
+                                          8), // گوشه‌های گرد
                                     ),
                                     child: NormalMedium(
-                                      '$day',
-                                      textColorInLight:
-                                          isPreviousMonthDay || isNextMonthDay
-                                              ? Colors.grey
-                                              : (selectedDay == day
-                                                  ? Colors.white
-                                                  : const Color(0xff030712)),
+                                      '$day', // نمایش روز
+                                      textColorInLight: isPreviousMonthDay ||
+                                              isNextMonthDay
+                                          ? Colors
+                                              .grey // رنگ خاکستری برای روزهای ماه‌های قبلی یا بعدی
+                                          : (selectedDay == day
+                                              ? Colors
+                                                  .white // رنگ سفید برای روز انتخابی
+                                              : const Color(
+                                                  0xff030712)), // رنگ پیش‌فرض برای روزهای دیگر
                                     ),
                                   );
                                 },
