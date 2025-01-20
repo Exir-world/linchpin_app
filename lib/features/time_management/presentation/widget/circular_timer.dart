@@ -7,8 +7,8 @@ import 'package:linchpin_app/core/extension/context_extension.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
 
 class CircularTimer extends StatefulWidget {
-  final DateTime initTime; // The first log of the day
-  final DateTime endTime; // The last output that the user must register
+  final DateTime? initTime; // The first log of the day
+  final DateTime? endTime; // The last output that the user must register
   final DateTime openAppTime; // Current server time
 
   const CircularTimer({
@@ -37,18 +37,25 @@ class _CircularTimerState extends State<CircularTimer> {
   @override
   void initState() {
     super.initState();
-    currentTime = widget.openAppTime; // مقدار اولیه زمان جاری
-    secondsPerSegment =
-        (widget.endTime.difference(widget.initTime).inSeconds / segments)
-            .round();
-    _calculateCompletedSegments();
-    _startTimer();
+
+    // اگر initTime null باشد، تایمر غیرفعال می‌شود
+    if (widget.initTime == null || widget.endTime == null) {
+      currentTime = widget.openAppTime; // مقدار اولیه زمان جاری
+      completedSegments = 0; // هیچ segmentی تکمیل نشده
+    } else {
+      currentTime = widget.openAppTime;
+      secondsPerSegment =
+          (widget.endTime!.difference(widget.initTime!).inSeconds / segments)
+              .round();
+      _calculateCompletedSegments();
+      _startTimer();
+    }
   }
 
   // تایمر را برای به روز رسانی openAppTime هر ثانیه شروع می کنیم
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (currentTime.isBefore(widget.endTime)) {
+      if (currentTime.isBefore(widget.endTime!)) {
         setState(() {
           currentTime =
               currentTime.add(Duration(seconds: 1)); // افزایش زمان جاری
@@ -63,7 +70,7 @@ class _CircularTimerState extends State<CircularTimer> {
   // محاسبه تعداد segments پرشده بر اساس زمان جاری
   void _calculateCompletedSegments() {
     int elapsedTimeInSeconds =
-        currentTime.difference(widget.initTime).inSeconds;
+        currentTime.difference(widget.initTime!).inSeconds;
 
     // محاسبه تعداد segments بر اساس تعداد ثانیه‌هایی که گذشت
     setState(() {

@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/features/root/presentation/bloc/root_bloc.dart';
+import 'package:linchpin_app/features/time_management/presentation/bloc/time_management_bloc.dart';
 import 'package:linchpin_app/features/root/presentation/root_screen.dart';
 
 void main() async {
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => getIt<RootBloc>(),
+          create: (context) => getIt<TimeManagementBloc>(),
         ),
       ],
       child: MaterialApp(

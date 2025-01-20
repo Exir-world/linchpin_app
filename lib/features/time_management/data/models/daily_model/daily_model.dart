@@ -1,38 +1,26 @@
-import 'package:flutter/foundation.dart';
-
+import 'package:flutter/material.dart';
+import 'package:linchpin_app/features/time_management/domain/entity/daily_entity.dart';
 import 'user.dart';
 
 @immutable
-class Data {
-  final DateTime? nowDatetime;
-  final User? user;
-  final int? remainingDuration;
-  final String? todayStartTime;
-  final dynamic lastEndTime;
-  final int? workDuration;
-  final int? stopDuration;
-  final String? currentStatus;
-  final DateTime? lastStartTime;
-  final DateTime? initTime;
-  final DateTime? endTodayTime;
-  final int? currentDuration;
-
-  const Data({
-    this.nowDatetime,
-    this.user,
-    this.remainingDuration,
-    this.todayStartTime,
-    this.lastEndTime,
-    this.workDuration,
-    this.stopDuration,
-    this.currentStatus,
-    this.lastStartTime,
-    this.initTime,
-    this.endTodayTime,
-    this.currentDuration,
+class DailyModel extends DailyEntity {
+  const DailyModel({
+    super.nowDatetime,
+    super.user,
+    super.remainingDuration,
+    super.todayStartTime,
+    super.lastEndTime,
+    super.workDuration,
+    super.stopDuration,
+    super.currentStatus,
+    super.lastStartTime,
+    super.initTime,
+    super.endTodayTime,
+    super.currentDuration,
+    super.endCurrentTime,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory DailyModel.fromJson(Map<String, dynamic> json) => DailyModel(
         nowDatetime: json['nowDatetime'] == null
             ? null
             : DateTime.parse(json['nowDatetime'] as String),
@@ -41,7 +29,7 @@ class Data {
             : User.fromJson(json['user'] as Map<String, dynamic>),
         remainingDuration: json['remainingDuration'] as int?,
         todayStartTime: json['todayStartTime'] as String?,
-        lastEndTime: json['lastEndTime'] as dynamic,
+        lastEndTime: json['lastEndTime'] as String?,
         workDuration: json['workDuration'] as int?,
         stopDuration: json['stopDuration'] as int?,
         currentStatus: json['currentStatus'] as String?,
@@ -55,6 +43,9 @@ class Data {
             ? null
             : DateTime.parse(json['endTodayTime'] as String),
         currentDuration: json['currentDuration'] as int?,
+        endCurrentTime: json['endCurrentTime'] == null
+            ? null
+            : DateTime.parse(json['endCurrentTime'] as String),
       );
 
   Map<String, dynamic> toJson() => {
@@ -66,9 +57,10 @@ class Data {
         'workDuration': workDuration,
         'stopDuration': stopDuration,
         'currentStatus': currentStatus,
-        'lastStartTime': lastStartTime?.toIso8601String(),
-        'initTime': initTime?.toIso8601String(),
+        'lastStartTime': lastStartTime,
+        'initTime': initTime,
         'endTodayTime': endTodayTime?.toIso8601String(),
         'currentDuration': currentDuration,
+        'endCurrentTime': endCurrentTime?.toIso8601String(),
       };
 }
