@@ -12,6 +12,16 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:linchpin_app/core/common/http_client.dart' as _i738;
+import 'package:linchpin_app/features/performance_report/data/data_source/api_last_quarter_report.dart'
+    as _i146;
+import 'package:linchpin_app/features/performance_report/data/repository/last_quarter_report_repository_impl.dart'
+    as _i356;
+import 'package:linchpin_app/features/performance_report/domain/repository/last_quarter_report_repository.dart'
+    as _i133;
+import 'package:linchpin_app/features/performance_report/domain/use_case/last_quarter_report_usecase.dart'
+    as _i285;
+import 'package:linchpin_app/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart'
+    as _i981;
 import 'package:linchpin_app/features/time_management/data/data_source/api_time_mamagement.dart'
     as _i526;
 import 'package:linchpin_app/features/time_management/data/repository/time_management_repository_impl.dart'
@@ -38,16 +48,28 @@ extension GetItInjectableX on _i174.GetIt {
     );
     final dioProvider = _$DioProvider();
     gh.factory<_i361.Dio>(() => dioProvider.httpclient);
+    gh.singleton<_i146.ApiLastQuarterReport>(
+        () => _i146.ApiLastQuarterReport(gh<_i361.Dio>()));
     gh.singleton<_i526.ApiTimeMamagement>(
         () => _i526.ApiTimeMamagement(gh<_i361.Dio>()));
     gh.singleton<_i1063.TimeManagementRepository>(
       () => _i400.TimeManagementRepositoryImpl(gh<_i526.ApiTimeMamagement>()),
       registerFor: {_prod},
     );
+    gh.singleton<_i133.LastQuarterReportRepository>(
+      () => _i356.LastQuarterReportRepositoryImpl(
+          gh<_i146.ApiLastQuarterReport>()),
+      registerFor: {_prod},
+    );
     gh.singleton<_i781.TimeManagementUsecase>(() =>
         _i781.TimeManagementUsecase(gh<_i1063.TimeManagementRepository>()));
     gh.factory<_i134.TimeManagementBloc>(
         () => _i134.TimeManagementBloc(gh<_i781.TimeManagementUsecase>()));
+    gh.singleton<_i285.LastQuarterReportUsecase>(() =>
+        _i285.LastQuarterReportUsecase(
+            gh<_i133.LastQuarterReportRepository>()));
+    gh.factory<_i981.LastQuarterReportBloc>(() =>
+        _i981.LastQuarterReportBloc(gh<_i285.LastQuarterReportUsecase>()));
     return this;
   }
 }

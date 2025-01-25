@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +7,12 @@ import 'package:linchpin_app/core/common/colors.dart';
 import 'package:linchpin_app/core/common/dimens.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 import 'package:linchpin_app/core/translate/locale_keys.dart';
+import 'package:linchpin_app/features/root/presentation/root_screen.dart';
 import 'package:linchpin_app/features/time_management/presentation/bloc/time_management_bloc.dart';
 import 'package:linchpin_app/features/time_management/presentation/widget/circular_timer.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 class TimeManagementScreen extends StatefulWidget {
   const TimeManagementScreen({super.key});
@@ -18,6 +22,38 @@ class TimeManagementScreen extends StatefulWidget {
 }
 
 class _TimeManagementScreenState extends State<TimeManagementScreen> {
+  bool _isLoading = false;
+
+  String? currentStatus;
+
+  // این موارد فقط برای نمایش در فضای لودینگ دارند استفاده میشن و کاربرد دیگری ندارند
+  String? lv;
+  String? ls;
+  String? lkh;
+  String? lN;
+
+  void formatDateTime(DateTime dateTime) {
+    // تبدیل تاریخ میلادی به تاریخ شمسی
+    Jalali shamsiDate = Jalali.fromDateTime(dateTime);
+
+    // فرمت کردن تاریخ شمسی به صورت "روز ماه" (مثلاً: ۲۲ دی)
+    String formattedDate = '${shamsiDate.day} ${shamsiDate.formatter.mN}';
+
+    // شروع تایمر برای به روزرسانی هر ثانیه
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      // به‌روز رسانی زمان هر ثانیه
+      dateTime = dateTime
+          .add(Duration(seconds: 1)); // افزایش یک ثانیه به تاریخ و زمان فعلی
+
+      // فرمت کردن زمان (ساعت، دقیقه، ثانیه) از DateTime
+      String formattedTime =
+          '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}';
+
+      // ترکیب تاریخ شمسی و زمان
+      RootScreen.timeServerNotofire.value = '$formattedDate | $formattedTime';
+    });
+  }
+
   // تعداد کاراکتر های متن اگر بیش از حد مجاز باشه
   String _truncateText(String text, int maxLength) {
     if (text.length > maxLength) {
@@ -36,13 +72,26 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<TimeManagementBloc>(context).add(DailyEvent());
+    BlocProvider.of<TimeManagementBloc>(context)
+        .add(DailyEvent(actionType: 'daily'));
+    formatDateTime(DateTime.now()); // نمایش تاریخ و زمان فرمت‌شده
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TimeManagementBloc, TimeManagementState>(
+    return BlocConsumer<TimeManagementBloc, TimeManagementState>(
+      listener: (context, state) {
+        if (state is DailyLoadingState) {
+          setState(() {
+            _isLoading = true;
+          });
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      },
       builder: (context, state) {
         if (state is DailyComplitedState) {
           // فرض میکنیم که workDuration از state به دست میاد
@@ -51,6 +100,11 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
 
           // تبدیل workDuration به فرمت ساعت و دقیقه
           String formattedTime = convertSecondsToTime(workDuration);
+          currentStatus = state.dailyEntity.currentStatus;
+          lN = state.dailyEntity.user?.name ?? '';
+          lkh = state.dailyEntity.lastEndTime;
+          ls = formattedTime;
+          lv = state.dailyEntity.todayStartTime;
           return Scaffold(
             backgroundColor: BACKGROUND_LIGHT_COLOR,
             body: SingleChildScrollView(
@@ -63,47 +117,89 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
                       BigRegular(LocaleKeys.goodDay.tr()),
                       SizedBox(width: 4),
                       BigBold(
-                        _truncateText(state.dailyEntity.user!.name!, 10),
+                        _truncateText(state.dailyEntity.user?.name ?? '', 10),
                       ),
                     ],
                   ),
                   SizedBox(height: VERTICAL_SPACING_6x),
-                  // CircularTimer(
-                  //   initTime: DateTime(2025, 01, 8, 13, 00),
-                  //   endTime: DateTime(2025, 01, 8, 14, 00),
-                  //   openAppTime: DateTime(2025, 01, 8, 13, 50, 23),
-                  // ),
                   CircularTimer(
-                    initTime: state.dailyEntity.lastStartTime,
-                    endTime: state.dailyEntity.endCurrentTime,
-                    openAppTime: state.dailyEntity.nowDatetime!,
+                    initTime: currentStatus == 'CHECKED_IN'
+                        ? 0
+                        : currentStatus == 'STOP'
+                            ? 0
+                            : null,
+                    endTime: state.dailyEntity.eachTimeDuration,
+                    openAppTime: state.dailyEntity.currentDuration!,
+                    isTimerAllowed: currentStatus == 'STOP' ? false : true,
+                    shouldReset: currentStatus ==
+                        'CHECKED_OUT', // فقط در صورت "ثبت ورود" ریست شود
+                    remainingDuration: state.dailyEntity.remainingDuration!,
+                    stopDuration: state.dailyEntity.stopDuration!,
                   ),
                   SizedBox(height: VERTICAL_SPACING_10x),
-                  Column(
-                    children: [
-                      Container(
-                        height: 60,
-                        width: 60,
-                        decoration: BoxDecoration(
-                            color: Color(0xff58EC89),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0xff58EC89).withValues(alpha: .5),
-                                blurRadius: 20.0,
-                                offset: Offset(0, 4),
-                              ),
-                            ]),
-                        alignment: Alignment.center,
-                        child: Assets.icons.timerTick.svg(),
-                      ),
-                      SizedBox(height: VERTICAL_SPACING_3x),
-                      LargeDemiBold(
-                        'ثبت ورود',
-                        textColorInLight: Color(0xff58EC89),
-                      ),
-                    ],
-                  ),
+                  currentStatus == 'CHECKED_OUT'
+                      ? ButtonStatus(
+                          colorBackgerand: Color(0xff58EC89),
+                          title: 'ثبت ورود',
+                          icon: Assets.icons.timerTick.svg(),
+                          onTap: () {
+                            BlocProvider.of<TimeManagementBloc>(context)
+                                .add(DailyEvent(actionType: 'check-in'));
+                          },
+                        )
+                      : currentStatus == 'CHECKED_IN'
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ButtonStatus(
+                                  colorBackgerand: Color(0xffEC5858),
+                                  title: 'ثبت خروج',
+                                  icon: Assets.icons.timerTick.svg(),
+                                  onTap: () {
+                                    BlocProvider.of<TimeManagementBloc>(context)
+                                        .add(DailyEvent(
+                                            actionType: 'check-out'));
+                                  },
+                                ),
+                                SizedBox(width: 40),
+                                ButtonStatus(
+                                  colorBackgerand: Color(0xffFFA656),
+                                  title: 'توقف',
+                                  icon: Assets.icons.pause.svg(),
+                                  onTap: () {
+                                    BlocProvider.of<TimeManagementBloc>(context)
+                                        .add(DailyEvent(
+                                            actionType: 'stop-start'));
+                                  },
+                                ),
+                              ],
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ButtonStatus(
+                                  colorBackgerand: Color(0xffEC5858),
+                                  title: 'ثبت خروج',
+                                  icon: Assets.icons.timerTick.svg(),
+                                  onTap: () {
+                                    BlocProvider.of<TimeManagementBloc>(context)
+                                        .add(DailyEvent(
+                                            actionType: 'check-out'));
+                                  },
+                                ),
+                                SizedBox(width: 40),
+                                ButtonStatus(
+                                  colorBackgerand: Color(0xff58EC89),
+                                  title: 'ادامه',
+                                  icon: Assets.icons.play.svg(height: 30),
+                                  onTap: () {
+                                    BlocProvider.of<TimeManagementBloc>(context)
+                                        .add(
+                                            DailyEvent(actionType: 'stop-end'));
+                                  },
+                                ),
+                              ],
+                            ),
                   SizedBox(height: VERTICAL_SPACING_8x),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -117,7 +213,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
                       _BoxEntryExit(
                         image: Assets.icons.timerTick3.svg(),
                         title: 'ساعات کار',
-                        time: formattedTime,
+                        time: formattedTime == '00:00' ? '-' : formattedTime,
                       ),
                       SizedBox(width: 12),
                       _BoxEntryExit(
@@ -132,8 +228,109 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
             ),
           );
         } else if (state is DailyLoadingState) {
-          return Scaffold(
-            body: Center(child: CupertinoActivityIndicator()),
+          return OverlayLoaderWithAppIcon(
+            isLoading: _isLoading,
+            overlayBackgroundColor: BACKGROUND_LIGHT_COLOR,
+            overlayOpacity: .5,
+            appIcon: CupertinoActivityIndicator(color: Colors.deepPurple),
+            child: Scaffold(
+              backgroundColor: BACKGROUND_LIGHT_COLOR,
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: VERTICAL_SPACING_5x),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        BigRegular(LocaleKeys.goodDay.tr()),
+                        SizedBox(width: 4),
+                        BigBold(
+                          _truncateText(lN ?? '', 10),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: VERTICAL_SPACING_6x),
+                    CircularTimer(
+                      initTime: null,
+                      endTime: null,
+                      openAppTime: 0,
+                      isTimerAllowed: false,
+                      shouldReset: false,
+                      remainingDuration: 0,
+                      stopDuration: 0,
+                    ),
+                    SizedBox(height: VERTICAL_SPACING_10x),
+                    currentStatus == 'CHECKED_OUT'
+                        ? ButtonStatus(
+                            colorBackgerand: Color(0xff58EC89),
+                            title: 'ثبت ورود',
+                            icon: Assets.icons.timerTick.svg(),
+                            onTap: () {},
+                          )
+                        : currentStatus == 'CHECKED_IN'
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ButtonStatus(
+                                    colorBackgerand: Color(0xffEC5858),
+                                    title: 'ثبت خروج',
+                                    icon: Assets.icons.timerTick.svg(),
+                                    onTap: () {},
+                                  ),
+                                  SizedBox(width: 40),
+                                  ButtonStatus(
+                                    colorBackgerand: Color(0xffFFA656),
+                                    title: 'توقف',
+                                    icon: Assets.icons.pause.svg(),
+                                    onTap: () {},
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ButtonStatus(
+                                    colorBackgerand: Color(0xffEC5858),
+                                    title: 'ثبت خروج',
+                                    icon: Assets.icons.timerTick.svg(),
+                                    onTap: () {},
+                                  ),
+                                  SizedBox(width: 40),
+                                  ButtonStatus(
+                                    colorBackgerand: Color(0xff58EC89),
+                                    title: 'ادامه',
+                                    icon: Assets.icons.play.svg(height: 30),
+                                    onTap: () {},
+                                  ),
+                                ],
+                              ),
+                    SizedBox(height: VERTICAL_SPACING_8x),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _BoxEntryExit(
+                          image: Assets.icons.timerTick2.svg(),
+                          title: 'زمان ورود',
+                          time: lv ?? '-',
+                        ),
+                        SizedBox(width: 12),
+                        _BoxEntryExit(
+                          image: Assets.icons.timerTick3.svg(),
+                          title: 'ساعات کار',
+                          time: ls ?? '-',
+                        ),
+                        SizedBox(width: 12),
+                        _BoxEntryExit(
+                          image: Assets.icons.timerTick4.svg(),
+                          title: 'زمان خروج',
+                          time: lkh ?? '-',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
           );
         } else if (state is DailyErrorState) {
           return Scaffold(
@@ -145,6 +342,52 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
           );
         }
       },
+    );
+  }
+}
+
+class ButtonStatus extends StatelessWidget {
+  final Color colorBackgerand;
+  final String title;
+  final Widget icon;
+  final Function() onTap;
+  const ButtonStatus({
+    super.key,
+    required this.colorBackgerand,
+    required this.title,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+                color: colorBackgerand,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: colorBackgerand.withValues(alpha: .5),
+                    blurRadius: 20.0,
+                    offset: Offset(0, 4),
+                  ),
+                ]),
+            alignment: Alignment.center,
+            child: icon,
+          ),
+          SizedBox(height: VERTICAL_SPACING_3x),
+          LargeDemiBold(
+            title,
+            textColorInLight: colorBackgerand,
+          ),
+        ],
+      ),
     );
   }
 }

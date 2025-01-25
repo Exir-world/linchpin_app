@@ -10,8 +10,9 @@ class TimeManagementUsecase {
   TimeManagementUsecase(this.timeManagementRepository);
 
   // اطلاعات صفحه اصلی
-  Future<DataState<DailyEntity>> daily() async {
-    DataState<DailyEntity> dataState = await timeManagementRepository.daily();
+  Future<DataState<DailyEntity>> daily(String actionType) async {
+    DataState<DailyEntity> dataState =
+        await timeManagementRepository.daily(actionType);
     return dataState;
   }
 }

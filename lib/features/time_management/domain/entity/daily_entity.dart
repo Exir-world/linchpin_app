@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:linchpin_app/features/time_management/data/models/daily_model/user.dart';
 
 class DailyEntity extends Equatable {
-  final DateTime? nowDatetime; // تایم فعلی سرور
+  final String? nowDatetime; // تایم فعلی سرور
   final User? user; // اطلاعات کاربر
   final int? remainingDuration; // تایم باقی مانده کل روز
   final String? todayStartTime; // اولین ورود روز (نمایشی هست فقط)
@@ -18,6 +18,7 @@ class DailyEntity extends Equatable {
       currentDuration; // میزان کارکردش واسه تایم فعلی (زمانی که کاربر پشت سر گذاشته در کرنومتر)
   final DateTime?
       endCurrentTime; // آخرین ساعتی که کاربر در اون شیفت باید خارج بشه
+  final int? eachTimeDuration;
 
   const DailyEntity({
     this.nowDatetime,
@@ -33,6 +34,7 @@ class DailyEntity extends Equatable {
     this.endTodayTime,
     this.currentDuration,
     this.endCurrentTime,
+    this.eachTimeDuration,
   });
 
   @override
@@ -50,5 +52,6 @@ class DailyEntity extends Equatable {
         endTodayTime,
         currentDuration,
         endCurrentTime,
+        eachTimeDuration,
       ];
 }

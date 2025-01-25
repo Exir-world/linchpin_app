@@ -18,12 +18,11 @@ class DailyModel extends DailyEntity {
     super.endTodayTime,
     super.currentDuration,
     super.endCurrentTime,
+    super.eachTimeDuration,
   });
 
   factory DailyModel.fromJson(Map<String, dynamic> json) => DailyModel(
-        nowDatetime: json['nowDatetime'] == null
-            ? null
-            : DateTime.parse(json['nowDatetime'] as String),
+        nowDatetime: json['nowDatetime'] as String?,
         user: json['user'] == null
             ? null
             : User.fromJson(json['user'] as Map<String, dynamic>),
@@ -46,10 +45,11 @@ class DailyModel extends DailyEntity {
         endCurrentTime: json['endCurrentTime'] == null
             ? null
             : DateTime.parse(json['endCurrentTime'] as String),
+        eachTimeDuration: json['eachTimeDuration'] as int?,
       );
 
   Map<String, dynamic> toJson() => {
-        'nowDatetime': nowDatetime?.toIso8601String(),
+        'nowDatetime': nowDatetime,
         'user': user?.toJson(),
         'remainingDuration': remainingDuration,
         'todayStartTime': todayStartTime,
@@ -62,5 +62,6 @@ class DailyModel extends DailyEntity {
         'endTodayTime': endTodayTime?.toIso8601String(),
         'currentDuration': currentDuration,
         'endCurrentTime': endCurrentTime?.toIso8601String(),
+        'eachTimeDuration': eachTimeDuration,
       };
 }

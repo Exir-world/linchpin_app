@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin_app/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin_app/core/shared_preferences/shared_preferences_service.dart';
-import 'package:linchpin_app/features/performance_report/last_quarter_report_screen.dart';
+import 'package:linchpin_app/features/performance_report/presentation/last_quarter_report_screen.dart';
 import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
 import 'package:linchpin_app/features/time_management/presentation/time_management_screen.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
@@ -12,6 +12,7 @@ class RootScreen extends StatefulWidget {
   @override
   State<RootScreen> createState() => _RootScreenState();
   static ValueNotifier<int> itemSelectedNotifire = ValueNotifier(1);
+  static ValueNotifier<String?> timeServerNotofire = ValueNotifier(null);
 }
 
 class _RootScreenState extends State<RootScreen> {
@@ -20,7 +21,7 @@ class _RootScreenState extends State<RootScreen> {
     PrefService prefService = PrefService();
     prefService.createCacheString(
       SharedKey.jwtToken,
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6IlVzZXIiLCJpYXQiOjE3MzczNTg0MzIsImV4cCI6MTczNzQ0NDgzMn0.EoLgfHmkJPmn-7IWKlduoz-TMV-1RFy924fTWxg9h4o",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6IlVzZXIiLCJpYXQiOjE3Mzc3ODAwNDcsImV4cCI6MTczNzg2NjQ0N30.fx92Kcq7Z6U8sQyRjrbbD_EcB7QKDW95EXC6RWmh-Vs",
     );
     super.initState();
   }

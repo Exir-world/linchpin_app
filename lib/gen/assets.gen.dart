@@ -53,6 +53,12 @@ class $AssetsIconsGen {
   /// File path: assets/icons/docs.svg
   SvgGenImage get docs => const SvgGenImage('assets/icons/docs.svg');
 
+  /// File path: assets/icons/pause.svg
+  SvgGenImage get pause => const SvgGenImage('assets/icons/pause.svg');
+
+  /// File path: assets/icons/play.svg
+  SvgGenImage get play => const SvgGenImage('assets/icons/play.svg');
+
   /// File path: assets/icons/plus.svg
   SvgGenImage get plus => const SvgGenImage('assets/icons/plus.svg');
 
@@ -99,6 +105,8 @@ class $AssetsIconsGen {
         clockAddPlus,
         combined,
         docs,
+        pause,
+        play,
         plus,
         ringing,
         spring,

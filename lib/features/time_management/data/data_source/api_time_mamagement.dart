@@ -7,20 +7,10 @@ class ApiTimeMamagement {
   ApiTimeMamagement(this.httpclient);
 
   // اطلاعات صفحه اصلی
-  Future<dynamic> daily() async {
-    final response = await httpclient.get('attendance/daily');
-    return response;
-  }
-
-  // ثبت ورود کاربر
-  Future<dynamic> checkIn() async {
-    final response = await httpclient.post('attendance/check-in');
-    return response;
-  }
-
-  // ثبت خروج کاربر
-  Future<dynamic> checkOut() async {
-    final response = await httpclient.post('attendance/check-out');
+  Future<dynamic> daily(String actionType) async {
+    final response = await httpclient.post('attendance/main-page', data: {
+      "actionType": actionType,
+    });
     return response;
   }
 }

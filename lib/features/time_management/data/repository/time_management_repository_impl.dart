@@ -14,9 +14,9 @@ class TimeManagementRepositoryImpl extends TimeManagementRepository {
 
   TimeManagementRepositoryImpl(this.apiTimeMamagement);
   @override
-  Future<DataState<DailyEntity>> daily() async {
+  Future<DataState<DailyEntity>> daily(String actionType) async {
     try {
-      Response response = await apiTimeMamagement.daily();
+      Response response = await apiTimeMamagement.daily(actionType);
       DailyEntity dailyEntity = DailyModel.fromJson(response.data);
       return DataSuccess(dailyEntity);
     } on DioException catch (e) {

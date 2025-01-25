@@ -7,15 +7,23 @@ import 'package:linchpin_app/core/extension/context_extension.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
 
 class CircularTimer extends StatefulWidget {
-  final DateTime? initTime; // The first log of the day
-  final DateTime? endTime; // The last output that the user must register
-  final DateTime openAppTime; // Current server time
+  final int? initTime; // مقدار زمان شروع (TimeStamp بر حسب میلی‌ثانیه)
+  final int? endTime; // مقدار زمان پایان (TimeStamp بر حسب میلی‌ثانیه)
+  final int openAppTime; // مقدار زمان فعلی (TimeStamp بر حسب میلی‌ثانیه)
+  final bool isTimerAllowed; // مقدار بولین برای کنترل تایمر
+  final bool shouldReset; // مقدار بولین برای ریست تایمر
+  final int remainingDuration; // زمان باقی‌مانده بر حسب ثانیه
+  final int stopDuration; // زمان توقفی که کاربر کرده بر حسب ثانیه
 
   const CircularTimer({
     super.key,
     required this.initTime,
     required this.endTime,
     required this.openAppTime,
+    required this.isTimerAllowed,
+    required this.shouldReset,
+    required this.remainingDuration,
+    required this.stopDuration,
   });
 
   @override
@@ -25,9 +33,13 @@ class CircularTimer extends StatefulWidget {
 class _CircularTimerState extends State<CircularTimer> {
   int completedSegments = 0; // تعداد segments تکمیل‌شده
   final int segments = 60; // تعداد segments در دایره
-  late Timer _timer; // تایمر برای به روز رسانی زمان
-  late DateTime currentTime; // متغیر جدید برای ذخیره زمان جاری
+  late Timer _timer =
+      Timer(Duration.zero, () {}); // تایمر برای به روز رسانی زمان
+  late Duration elapsedDuration; // مدت زمانی که از initTime گذشته
+  bool isTimerRunning = false; // وضعیت کرنومتر
   late int secondsPerSegment; // تعداد ثانیه‌هایی که یک سگمنت را پر می‌کند
+  late int remainingTime; // زمان باقی‌مانده (بر حسب ثانیه)
+  late int stopDuration; // زمان توقفی که کاربر کرده بر حسب ثانیه
 
   // رنگ‌های شروع، وسط و پایان برای گرادینت سه رنگ
   final Color activeColorStart = Color(0xff9642E5); // رنگ شروع
@@ -38,43 +50,144 @@ class _CircularTimerState extends State<CircularTimer> {
   void initState() {
     super.initState();
 
-    // اگر initTime null باشد، تایمر غیرفعال می‌شود
-    if (widget.initTime == null || widget.endTime == null) {
-      currentTime = widget.openAppTime; // مقدار اولیه زمان جاری
-      completedSegments = 0; // هیچ segmentی تکمیل نشده
-    } else {
-      currentTime = widget.openAppTime;
+    // تنظیم مقدار اولیه remainingTime
+    remainingTime = widget.remainingDuration;
+    stopDuration = widget.stopDuration;
+
+    if (widget.initTime != null && widget.endTime != null) {
+      // تعداد میلی‌ثانیه‌ها برای هر سگمنت
       secondsPerSegment =
-          (widget.endTime!.difference(widget.initTime!).inSeconds / segments)
-              .round();
+          ((widget.endTime! - widget.initTime!) / segments).round();
+
+      // محاسبه مدت زمان سپری شده از initTime
+      elapsedDuration = Duration(
+        seconds: widget.openAppTime - widget.initTime!,
+      );
+
       _calculateCompletedSegments();
       _startTimer();
+      // شروع تایمر مستقل برای کاهش زمان باقی‌مانده
+      _startRemainingTimeTimer();
+
+      if (!widget.isTimerAllowed) {
+        _startStopDurationTimer();
+      }
+    } else {
+      elapsedDuration = Duration.zero;
+    }
+  }
+
+  // تایمر کاهش زمان باقی‌مانده
+  void _startRemainingTimeTimer() {
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if (remainingTime > 0) {
+        setState(() {
+          remainingTime--;
+        });
+      } else {
+        timer.cancel(); // اگر زمان باقی‌مانده تمام شد، تایمر را متوقف کن
+      }
+    });
+  }
+
+  // تایمر افزایش زمان توقف
+  void _startStopDurationTimer() {
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        stopDuration++;
+      });
+    });
+  }
+
+  // فرمت نمایش زمان باقی‌مانده
+  String _formatRemainingTime(int remainingSeconds) {
+    int totalMinutes = remainingSeconds ~/ 60;
+    int hours = totalMinutes ~/ 60;
+    int minutes = totalMinutes % 60;
+
+    if (hours > 0) {
+      return '$hours ساعت، $minutes دقیقه';
+    } else {
+      return '$minutes دقیقه';
+    }
+  }
+
+  // فرمت نمایش زمان توقف
+  String _formatStopDurationTime(int remainingSeconds) {
+    int totalMinutes = remainingSeconds ~/ 60;
+    int hours = totalMinutes ~/ 60;
+    int minutes = totalMinutes % 60;
+
+    if (hours > 0) {
+      return '$hours ساعت، $minutes دقیقه';
+    } else {
+      return '$minutes دقیقه';
     }
   }
 
   // تایمر را برای به روز رسانی openAppTime هر ثانیه شروع می کنیم
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (currentTime.isBefore(widget.endTime!)) {
-        setState(() {
-          currentTime =
-              currentTime.add(Duration(seconds: 1)); // افزایش زمان جاری
-          _calculateCompletedSegments(); // محاسبه تعداد segments
-        });
-      } else {
-        _timer.cancel(); // وقتی به endTime رسیدیم، تایمر متوقف می‌شود
+      if (!widget.isTimerAllowed) {
+        return; // اگر اجازه داده نشده، از ادامه جلوگیری می‌کنیم
+      }
+
+      setState(() {
+        elapsedDuration += Duration(seconds: 1);
+        _calculateCompletedSegments();
+      });
+
+      // بررسی اتمام تایمر بر اساس مقدار میلی‌ثانیه‌ها
+      // if (elapsedDuration.inSeconds >= (widget.endTime! - widget.initTime!)) {
+      //   _timer.cancel();
+      // }
+    });
+  }
+
+  void _resetTimer() {
+    setState(() {
+      _timer.cancel();
+      elapsedDuration = Duration.zero;
+      completedSegments = 0;
+      if (widget.isTimerAllowed) {
+        _startTimer();
       }
     });
   }
 
+  @override
+  void didUpdateWidget(CircularTimer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // بررسی تغییر در isTimerAllowed
+    if (oldWidget.isTimerAllowed != widget.isTimerAllowed) {
+      if (widget.isTimerAllowed) {
+        _startTimer();
+      } else {
+        _timer.cancel();
+      }
+    }
+
+    // بررسی تغییر در shouldReset
+    if (widget.shouldReset && !oldWidget.shouldReset) {
+      _resetTimer();
+      // اینجا می‌توانید از یک callback یا مدیریت وضعیت برای بازگرداندن مقدار shouldReset به false استفاده کنید.
+    }
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String hours = twoDigits(duration.inHours);
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$hours:$minutes:$seconds";
+  }
+
   // محاسبه تعداد segments پرشده بر اساس زمان جاری
   void _calculateCompletedSegments() {
-    int elapsedTimeInSeconds =
-        currentTime.difference(widget.initTime!).inSeconds;
-
-    // محاسبه تعداد segments بر اساس تعداد ثانیه‌هایی که گذشت
     setState(() {
-      completedSegments = (elapsedTimeInSeconds / secondsPerSegment).round();
+      completedSegments =
+          (elapsedDuration.inSeconds / secondsPerSegment).round();
       if (completedSegments > segments) {
         completedSegments = segments; // جلوگیری از پر شدن بیش از حد دایره
       }
@@ -126,10 +239,18 @@ class _CircularTimerState extends State<CircularTimer> {
               ),
               SizedBox(height: 8),
               MegaBold(
-                '00:00:00',
+                _formatDuration(elapsedDuration), // به جای مقدار ثابت
                 textColorInLight: TEXT_LIGHT_CHRONOMETER_COLOR,
               ),
-              LargeRegular('8 ساعت، باقی مانده'),
+              NormalRegular(
+                  '${_formatRemainingTime(remainingTime)} باقی مانده'),
+              !widget.isTimerAllowed ? SizedBox(height: 12) : Container(),
+              !widget.isTimerAllowed
+                  ? SmallRegular(
+                      _formatStopDurationTime(stopDuration),
+                      textColorInLight: Color(0xffFF912E),
+                    )
+                  : Container(),
             ],
           ),
         ),

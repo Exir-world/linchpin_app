@@ -19,7 +19,7 @@ class TimeManagementBloc
       DailyEvent event, Emitter<TimeManagementState> emit) async {
     emit(DailyLoadingState());
 
-    DataState dataState = await timeManagementUsecase.daily();
+    DataState dataState = await timeManagementUsecase.daily(event.actionType);
 
     if (dataState is DataSuccess) {
       emit(DailyComplitedState(dataState.data));

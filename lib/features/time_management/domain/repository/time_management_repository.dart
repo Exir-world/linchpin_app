@@ -3,5 +3,5 @@ import 'package:linchpin_app/features/time_management/domain/entity/daily_entity
 
 abstract class TimeManagementRepository {
   // اطلاعات صفحه اصلی
-  Future<DataState<DailyEntity>> daily();
+  Future<DataState<DailyEntity>> daily(String actionType);
 }
