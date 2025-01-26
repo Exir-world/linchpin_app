@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin_app/core/common/colors.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/features/requests/requests_screen.dart';
+import 'package:linchpin_app/features/requests/presentation/requests_screen.dart';
 import 'package:linchpin_app/features/root/presentation/root_screen.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
 

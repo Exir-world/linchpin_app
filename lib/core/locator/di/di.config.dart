@@ -22,6 +22,16 @@ import 'package:linchpin_app/features/performance_report/domain/use_case/last_qu
     as _i285;
 import 'package:linchpin_app/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart'
     as _i981;
+import 'package:linchpin_app/features/requests/data/data_source/api_request.dart'
+    as _i862;
+import 'package:linchpin_app/features/requests/data/repository/request_repository_impl.dart'
+    as _i150;
+import 'package:linchpin_app/features/requests/domain/repository/request_repository.dart'
+    as _i688;
+import 'package:linchpin_app/features/requests/domain/usecase/request_usecase.dart'
+    as _i171;
+import 'package:linchpin_app/features/requests/presentation/bloc/requests_bloc.dart'
+    as _i1041;
 import 'package:linchpin_app/features/time_management/data/data_source/api_time_mamagement.dart'
     as _i526;
 import 'package:linchpin_app/features/time_management/data/repository/time_management_repository_impl.dart'
@@ -52,6 +62,13 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i146.ApiLastQuarterReport(gh<_i361.Dio>()));
     gh.singleton<_i526.ApiTimeMamagement>(
         () => _i526.ApiTimeMamagement(gh<_i361.Dio>()));
+    gh.singleton<_i862.ApiRequest>(() => _i862.ApiRequest(gh<_i361.Dio>()));
+    gh.singleton<_i688.RequestRepository>(
+      () => _i150.RequestRepositoryImpl(gh<_i862.ApiRequest>()),
+      registerFor: {_prod},
+    );
+    gh.singleton<_i171.RequestUsecase>(
+        () => _i171.RequestUsecase(gh<_i688.RequestRepository>()));
     gh.singleton<_i1063.TimeManagementRepository>(
       () => _i400.TimeManagementRepositoryImpl(gh<_i526.ApiTimeMamagement>()),
       registerFor: {_prod},
@@ -63,6 +80,8 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.singleton<_i781.TimeManagementUsecase>(() =>
         _i781.TimeManagementUsecase(gh<_i1063.TimeManagementRepository>()));
+    gh.factory<_i1041.RequestsBloc>(
+        () => _i1041.RequestsBloc(gh<_i171.RequestUsecase>()));
     gh.factory<_i134.TimeManagementBloc>(
         () => _i134.TimeManagementBloc(gh<_i781.TimeManagementUsecase>()));
     gh.singleton<_i285.LastQuarterReportUsecase>(() =>

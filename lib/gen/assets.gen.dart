@@ -35,6 +35,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/calendar.svg
   SvgGenImage get calendar => const SvgGenImage('assets/icons/calendar.svg');
 
+  /// File path: assets/icons/check-out.svg
+  SvgGenImage get checkOut => const SvgGenImage('assets/icons/check-out.svg');
+
   /// File path: assets/icons/chevron-up-down.svg
   SvgGenImage get chevronUpDown =>
       const SvgGenImage('assets/icons/chevron-up-down.svg');
@@ -46,6 +49,16 @@ class $AssetsIconsGen {
   /// File path: assets/icons/clock-add-plus.svg
   SvgGenImage get clockAddPlus =>
       const SvgGenImage('assets/icons/clock-add-plus.svg');
+
+  /// File path: assets/icons/clock-add.svg
+  SvgGenImage get clockAdd => const SvgGenImage('assets/icons/clock-add.svg');
+
+  /// File path: assets/icons/clock-close.svg
+  SvgGenImage get clockClose =>
+      const SvgGenImage('assets/icons/clock-close.svg');
+
+  /// File path: assets/icons/clock-dash.svg
+  SvgGenImage get clockDash => const SvgGenImage('assets/icons/clock-dash.svg');
 
   /// File path: assets/icons/combined.svg
   SvgGenImage get combined => const SvgGenImage('assets/icons/combined.svg');
@@ -74,6 +87,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/tag.svg
   SvgGenImage get tag => const SvgGenImage('assets/icons/tag.svg');
 
+  /// File path: assets/icons/timer-off-sleep.svg
+  SvgGenImage get timerOffSleep =>
+      const SvgGenImage('assets/icons/timer-off-sleep.svg');
+
   /// File path: assets/icons/timer-tick-2.svg
   SvgGenImage get timerTick2 =>
       const SvgGenImage('assets/icons/timer-tick-2.svg');
@@ -100,9 +117,13 @@ class $AssetsIconsGen {
         boardTasksA,
         boardTasks,
         calendar,
+        checkOut,
         chevronUpDown,
         clockAddPlusA,
         clockAddPlus,
+        clockAdd,
+        clockClose,
+        clockDash,
         combined,
         docs,
         pause,
@@ -112,6 +133,7 @@ class $AssetsIconsGen {
         spring,
         summer,
         tag,
+        timerOffSleep,
         timerTick2,
         timerTick3,
         timerTick4,
