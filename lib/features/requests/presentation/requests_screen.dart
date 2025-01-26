@@ -24,6 +24,68 @@ class _RequestsScreenState extends State<RequestsScreen> {
     super.initState();
   }
 
+  String _formatDate(DateTime date) {
+    final jalali = Jalali.fromDateTime(date);
+    return '${jalali.formatter.y}/${jalali.formatter.m}/${jalali.formatter.d}';
+  }
+
+  String _formatTime(DateTime time) {
+    return '${time.hour}:${time.minute}';
+  }
+
+  String getTypeLabel(String type) {
+    final typeLabels = {
+      'SICK_LEAVE': 'مرخصی استعلاجی - ',
+      'HOURLY_LEAVE': 'مرخصی ساعتی - ',
+      'DAILY_LEAVE': 'مرخصی روزانه - ',
+      'MANUAL_CHECK_OUT': 'تردد دستی (خروج) - ',
+      'MANUAL_CHECK_IN': 'تردد دستی (ورود) - ',
+    };
+
+    return typeLabels[type] ?? '';
+  }
+
+  String getStatusLabel(String status) {
+    final statusLabels = {
+      'PENDING': 'در حال انتظار',
+      'APPROVED': 'تایید شده',
+      'REJECTED': 'رد شده',
+      'CANCELLED': 'لغو شده',
+    };
+
+    return statusLabels[status] ?? '';
+  }
+
+  Widget _getIconForType(String type) {
+    final iconsMap = {
+      'SICK_LEAVE': Assets.icons.timerOffSleep.svg(),
+      'HOURLY_LEAVE': Assets.icons.clockDash.svg(),
+      'DAILY_LEAVE': Assets.icons.checkOut.svg(),
+      'MANUAL_CHECK_OUT': Assets.icons.clockClose.svg(),
+      'MANUAL_CHECK_IN': Assets.icons.clockAdd.svg(),
+    };
+
+    return iconsMap[type] ?? Assets.icons.clockAdd.svg();
+  }
+
+  String _getDetailsForType({
+    required String type,
+    required String startDay,
+    required String endDay,
+    required String startTimeH,
+    required String endTimeH,
+  }) {
+    final detailsMap = {
+      'SICK_LEAVE': 'تاریخ $startDay الی $endDay',
+      'HOURLY_LEAVE': 'ساعت $startTimeH الی $endTimeH',
+      'DAILY_LEAVE': 'تاریخ $startDay الی $endDay',
+      'MANUAL_CHECK_OUT': 'خروج برای ساعت $endTimeH',
+      'MANUAL_CHECK_IN': 'ورود برای ساعت $startTimeH',
+    };
+
+    return detailsMap[type] ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,18 +161,12 @@ class _RequestsScreenState extends State<RequestsScreen> {
                               physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 final data = state.requestUserEntity[index];
-                                String createdAt =
-                                    '${Jalali.fromDateTime(data.createdAt!).formatter.y}/${Jalali.fromDateTime(data.createdAt!).formatter.m}/${Jalali.fromDateTime(data.createdAt!).formatter.d}';
+                                String createdAt = _formatDate(data.createdAt!);
                                 String startTimeH =
-                                    '${data.startTime!.hour.toString()}:${data.startTime!.minute.toString()}';
-                                String endTimeH =
-                                    '${data.endTime!.hour.toString()}:${data.endTime!.minute.toString()}';
-
-                                String startDay =
-                                    '${Jalali.fromDateTime(data.startTime!).formatter.y}/${Jalali.fromDateTime(data.startTime!).formatter.m}/${Jalali.fromDateTime(data.startTime!).formatter.d}';
-
-                                String endDay =
-                                    '${Jalali.fromDateTime(data.endTime!).formatter.y}/${Jalali.fromDateTime(data.endTime!).formatter.m}/${Jalali.fromDateTime(data.endTime!).formatter.d}';
+                                    _formatTime(data.startTime!);
+                                String endTimeH = _formatTime(data.endTime!);
+                                String startDay = _formatDate(data.startTime!);
+                                String endDay = _formatDate(data.endTime!);
                                 return Container(
                                   height: 92,
                                   margin: EdgeInsets.only(bottom: 12),
@@ -128,37 +184,12 @@ class _RequestsScreenState extends State<RequestsScreen> {
                                           children: [
                                             Row(
                                               children: [
-                                                NormalRegular(data.type ==
-                                                        'SICK_LEAVE'
-                                                    ? 'مرخصی استعلاجی - '
-                                                    : data.type ==
-                                                            'HOURLY_LEAVE'
-                                                        ? 'مرخصی ساعتی - '
-                                                        : data.type ==
-                                                                'DAILY_LEAVE'
-                                                            ? 'مرخصی روزانه - '
-                                                            : data.type ==
-                                                                    'MANUAL_CHECK_OUT'
-                                                                ? 'تردد دستی (خروج) - '
-                                                                : data.type ==
-                                                                        'MANUAL_CHECK_IN'
-                                                                    ? 'تردد دستی (ورود) - '
-                                                                    : ''),
+                                                NormalRegular(
+                                                    getTypeLabel(data.type!)),
                                                 NormalRegular(createdAt),
                                                 Spacer(),
                                                 SmallRegular(
-                                                  data.status == 'PENDING'
-                                                      ? 'در حال انتظار'
-                                                      : data.status ==
-                                                              'APPROVED'
-                                                          ? 'تایید شده'
-                                                          : data.status ==
-                                                                  'REJECTED'
-                                                              ? 'رد شده'
-                                                              : data.status ==
-                                                                      'CANCELLED'
-                                                                  ? 'لغو شده'
-                                                                  : '',
+                                                  getStatusLabel(data.status!),
                                                   textColorInLight:
                                                       Color(0xff828282),
                                                 ),
@@ -166,52 +197,18 @@ class _RequestsScreenState extends State<RequestsScreen> {
                                             ),
                                             Row(
                                               children: [
-                                                data.type == 'SICK_LEAVE'
-                                                    ? Assets.icons.timerOffSleep
-                                                        .svg()
-                                                    : data.type ==
-                                                            'HOURLY_LEAVE'
-                                                        ? Assets.icons.clockDash
-                                                            .svg()
-                                                        : data.type ==
-                                                                'DAILY_LEAVE'
-                                                            ? Assets
-                                                                .icons.checkOut
-                                                                .svg()
-                                                            : data.type ==
-                                                                    'MANUAL_CHECK_OUT'
-                                                                ? Assets.icons
-                                                                    .clockClose
-                                                                    .svg()
-                                                                : data.type ==
-                                                                        'MANUAL_CHECK_IN'
-                                                                    ? Assets
-                                                                        .icons
-                                                                        .clockAdd
-                                                                        .svg()
-                                                                    : Assets
-                                                                        .icons
-                                                                        .clockAdd
-                                                                        .svg(),
+                                                _getIconForType(data.type!),
                                                 SizedBox(width: 8),
                                                 SmallRegular(
-                                                  data.type == 'SICK_LEAVE'
-                                                      ? 'تاریخ $startDay الی $endDay'
-                                                      : data.type ==
-                                                              'HOURLY_LEAVE'
-                                                          ? 'ساعت $startTimeH الی $endTimeH'
-                                                          : data.type ==
-                                                                  'DAILY_LEAVE'
-                                                              ? 'تاریخ $startDay الی $endDay'
-                                                              : data.type ==
-                                                                      'MANUAL_CHECK_OUT'
-                                                                  ? 'خروج برای ساعت $endTimeH'
-                                                                  : data.type ==
-                                                                          'MANUAL_CHECK_IN'
-                                                                      ? 'ورود برای ساعت $startTimeH'
-                                                                      : '',
+                                                  _getDetailsForType(
+                                                    type: data.type!,
+                                                    startDay: startDay,
+                                                    endDay: endDay,
+                                                    startTimeH: startTimeH,
+                                                    endTimeH: endTimeH,
+                                                  ),
                                                   textColorInLight:
-                                                      Color(0xff861C8C),
+                                                      const Color(0xff861C8C),
                                                 ),
                                                 Spacer(),
                                                 data.status == 'CANCELLED' ||
