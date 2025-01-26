@@ -62,15 +62,20 @@ class _RequestsScreenState extends State<RequestsScreen> {
                                     builder: (context) => RequestDetailScreen(),
                                   ));
                             },
-                            child: Row(
-                              children: [
-                                Assets.icons.plus.svg(),
-                                SizedBox(width: 8),
-                                NormalMedium(
-                                  'ثبت درخواست جدید',
-                                  textColorInLight: Color(0xff861C8C),
-                                ),
-                              ],
+                            child: Container(
+                              color: Colors.transparent,
+                              padding: EdgeInsets.only(
+                                  right: 24, bottom: 12, top: 12),
+                              child: Row(
+                                children: [
+                                  Assets.icons.plus.svg(),
+                                  SizedBox(width: 8),
+                                  NormalMedium(
+                                    'ثبت درخواست جدید',
+                                    textColorInLight: Color(0xff861C8C),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],

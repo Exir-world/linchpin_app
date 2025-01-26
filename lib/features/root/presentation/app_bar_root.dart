@@ -34,7 +34,11 @@ AppBar appBarRoot(BuildContext context, bool isRequestScreen) {
                             builder: (context) => RequestsScreen(),
                           ));
                     },
-                    child: Assets.icons.docs.svg(height: 26),
+                    child: Container(
+                        color: Colors.transparent,
+                        height: kToolbarHeight,
+                        padding: EdgeInsets.only(left: 12),
+                        child: Assets.icons.docs.svg(height: 26)),
                   )
                 : SizedBox.shrink(),
             Spacer(),
@@ -44,14 +48,6 @@ AppBar appBarRoot(BuildContext context, bool isRequestScreen) {
                 return NormalMedium(value ?? '');
               },
             ),
-            // SizedBox(width: 2),
-            // NormalMedium("دی"),
-            // SizedBox(width: 2),
-            // NormalMedium("|"),
-            // SizedBox(width: 2),
-            // NormalMedium("10:23:30"),
-            // SizedBox(width: 8),
-            // Assets.icons.calendar.svg(color: Colors.grey),
           ],
         );
       },
