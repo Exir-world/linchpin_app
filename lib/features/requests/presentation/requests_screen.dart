@@ -77,16 +77,16 @@ class _RequestsScreenState extends State<RequestsScreen> {
                       ),
                       SizedBox(height: 24),
                       state.requestUserEntity.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  NormalRegular(
-                                    'درخواستی وجود ندارد',
-                                    textColorInLight: Color(0xffCAC4CF),
-                                  ),
-                                ],
-                              ),
+                          ? Column(
+                              children: [
+                                SizedBox(
+                                  height: context.screenHeight / 3.2,
+                                ),
+                                NormalRegular(
+                                  'درخواستی وجود ندارد',
+                                  textColorInLight: Color(0xffCAC4CF),
+                                ),
+                              ],
                             )
                           : ListView.builder(
                               itemCount: state.requestUserEntity.length,
