@@ -30,7 +30,9 @@ class _RequestsScreenState extends State<RequestsScreen> {
   }
 
   String _formatTime(DateTime time) {
-    return '${time.hour}:${time.minute}';
+    String hour = time.hour.toString().padLeft(2, '0');
+    String minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 
   String getTypeLabel(String type) {
@@ -161,12 +163,17 @@ class _RequestsScreenState extends State<RequestsScreen> {
                               physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 final data = state.requestUserEntity[index];
-                                String createdAt = _formatDate(data.createdAt!);
-                                String startTimeH =
-                                    _formatTime(data.startTime!);
-                                String endTimeH = _formatTime(data.endTime!);
-                                String startDay = _formatDate(data.startTime!);
-                                String endDay = _formatDate(data.endTime!);
+                                DateTime startTime = data.startTime!.toLocal();
+                                DateTime? endTime = data.endTime?.toLocal();
+                                String createdAt = _formatDate(startTime);
+                                String startTimeH = _formatTime(startTime);
+                                String endTimeH = endTime != null
+                                    ? _formatTime(endTime)
+                                    : 'نامشخص';
+                                String startDay = _formatDate(startTime);
+                                String endDay = endTime != null
+                                    ? _formatDate(endTime)
+                                    : 'نامشخص';
                                 return Container(
                                   height: 92,
                                   margin: EdgeInsets.only(bottom: 12),

@@ -42,6 +42,10 @@ class $AssetsIconsGen {
   SvgGenImage get chevronUpDown =>
       const SvgGenImage('assets/icons/chevron-up-down.svg');
 
+  /// File path: assets/icons/circle_clock.svg
+  SvgGenImage get circleClock =>
+      const SvgGenImage('assets/icons/circle_clock.svg');
+
   /// File path: assets/icons/clock-add-plus-a.svg
   SvgGenImage get clockAddPlusA =>
       const SvgGenImage('assets/icons/clock-add-plus-a.svg');
@@ -119,6 +123,7 @@ class $AssetsIconsGen {
         calendar,
         checkOut,
         chevronUpDown,
+        circleClock,
         clockAddPlusA,
         clockAddPlus,
         clockAdd,

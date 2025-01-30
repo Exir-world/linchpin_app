@@ -30,3 +30,32 @@ final class RequestCancelError extends RequestsState {
 
   RequestCancelError(this.textError);
 }
+
+final class RequestTypesLoading extends RequestsState {}
+
+final class RequestTypesCompleted extends RequestsState {
+  final List<RequestTypesEntity> requestTypesEntity;
+
+  RequestTypesCompleted(this.requestTypesEntity);
+}
+
+final class RequestTypesError extends RequestsState {
+  final String textError;
+
+  RequestTypesError(this.textError);
+}
+
+// ثبت درخواست
+final class RequestCreateLoading extends RequestsState {}
+
+final class RequestCreateCompleted extends RequestsState {
+  final RequestCreateEntity requestCreateEntity;
+
+  RequestCreateCompleted(this.requestCreateEntity);
+}
+
+final class RequestCreateError extends RequestsState {
+  final String textError;
+
+  RequestCreateError(this.textError);
+}

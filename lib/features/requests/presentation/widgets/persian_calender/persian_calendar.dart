@@ -227,6 +227,8 @@ class _PersianCalendarState extends State<PersianCalendar> {
           const SizedBox(height: 12),
           GestureDetector(
             onTap: () {
+              // زمانی که کاربر خارج از متن کلیک کند، فوکوس برداشته می‌شود
+              FocusScope.of(context).requestFocus(FocusNode());
               if (!PersianCalendar.isCalenderOpenNotifier.value) {
                 PersianCalendar.daysOfMonthNotifier.value =
                     PersianCalendar.getDaysOfMonth(

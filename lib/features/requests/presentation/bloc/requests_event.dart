@@ -11,3 +11,21 @@ class RequestCancelEvent extends RequestsEvent {
 
   RequestCancelEvent(this.id);
 }
+
+// لیست نوع درخواست ها
+class RequestTypesEvent extends RequestsEvent {}
+
+// ثبت درخواست
+class RequestCreateEvent extends RequestsEvent {
+  final String type;
+  final String? description;
+  final String startTime;
+  final String? endTime;
+
+  RequestCreateEvent({
+    required this.type,
+    this.description,
+    required this.startTime,
+    this.endTime,
+  });
+}
