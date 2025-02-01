@@ -21,7 +21,7 @@ class _RootScreenState extends State<RootScreen> {
     PrefService prefService = PrefService();
     prefService.createCacheString(
       SharedKey.jwtToken,
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6IlVzZXIiLCJpYXQiOjE3MzgyMzg4MTYsImV4cCI6MTczODMyNTIxNn0.qShORjCxa00e2wxZmzZfiO0jreIZsEGvMmQFGkf4Jlg",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6IlVzZXIiLCJpYXQiOjE3MzgzODU4OTAsImV4cCI6MTczODQ3MjI5MH0.FXxR2GI4ewlpt6XijdhHGado7v4__c7Aie_g5bkn2VA",
     );
     super.initState();
   }

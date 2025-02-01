@@ -169,11 +169,11 @@ class _RequestsScreenState extends State<RequestsScreen> {
                                 String startTimeH = _formatTime(startTime);
                                 String endTimeH = endTime != null
                                     ? _formatTime(endTime)
-                                    : 'نامشخص';
+                                    : _formatTime(startTime);
                                 String startDay = _formatDate(startTime);
                                 String endDay = endTime != null
                                     ? _formatDate(endTime)
-                                    : 'نامشخص';
+                                    : _formatTime(startTime);
                                 return Container(
                                   height: 92,
                                   margin: EdgeInsets.only(bottom: 12),

@@ -51,7 +51,7 @@ class _DayViewState extends State<DayView> {
     );
 
     // بستن منوی کشویی تقویم پس از انتخاب تاریخ
-    PersianCalendar.closeDropdown(PersianCalendar.dropdownOverlay.value);
+    PersianCalendar.closeDropdown();
   }
 
   @override

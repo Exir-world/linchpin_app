@@ -6,12 +6,15 @@ import 'package:linchpin_app/gen/fonts.gen.dart';
 
 class ClockBox extends StatefulWidget {
   final String title;
-  const ClockBox({super.key, required this.title});
+  final bool isEndTime;
+  const ClockBox({super.key, required this.title, required this.isEndTime});
 
   @override
   State<ClockBox> createState() => _ClockBoxState();
-  static ValueNotifier<String?> hourNotifire = ValueNotifier(null);
-  static ValueNotifier<String?> minuteNotifire = ValueNotifier(null);
+  static ValueNotifier<String?> hourNotifireStrat = ValueNotifier(null);
+  static ValueNotifier<String?> minuteNotifireStart = ValueNotifier(null);
+  static ValueNotifier<String?> hourNotifireEnd = ValueNotifier(null);
+  static ValueNotifier<String?> minuteNotifireEnd = ValueNotifier(null);
 }
 
 class _ClockBoxState extends State<ClockBox> {
@@ -135,9 +138,15 @@ class _ClockBoxState extends State<ClockBox> {
               setState(() {
                 previousValue = (currentValue + 1).toString().padLeft(2, '0');
                 controller.text = previousValue;
-                isHour
-                    ? ClockBox.hourNotifire.value = controller.text
-                    : ClockBox.minuteNotifire.value = controller.text;
+                if (widget.isEndTime) {
+                  isHour
+                      ? ClockBox.hourNotifireEnd.value = controller.text
+                      : ClockBox.minuteNotifireEnd.value = controller.text;
+                } else {
+                  isHour
+                      ? ClockBox.hourNotifireStrat.value = controller.text
+                      : ClockBox.minuteNotifireStart.value = controller.text;
+                }
               });
             }
           },
@@ -175,9 +184,16 @@ class _ClockBoxState extends State<ClockBox> {
               if (value.isEmpty) {
                 setState(() {
                   controller.text = previousValue;
-                  isHour
-                      ? ClockBox.hourNotifire.value = controller.text
-                      : ClockBox.minuteNotifire.value = controller.text;
+
+                  if (widget.isEndTime) {
+                    isHour
+                        ? ClockBox.hourNotifireEnd.value = controller.text
+                        : ClockBox.minuteNotifireEnd.value = controller.text;
+                  } else {
+                    isHour
+                        ? ClockBox.hourNotifireStrat.value = controller.text
+                        : ClockBox.minuteNotifireStart.value = controller.text;
+                  }
                   // تنظیم مکان‌نما به آخر متن
                   controller.selection = TextSelection.fromPosition(
                     TextPosition(offset: controller.text.length),
@@ -206,9 +222,15 @@ class _ClockBoxState extends State<ClockBox> {
               setState(() {
                 previousValue = (currentValue - 1).toString().padLeft(2, '0');
                 controller.text = previousValue;
-                isHour
-                    ? ClockBox.hourNotifire.value = controller.text
-                    : ClockBox.minuteNotifire.value = controller.text;
+                if (widget.isEndTime) {
+                  isHour
+                      ? ClockBox.hourNotifireEnd.value = controller.text
+                      : ClockBox.minuteNotifireEnd.value = controller.text;
+                } else {
+                  isHour
+                      ? ClockBox.hourNotifireStrat.value = controller.text
+                      : ClockBox.minuteNotifireStart.value = controller.text;
+                }
               });
             }
           },
