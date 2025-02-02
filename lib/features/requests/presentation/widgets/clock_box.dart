@@ -152,7 +152,7 @@ class _ClockBoxState extends State<ClockBox> {
           },
         ),
         SizedBox(
-          width: 40,
+          width: 80,
           child: TextField(
             controller: controller,
             textAlign: TextAlign.center,
@@ -176,6 +176,10 @@ class _ClockBoxState extends State<ClockBox> {
               }),
             ],
             decoration: InputDecoration(
+              hintText: '00',
+              hintStyle: TextStyle(
+                color: Color(0xffCAC4CF),
+              ),
               border: InputBorder.none,
               isDense: true,
               contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -287,8 +291,14 @@ class _ClockBoxState extends State<ClockBox> {
                   Assets.icons.circleClock.svg(),
                   SizedBox(width: 8),
                   NormalRegular(
-                    '${_hourController.text}:${_minuteController.text}',
-                    textColorInLight: Color(0xff540E5C),
+                    _hourController.text.isEmpty &&
+                            _minuteController.text.isEmpty
+                        ? '--:--'
+                        : '${_hourController.text}:${_minuteController.text}',
+                    textColorInLight: _hourController.text.isEmpty &&
+                            _minuteController.text.isEmpty
+                        ? Color(0xffCAC4CF)
+                        : Color(0xff540E5C),
                   ),
                 ],
               ),

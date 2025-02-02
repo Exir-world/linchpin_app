@@ -489,7 +489,7 @@ class _PersianDatePickerState extends State<PersianDatePicker> {
                               const SizedBox(width: 8),
                               persianDateSlash == null
                                   ? NormalRegular(
-                                      "تاریخ",
+                                      "--/--/--",
                                       textColorInLight: const Color(0xffCAC4CF),
                                     )
                                   : NormalRegular(persianDateSlash),
