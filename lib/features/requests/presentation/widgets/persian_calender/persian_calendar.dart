@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:linchpin_app/core/extension/context_extension.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 import 'day_view.dart';
 import 'month_view.dart';
@@ -48,6 +49,13 @@ class PersianCalendar {
     final overlay = Overlay.of(context);
     final renderBox = context.findRenderObject() as RenderBox;
     final position = renderBox.localToGlobal(Offset.zero);
+    final screenHeight = context.screenHeight;
+    const calendarHeight = 300.0; // ارتفاع تقریبی تقویم
+
+    // بررسی اینکه آیا فضای کافی در پایین صفحه وجود دارد
+    final bool hasEnoughSpaceBelow =
+        (position.dy + renderBox.size.height + 8 + calendarHeight) <
+            screenHeight;
 
     dropdownOverlay.value = OverlayEntry(
       builder: (context) => Stack(
@@ -65,7 +73,9 @@ class PersianCalendar {
           ),
           Positioned(
             left: position.dx,
-            top: position.dy + renderBox.size.height + 8,
+            top: hasEnoughSpaceBelow
+                ? position.dy + renderBox.size.height - 8 // نمایش پایین
+                : position.dy - calendarHeight - 8, // نمایش بالا
             width: renderBox.size.width,
             child: Material(
               color: Colors.transparent,

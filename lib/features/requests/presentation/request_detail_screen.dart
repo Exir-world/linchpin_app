@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:linchpin_app/core/common/dimens.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 import 'package:linchpin_app/core/extension/context_extension.dart';
@@ -8,9 +8,8 @@ import 'package:linchpin_app/features/requests/presentation/bloc/requests_bloc.d
 import 'package:linchpin_app/features/requests/presentation/widgets/box_request_type.dart';
 import 'package:linchpin_app/features/requests/presentation/widgets/clock_box.dart';
 import 'package:linchpin_app/features/requests/presentation/widgets/explanation_widget.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/persian_calender/persian_calendar.dart';
+import 'package:linchpin_app/features/requests/presentation/widgets/persian_date_picker.dart';
 import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
 
 class RequestDetailScreen extends StatefulWidget {
   const RequestDetailScreen({super.key});
@@ -19,11 +18,20 @@ class RequestDetailScreen extends StatefulWidget {
   State<RequestDetailScreen> createState() => _RequestDetailScreenState();
   static ValueNotifier<String?> startDateNotifire = ValueNotifier(null);
   static ValueNotifier<String?> endDateNotifire = ValueNotifier(null);
+  static ValueNotifier<bool> isButtonEnabled = ValueNotifier(false);
 }
 
 class _RequestDetailScreenState extends State<RequestDetailScreen> {
+  bool isLoading = false;
   @override
   void initState() {
+    BoxRequestType.selectedItemNotifire.addListener(checkFormCompletion);
+    RequestDetailScreen.startDateNotifire.addListener(checkFormCompletion);
+    RequestDetailScreen.endDateNotifire.addListener(checkFormCompletion);
+    ClockBox.hourNotifireStrat.addListener(checkFormCompletion);
+    ClockBox.minuteNotifireStart.addListener(checkFormCompletion);
+    ClockBox.hourNotifireEnd.addListener(checkFormCompletion);
+    ClockBox.minuteNotifireEnd.addListener(checkFormCompletion);
     BoxRequestType.selectedItemNotifire.value = null;
     RequestDetailScreen.startDateNotifire.value = null;
     RequestDetailScreen.endDateNotifire.value = null;
@@ -34,158 +42,172 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
   }
 
   @override
+  void dispose() {
+    BoxRequestType.selectedItemNotifire.removeListener(checkFormCompletion);
+    RequestDetailScreen.startDateNotifire.removeListener(checkFormCompletion);
+    RequestDetailScreen.endDateNotifire.removeListener(checkFormCompletion);
+    ClockBox.hourNotifireStrat.removeListener(checkFormCompletion);
+    ClockBox.minuteNotifireStart.removeListener(checkFormCompletion);
+    ClockBox.hourNotifireEnd.removeListener(checkFormCompletion);
+    ClockBox.minuteNotifireEnd.removeListener(checkFormCompletion);
+    super.dispose();
+  }
+
+  void checkFormCompletion() {
+    final type = BoxRequestType.selectedItemNotifire.value;
+    final startDate = RequestDetailScreen.startDateNotifire.value;
+    final endDate = RequestDetailScreen.endDateNotifire.value;
+    final hourStart = ClockBox.hourNotifireStrat.value;
+    final minuteStart = ClockBox.minuteNotifireStart.value;
+    final hourEnd = ClockBox.hourNotifireEnd.value;
+    final minuteEnd = ClockBox.minuteNotifireEnd.value;
+
+    bool isComplete = false;
+
+    switch (type) {
+      case 'MANUAL_CHECK_IN':
+      case 'MANUAL_CHECK_OUT':
+        isComplete =
+            startDate != null && hourStart != null && minuteStart != null;
+        break;
+
+      case 'HOURLY_LEAVE':
+        isComplete = startDate != null &&
+            hourStart != null &&
+            minuteStart != null &&
+            hourEnd != null &&
+            minuteEnd != null;
+        break;
+
+      case 'SICK_LEAVE':
+      case 'DAILY_LEAVE':
+        isComplete = startDate != null && endDate != null;
+        break;
+    }
+
+    RequestDetailScreen.isButtonEnabled.value = isComplete;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarRoot(context, true),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterFloat,
-      floatingActionButton: GestureDetector(
-        onTap: () {
-          if (BoxRequestType.selectedItemNotifire.value != null &&
-              RequestDetailScreen.startDateNotifire.value != null) {
-            if (BoxRequestType.selectedItemNotifire.value ==
-                    'MANUAL_CHECK_IN' &&
-                ClockBox.hourNotifireStrat.value != null &&
-                ClockBox.minuteNotifireStart.value != null) {
-              String hour = ClockBox.hourNotifireStrat.value!;
-              String minute = ClockBox.minuteNotifireStart.value!;
+      floatingActionButton: ValueListenableBuilder<bool>(
+        valueListenable: RequestDetailScreen.isButtonEnabled,
+        builder: (context, isEnabled, child) {
+          return GestureDetector(
+            onTap: isEnabled
+                ? () {
+                    final type = BoxRequestType.selectedItemNotifire.value;
+                    final startDate =
+                        RequestDetailScreen.startDateNotifire.value;
+                    final endDate = RequestDetailScreen.endDateNotifire.value;
+                    final description =
+                        ExplanationWidget.explanationNotifire.value;
 
-              // تاریخ اولیه
-              String date = RequestDetailScreen.startDateNotifire.value!;
+                    String? formatDateTime(
+                        String date, String? hour, String? minute) {
+                      if (hour == null || minute == null) {
+                        return null;
+                      }
+                      final dateTime = DateTime.parse(date)
+                          .toLocal()
+                          .copyWith(
+                            hour: int.parse(hour),
+                            minute: int.parse(minute),
+                          )
+                          .toUtc();
+                      return dateTime.toString().replaceAll(' ', 'T');
+                    }
 
-              DateTime dateTime1 = DateTime.parse(date).toLocal();
-              DateTime updatedDate1 = dateTime1
-                  .copyWith(
-                    hour: int.parse(hour),
-                    minute: int.parse(minute),
-                  )
-                  .toUtc();
-              // فرمت خروجی را بازسازی می‌کنیم تا `T` باقی بماند
-              String formattedDate =
-                  updatedDate1.toString().replaceAll(' ', 'T');
-              // اگر تردد دستی ورود بود
-              BlocProvider.of<RequestsBloc>(context).add(
-                RequestCreateEvent(
-                  type: BoxRequestType.selectedItemNotifire.value!,
-                  description: ExplanationWidget.explanationNotifire.value,
-                  startTime: formattedDate,
-                ),
-              );
-            } else if (BoxRequestType.selectedItemNotifire.value ==
-                    'MANUAL_CHECK_OUT' &&
-                ClockBox.hourNotifireStrat.value != null &&
-                ClockBox.minuteNotifireStart.value != null) {
-              String hour = ClockBox.hourNotifireStrat.value!;
-              String minute = ClockBox.minuteNotifireStart.value!;
+                    void sendRequest(
+                        {required String startTime, String? endTime}) {
+                      BlocProvider.of<RequestsBloc>(context).add(
+                        RequestCreateEvent(
+                          type: type!,
+                          description: description,
+                          startTime: startTime,
+                          endTime: endTime,
+                        ),
+                      );
+                    }
 
-              // تاریخ اولیه
-              String date = RequestDetailScreen.startDateNotifire.value!;
+                    // بررسی شرایط برای هر نوع درخواست و ارسال آن
+                    switch (type) {
+                      case 'MANUAL_CHECK_IN':
+                      case 'MANUAL_CHECK_OUT':
+                        {
+                          // بررسی اینکه آیا تاریخ شروع و ساعت ورود پر شده‌اند
+                          if (startDate != null &&
+                              ClockBox.hourNotifireStrat.value != null &&
+                              ClockBox.minuteNotifireStart.value != null) {
+                            final startTime = formatDateTime(
+                              startDate,
+                              ClockBox.hourNotifireStrat.value,
+                              ClockBox.minuteNotifireStart.value,
+                            );
+                            if (startTime != null) {
+                              sendRequest(startTime: startTime);
+                            }
+                          }
+                          break;
+                        }
 
-              DateTime dateTime1 = DateTime.parse(date).toLocal();
-              DateTime updatedDate1 = dateTime1
-                  .copyWith(
-                    hour: int.parse(hour),
-                    minute: int.parse(minute),
-                  )
-                  .toUtc();
-              // فرمت خروجی را بازسازی می‌کنیم تا `T` باقی بماند
-              String formattedDate =
-                  updatedDate1.toString().replaceAll(' ', 'T');
+                      case 'HOURLY_LEAVE':
+                        {
+                          // بررسی اینکه تاریخ شروع، ساعت شروع و ساعت پایان پر شده‌اند
+                          if (startDate != null &&
+                              ClockBox.hourNotifireStrat.value != null &&
+                              ClockBox.minuteNotifireStart.value != null &&
+                              ClockBox.hourNotifireEnd.value != null &&
+                              ClockBox.minuteNotifireEnd.value != null) {
+                            final startTime = formatDateTime(
+                              startDate,
+                              ClockBox.hourNotifireStrat.value,
+                              ClockBox.minuteNotifireStart.value,
+                            );
+                            final endTime = formatDateTime(
+                              startDate,
+                              ClockBox.hourNotifireEnd.value,
+                              ClockBox.minuteNotifireEnd.value,
+                            );
+                            if (startTime != null && endTime != null) {
+                              sendRequest(
+                                  startTime: startTime, endTime: endTime);
+                            }
+                          }
+                          break;
+                        }
 
-              // اگر تردد دستی خروج بود
-              BlocProvider.of<RequestsBloc>(context).add(
-                RequestCreateEvent(
-                  type: BoxRequestType.selectedItemNotifire.value!,
-                  description: ExplanationWidget.explanationNotifire.value,
-                  startTime: formattedDate,
-                ),
-              );
-            } else if (BoxRequestType.selectedItemNotifire.value ==
-                    'HOURLY_LEAVE' &&
-                ClockBox.hourNotifireStrat.value != null &&
-                ClockBox.minuteNotifireStart.value != null &&
-                ClockBox.hourNotifireEnd.value != null &&
-                ClockBox.minuteNotifireEnd.value != null) {
-              String hourStart = ClockBox.hourNotifireStrat.value!;
-              String minuteStart = ClockBox.minuteNotifireStart.value!;
-              String hourEnd = ClockBox.hourNotifireEnd.value!;
-              String minuteEnd = ClockBox.minuteNotifireEnd.value!;
-
-              // تاریخ اولیه
-              String date = RequestDetailScreen.startDateNotifire.value!;
-
-              DateTime dateTime1 = DateTime.parse(date).toLocal();
-              DateTime updatedDate1 = dateTime1
-                  .copyWith(
-                    hour: int.parse(hourStart),
-                    minute: int.parse(minuteStart),
-                  )
-                  .toUtc();
-              // فرمت خروجی را بازسازی می‌کنیم تا `T` باقی بماند
-              String formattedDateStart =
-                  updatedDate1.toString().replaceAll(' ', 'T');
-
-              DateTime dateTime2 = DateTime.parse(date).toLocal();
-              DateTime updatedDate2 = dateTime2
-                  .copyWith(
-                    hour: int.parse(hourEnd),
-                    minute: int.parse(minuteEnd),
-                  )
-                  .toUtc();
-              // فرمت خروجی را بازسازی می‌کنیم تا `T` باقی بماند
-              String formattedDateEnd =
-                  updatedDate2.toString().replaceAll(' ', 'T');
-              // اگر مرخصی ساعتی بود
-              BlocProvider.of<RequestsBloc>(context).add(
-                RequestCreateEvent(
-                  type: BoxRequestType.selectedItemNotifire.value!,
-                  description: ExplanationWidget.explanationNotifire.value,
-                  startTime: formattedDateStart,
-                  endTime: formattedDateEnd,
-                ),
-              );
-            } else if (BoxRequestType.selectedItemNotifire.value ==
-                    'SICK_LEAVE' &&
-                RequestDetailScreen.startDateNotifire.value != null &&
-                RequestDetailScreen.endDateNotifire.value != null) {
-              // اگر مرخصی استعلاجی بود
-              BlocProvider.of<RequestsBloc>(context).add(
-                RequestCreateEvent(
-                  type: BoxRequestType.selectedItemNotifire.value!,
-                  description: ExplanationWidget.explanationNotifire.value,
-                  startTime: RequestDetailScreen.startDateNotifire.value!,
-                  endTime: RequestDetailScreen.endDateNotifire.value,
-                ),
-              );
-            } else if (BoxRequestType.selectedItemNotifire.value ==
-                    'DAILY_LEAVE' &&
-                RequestDetailScreen.startDateNotifire.value != null &&
-                RequestDetailScreen.endDateNotifire.value != null) {
-              // اگر مرخصی روزانه بود
-              BlocProvider.of<RequestsBloc>(context).add(
-                RequestCreateEvent(
-                  type: BoxRequestType.selectedItemNotifire.value!,
-                  description: ExplanationWidget.explanationNotifire.value,
-                  startTime: RequestDetailScreen.startDateNotifire.value!,
-                  endTime: RequestDetailScreen.endDateNotifire.value,
-                ),
-              );
-            }
-          }
+                      case 'SICK_LEAVE':
+                      case 'DAILY_LEAVE':
+                        {
+                          // بررسی اینکه تاریخ شروع و تاریخ پایان پر شده‌اند
+                          if (startDate != null && endDate != null) {
+                            sendRequest(startTime: startDate, endTime: endDate);
+                          }
+                          break;
+                        }
+                    }
+                  }
+                : null,
+            child: Container(
+              height: 56,
+              margin: EdgeInsets.symmetric(horizontal: 24),
+              decoration: BoxDecoration(
+                color: isEnabled ? Color(0xff861C8C) : Color(0xffCAC4CF),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              alignment: Alignment.center,
+              child: NormalMedium(
+                'ثبت درخواست',
+                textColorInLight: Colors.white,
+              ),
+            ),
+          );
         },
-        child: Container(
-          height: 56,
-          margin: EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            color: Color(0xff861C8C),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          alignment: Alignment.center,
-          child: NormalMedium(
-            'ثبت درخواست',
-            textColorInLight: Colors.white,
-          ),
-        ),
       ),
       body: GestureDetector(
         onTap: () {
@@ -195,154 +217,250 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
         child: SafeArea(
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
-            child: BlocBuilder<RequestsBloc, RequestsState>(
+            child: BlocConsumer<RequestsBloc, RequestsState>(
+              listener: (context, state) {
+                if (state is RequestCreateCompleted) {
+                  Navigator.pop(context, true);
+                } else if (state is RequestCreateLoading) {
+                  setState(() {
+                    isLoading = true;
+                  });
+                } else if (state is RequestCreateError) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                }
+              },
+              buildWhen: (previous, current) {
+                if (current is RequestTypesCompleted ||
+                    current is RequestTypesLoading ||
+                    current is RequestTypesError) {
+                  return true;
+                } else {
+                  return false;
+                }
+              },
               builder: (context, state) {
                 if (state is RequestTypesCompleted) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: padding_Horizantalx),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 24),
-                        BigDemiBold('ثبت درخواست'),
-                        SizedBox(height: 24),
-                        BoxRequestType(
-                          state: state.requestTypesEntity,
-                        ),
-                        SizedBox(height: 24),
-                        ValueListenableBuilder(
-                          valueListenable: BoxRequestType.selectedItemNotifire,
-                          builder: (context, selectedItem, child) {
-                            if (selectedItem == 'MANUAL_CHECK_IN' ||
-                                selectedItem == 'MANUAL_CHECK_OUT' ||
-                                selectedItem == 'HOURLY_LEAVE') {
-                              return ClockBox(
-                                title: selectedItem == 'MANUAL_CHECK_OUT'
-                                    ? 'ساعت خروج'
-                                    : 'ساعت ورود',
-                                isEndTime: false,
-                              );
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: BoxRequestType.selectedItemNotifire,
-                          builder: (context, selectedItem, child) {
-                            if (selectedItem == 'HOURLY_LEAVE') {
-                              return Column(
-                                children: [
-                                  SizedBox(height: 24),
-                                  ClockBox(
-                                    title: 'ساعت خروج',
-                                    isEndTime: true,
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: BoxRequestType.selectedItemNotifire,
-                          builder: (context, selectedItem, child) {
-                            if (selectedItem == 'MANUAL_CHECK_IN' ||
-                                selectedItem == 'MANUAL_CHECK_OUT' ||
-                                selectedItem == 'HOURLY_LEAVE') {
-                              return PersianDatePicker(
-                                initialDate: DateTime.now(),
-                                onDateSelected: (persianDateSlash,
-                                    persianDateHyphen, englishDateIso8601) {
-                                  RequestDetailScreen.startDateNotifire.value =
-                                      englishDateIso8601;
-                                },
-                                padding: EdgeInsets.only(bottom: 24, top: 24),
-                                title: 'تاریخ',
-                              );
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: BoxRequestType.selectedItemNotifire,
-                          builder: (context, selectedItem, child) {
-                            if (selectedItem == 'DAILY_LEAVE') {
-                              return Column(
-                                children: [
-                                  PersianDatePicker(
+                  return Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: padding_Horizantalx),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 24),
+                            BigDemiBold('ثبت درخواست'),
+                            SizedBox(height: 24),
+                            BoxRequestType(
+                              state: state.requestTypesEntity,
+                            ),
+                            SizedBox(height: 24),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  BoxRequestType.selectedItemNotifire,
+                              builder: (context, selectedItem, child) {
+                                if (selectedItem == 'MANUAL_CHECK_IN' ||
+                                    selectedItem == 'MANUAL_CHECK_OUT' ||
+                                    selectedItem == 'HOURLY_LEAVE') {
+                                  return ClockBox(
+                                    title: selectedItem == 'MANUAL_CHECK_OUT'
+                                        ? 'ساعت خروج'
+                                        : 'ساعت ورود',
+                                    isEndTime: false,
+                                  );
+                                } else {
+                                  return Container();
+                                }
+                              },
+                            ),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  BoxRequestType.selectedItemNotifire,
+                              builder: (context, selectedItem, child) {
+                                if (selectedItem == 'HOURLY_LEAVE') {
+                                  return Column(
+                                    children: [
+                                      SizedBox(height: 24),
+                                      ClockBox(
+                                        title: 'ساعت خروج',
+                                        isEndTime: true,
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return Container();
+                                }
+                              },
+                            ),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  BoxRequestType.selectedItemNotifire,
+                              builder: (context, selectedItem, child) {
+                                if (selectedItem == 'MANUAL_CHECK_IN' ||
+                                    selectedItem == 'MANUAL_CHECK_OUT' ||
+                                    selectedItem == 'HOURLY_LEAVE') {
+                                  return PersianDatePicker(
                                     initialDate: DateTime.now(),
                                     onDateSelected: (persianDateSlash,
                                         persianDateHyphen, englishDateIso8601) {
                                       RequestDetailScreen.startDateNotifire
                                           .value = englishDateIso8601;
                                     },
-                                    padding: EdgeInsets.only(bottom: 24),
-                                    title: 'تاریخ شروع',
-                                  ),
-                                  PersianDatePicker(
-                                    initialDate: DateTime.now(),
-                                    onDateSelected: (persianDateSlash,
-                                        persianDateHyphen, englishDateIso8601) {
-                                      RequestDetailScreen.endDateNotifire
-                                          .value = englishDateIso8601;
-                                    },
-                                    padding: EdgeInsets.only(bottom: 24),
-                                    title: 'تاریخ پایان',
+                                    padding:
+                                        EdgeInsets.only(bottom: 24, top: 24),
+                                    title: 'تاریخ',
+                                  );
+                                } else {
+                                  return Container();
+                                }
+                              },
+                            ),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  BoxRequestType.selectedItemNotifire,
+                              builder: (context, selectedItem, child) {
+                                if (selectedItem == 'DAILY_LEAVE') {
+                                  return Column(
+                                    children: [
+                                      PersianDatePicker(
+                                        initialDate: DateTime.now(),
+                                        onDateSelected: (persianDateSlash,
+                                            persianDateHyphen,
+                                            englishDateIso8601) {
+                                          RequestDetailScreen.startDateNotifire
+                                              .value = englishDateIso8601;
+                                        },
+                                        padding: EdgeInsets.only(bottom: 24),
+                                        title: 'تاریخ شروع',
+                                      ),
+                                      PersianDatePicker(
+                                        initialDate: DateTime.now(),
+                                        onDateSelected: (persianDateSlash,
+                                            persianDateHyphen,
+                                            englishDateIso8601) {
+                                          RequestDetailScreen.endDateNotifire
+                                              .value = englishDateIso8601;
+                                        },
+                                        padding: EdgeInsets.only(bottom: 24),
+                                        title: 'تاریخ پایان',
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return Container();
+                                }
+                              },
+                            ),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  BoxRequestType.selectedItemNotifire,
+                              builder: (context, selectedItem, child) {
+                                if (selectedItem == 'SICK_LEAVE') {
+                                  return Column(
+                                    children: [
+                                      PersianDatePicker(
+                                        initialDate: DateTime.now(),
+                                        onDateSelected: (persianDateSlash,
+                                            persianDateHyphen,
+                                            englishDateIso8601) {
+                                          RequestDetailScreen.startDateNotifire
+                                              .value = englishDateIso8601;
+                                        },
+                                        padding: EdgeInsets.only(bottom: 24),
+                                        title: 'تاریخ شروع',
+                                      ),
+                                      PersianDatePicker(
+                                        initialDate: DateTime.now(),
+                                        onDateSelected: (persianDateSlash,
+                                            persianDateHyphen,
+                                            englishDateIso8601) {
+                                          RequestDetailScreen.endDateNotifire
+                                              .value = englishDateIso8601;
+                                        },
+                                        padding: EdgeInsets.only(bottom: 24),
+                                        title: 'تاریخ پایان',
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return Container();
+                                }
+                              },
+                            ),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  BoxRequestType.selectedItemNotifire,
+                              builder: (context, value, child) {
+                                if (value != null) {
+                                  return ExplanationWidget();
+                                } else {
+                                  return Container();
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (isLoading)
+                        Container(
+                          width: context.screenWidth,
+                          height: context.screenHeight - 120,
+                          color: Colors.white.withValues(alpha: .5),
+                          child: Center(
+                            child: Container(
+                              width: 70,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 5),
                                   ),
                                 ],
-                              );
-                            } else {
-                              return Container();
-                            }
-                          },
+                              ),
+                              child: Center(
+                                child: SpinKitFadingCube(
+                                  size: 24,
+                                  color: Color(0xff670099),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                        ValueListenableBuilder(
-                          valueListenable: BoxRequestType.selectedItemNotifire,
-                          builder: (context, selectedItem, child) {
-                            if (selectedItem == 'SICK_LEAVE') {
-                              return Column(
-                                children: [
-                                  PersianDatePicker(
-                                    initialDate: DateTime.now(),
-                                    onDateSelected: (persianDateSlash,
-                                        persianDateHyphen, englishDateIso8601) {
-                                      RequestDetailScreen.startDateNotifire
-                                          .value = englishDateIso8601;
-                                    },
-                                    padding: EdgeInsets.only(bottom: 24),
-                                    title: 'تاریخ شروع',
-                                  ),
-                                  PersianDatePicker(
-                                    initialDate: DateTime.now(),
-                                    onDateSelected: (persianDateSlash,
-                                        persianDateHyphen, englishDateIso8601) {
-                                      RequestDetailScreen.endDateNotifire
-                                          .value = englishDateIso8601;
-                                    },
-                                    padding: EdgeInsets.only(bottom: 24),
-                                    title: 'تاریخ پایان',
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                        ExplanationWidget(),
-                      ],
-                    ),
+                    ],
                   );
                 } else if (state is RequestTypesLoading) {
-                  return SizedBox(
+                  return Container(
                     width: context.screenWidth,
-                    height: context.screenHeight,
+                    height: context.screenHeight - 120,
+                    color: Colors.white.withValues(alpha: .5),
                     child: Center(
-                      child: CupertinoActivityIndicator(),
+                      child: Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 10,
+                              offset: Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: SpinKitFadingCube(
+                            size: 24,
+                            color: Color(0xff670099),
+                          ),
+                        ),
+                      ),
                     ),
                   );
                 } else if (state is RequestTypesError) {
@@ -359,149 +477,6 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                 }
               },
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PersianDatePicker extends StatefulWidget {
-  final String title;
-  final EdgeInsetsGeometry padding;
-  final DateTime initialDate;
-  final Function(
-    String? persianDateSlash,
-    String? persianDateHyphen,
-    String? englishDateIso8601,
-  )? onDateSelected;
-
-  const PersianDatePicker({
-    super.key,
-    required this.initialDate,
-    this.onDateSelected,
-    required this.title,
-    required this.padding,
-  });
-
-  @override
-  State<PersianDatePicker> createState() => _PersianDatePickerState();
-}
-
-class _PersianDatePickerState extends State<PersianDatePicker> {
-  late ValueNotifier<bool> isPickerOpenNotifier;
-  late ValueNotifier<String?> persianDateSlashNotifier;
-
-  @override
-  void initState() {
-    super.initState();
-    isPickerOpenNotifier = ValueNotifier<bool>(false);
-    persianDateSlashNotifier = ValueNotifier<String?>(null);
-  }
-
-  @override
-  void dispose() {
-    isPickerOpenNotifier.dispose();
-    persianDateSlashNotifier.dispose();
-    super.dispose();
-  }
-
-  void _openCalendar() {
-    PersianCalendar.openCalendar(
-      context,
-      initialDate: widget.initialDate,
-      onDateSelected:
-          (persianDateSlash, persianDateHyphen, englishDateIso8601) {
-        persianDateSlashNotifier.value = persianDateSlash;
-        widget.onDateSelected
-            ?.call(persianDateSlash, persianDateHyphen, englishDateIso8601);
-        _closeCalendar(); // غیرفعال کردن border بعد از انتخاب تاریخ
-      },
-      onCalendarStateChange: (isOpen) {
-        // تغییرات وضعیت تقویم
-        isPickerOpenNotifier.value = isOpen;
-      },
-    );
-  }
-
-  void _closeCalendar() {
-    isPickerOpenNotifier.value = false;
-    PersianCalendar.closeDropdown();
-  }
-
-  Future<bool> _onWillPop() async {
-    if (isPickerOpenNotifier.value) {
-      _closeCalendar(); // بسته شدن تقویم هنگام فشردن دکمه بک
-      return false; // جلوگیری از برگشت به صفحه قبلی
-    }
-    return true; // اجازه برگشت به صفحه قبلی
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: GestureDetector(
-        onTap: () {
-          if (isPickerOpenNotifier.value) {
-            _closeCalendar(); // بسته شدن تقویم وقتی بیرون از آن کلیک می‌شود
-          }
-        },
-        child: Padding(
-          padding: widget.padding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              NormalMedium(widget.title),
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: () {
-                  if (isPickerOpenNotifier.value) {
-                    _closeCalendar();
-                  } else {
-                    _openCalendar();
-                  }
-                },
-                child: ValueListenableBuilder(
-                  valueListenable: isPickerOpenNotifier,
-                  builder: (context, isOpen, child) {
-                    return Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isOpen
-                              ? const Color(0xff861C8C)
-                              : const Color(0xffE0E0F9),
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      child: ValueListenableBuilder(
-                        valueListenable: persianDateSlashNotifier,
-                        builder: (context, persianDateSlash, child) {
-                          return Row(
-                            children: [
-                              Assets.icons.calendar.svg(
-                                colorFilter: const ColorFilter.mode(
-                                    Color(0xffCAC4CF), BlendMode.srcIn),
-                              ),
-                              const SizedBox(width: 8),
-                              persianDateSlash == null
-                                  ? NormalRegular(
-                                      "--/--/--",
-                                      textColorInLight: const Color(0xffCAC4CF),
-                                    )
-                                  : NormalRegular(persianDateSlash),
-                            ],
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
           ),
         ),
       ),

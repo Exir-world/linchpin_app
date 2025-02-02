@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:linchpin_app/core/common/dimens.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 import 'package:linchpin_app/core/extension/context_extension.dart';
@@ -121,10 +121,18 @@ class _RequestsScreenState extends State<RequestsScreen> {
                           GestureDetector(
                             onTap: () {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => RequestDetailScreen(),
-                                  ));
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        RequestDetailScreen()),
+                              ).then((value) {
+                                if (value == true) {
+                                  setState(() {
+                                    BlocProvider.of<RequestsBloc>(context)
+                                        .add(RequestUser());
+                                  });
+                                }
+                              });
                             },
                             child: Container(
                               color: Colors.transparent,
@@ -247,11 +255,32 @@ class _RequestsScreenState extends State<RequestsScreen> {
                   ),
                 );
               } else if (state is RequestsLoading) {
-                return SizedBox(
+                return Container(
                   width: context.screenWidth,
-                  height: context.screenHeight,
+                  height: context.screenHeight - 120,
+                  color: Colors.white.withValues(alpha: .5),
                   child: Center(
-                    child: CupertinoActivityIndicator(),
+                    child: Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 10,
+                            offset: Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: SpinKitFadingCube(
+                          size: 24,
+                          color: Color(0xff670099),
+                        ),
+                      ),
+                    ),
                   ),
                 );
               } else if (state is RequestsError) {

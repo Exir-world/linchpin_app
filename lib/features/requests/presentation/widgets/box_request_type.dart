@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 import 'package:linchpin_app/features/requests/domain/entity/request_types_entity.dart';
+import 'package:linchpin_app/features/requests/presentation/request_detail_screen.dart';
+import 'package:linchpin_app/features/requests/presentation/widgets/clock_box.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
 
 class BoxRequestType extends StatefulWidget {
@@ -75,6 +77,10 @@ class _BoxRequestTypeState extends State<BoxRequestType> {
                           selecteditemName = title;
                           BoxRequestType.selectedItemNotifire.value =
                               item.requestId;
+                          RequestDetailScreen.startDateNotifire.value = null;
+                          RequestDetailScreen.endDateNotifire.value = null;
+                          ClockBox.hourNotifireStrat.value = null;
+                          ClockBox.minuteNotifireStart.value = null;
                           _closeDropdown();
                         });
                       },

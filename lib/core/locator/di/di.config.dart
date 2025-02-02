@@ -60,9 +60,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i361.Dio>(() => dioProvider.httpclient);
     gh.singleton<_i146.ApiLastQuarterReport>(
         () => _i146.ApiLastQuarterReport(gh<_i361.Dio>()));
+    gh.singleton<_i862.ApiRequest>(() => _i862.ApiRequest(gh<_i361.Dio>()));
     gh.singleton<_i526.ApiTimeMamagement>(
         () => _i526.ApiTimeMamagement(gh<_i361.Dio>()));
-    gh.singleton<_i862.ApiRequest>(() => _i862.ApiRequest(gh<_i361.Dio>()));
     gh.singleton<_i688.RequestRepository>(
       () => _i150.RequestRepositoryImpl(gh<_i862.ApiRequest>()),
       registerFor: {_prod},

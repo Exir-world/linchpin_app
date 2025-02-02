@@ -117,8 +117,11 @@ class _CircularTimerState extends State<CircularTimer> {
     int totalMinutes = remainingSeconds ~/ 60;
     int hours = totalMinutes ~/ 60;
     int minutes = totalMinutes % 60;
+    int seconds = remainingSeconds % 60;
 
-    if (hours > 0) {
+    if (remainingSeconds < 60) {
+      return '$seconds ثانیه';
+    } else if (hours > 0) {
       return '$hours ساعت، $minutes دقیقه';
     } else {
       return '$minutes دقیقه';

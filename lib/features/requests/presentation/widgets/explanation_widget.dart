@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
+import 'package:linchpin_app/gen/fonts.gen.dart';
 
 class ExplanationWidget extends StatefulWidget {
   const ExplanationWidget({super.key});
@@ -53,6 +54,10 @@ class _ExplanationWidgetState extends State<ExplanationWidget> {
               maxLines: null,
               minLines: 5, // حداقل یک خط ارتفاع
               focusNode: _focusNode,
+              style: TextStyle(
+                fontFamily: FontFamily.iRANSansXFARegular,
+                fontSize: 12,
+              ),
               onChanged: (value) {
                 ExplanationWidget.explanationNotifire.value = value;
               },
