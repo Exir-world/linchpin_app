@@ -70,6 +70,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/docs.svg
   SvgGenImage get docs => const SvgGenImage('assets/icons/docs.svg');
 
+  /// File path: assets/icons/info.svg
+  SvgGenImage get info => const SvgGenImage('assets/icons/info.svg');
+
   /// File path: assets/icons/pause.svg
   SvgGenImage get pause => const SvgGenImage('assets/icons/pause.svg');
 
@@ -134,6 +137,7 @@ class $AssetsIconsGen {
         clockDash,
         combined,
         docs,
+        info,
         pause,
         play,
         plus,
@@ -149,6 +153,16 @@ class $AssetsIconsGen {
         verify,
         winter
       ];
+}
+
+class $AssetsImagesGen {
+  const $AssetsImagesGen();
+
+  /// File path: assets/images/logo.png
+  AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [logo];
 }
 
 class $AssetsTranslationsGen {
@@ -168,6 +182,7 @@ class Assets {
   Assets._();
 
   static const $AssetsIconsGen icons = $AssetsIconsGen();
+  static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsTranslationsGen translations = $AssetsTranslationsGen();
 }
 

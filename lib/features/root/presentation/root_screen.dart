@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/shared_preferences/shared_preferences_key.dart';
-import 'package:linchpin_app/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin_app/features/performance_report/presentation/last_quarter_report_screen.dart';
 import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
 import 'package:linchpin_app/features/time_management/presentation/time_management_screen.dart';
@@ -16,16 +14,6 @@ class RootScreen extends StatefulWidget {
 }
 
 class _RootScreenState extends State<RootScreen> {
-  @override
-  void initState() {
-    PrefService prefService = PrefService();
-    prefService.createCacheString(
-      SharedKey.jwtToken,
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6IlVzZXIiLCJpYXQiOjE3Mzg0NzMxMjcsImV4cCI6MTc0MTA2NTEyN30.542DswNrqJp21t65loXqM41T7l2JZeNPdz9DB1wEQAc",
-    );
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

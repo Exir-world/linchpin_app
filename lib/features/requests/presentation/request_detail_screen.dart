@@ -92,6 +92,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarRoot(context, true),
+      resizeToAvoidBottomInset: true,
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterFloat,
       floatingActionButton: ValueListenableBuilder<bool>(

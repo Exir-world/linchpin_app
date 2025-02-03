@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin_app/core/common/dimens.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
 
 // نمایش پیغام موفقیت آمیز از پایین صفحه
-SnackBar snackBarVerify(
-    {required BuildContext context,
-    required String title,
-    required String desc}) {
+SnackBar snackBarVerify({
+  required BuildContext context,
+  required String title,
+  required String desc,
+  required Widget icon,
+}) {
   return SnackBar(
     dismissDirection: DismissDirection.up,
     elevation: 0,
@@ -27,7 +28,7 @@ SnackBar snackBarVerify(
       child: Row(
         children: [
           SizedBox(width: 12),
-          Assets.icons.verify.image(),
+          icon,
           SizedBox(width: 12),
           SmallRegular(
             title,

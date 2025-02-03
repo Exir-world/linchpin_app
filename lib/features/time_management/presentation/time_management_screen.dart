@@ -99,6 +99,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
                         context: context,
                         title: 'ثبت ورود انجام شد.',
                         desc: '',
+                        icon: Assets.icons.verify.image(),
                       ),
                     )
                   : nameStatus == 'check-out'
@@ -107,6 +108,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
                             context: context,
                             title: 'خروج شما انجام شد.',
                             desc: '',
+                            icon: Assets.icons.verify.image(),
                           ),
                         )
                       : nameStatus == 'stop-start'
@@ -115,6 +117,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
                                 context: context,
                                 title: 'زمان متوقف شد.',
                                 desc: '',
+                                icon: Assets.icons.verify.image(),
                               ),
                             )
                           : ScaffoldMessenger.of(context)
@@ -122,6 +125,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
                               context: context,
                               title: 'ادامه ساعت کاری فعال شد.',
                               desc: '',
+                              icon: Assets.icons.verify.image(),
                             ));
           setState(() {
             _isLoading = false;
