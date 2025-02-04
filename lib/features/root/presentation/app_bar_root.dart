@@ -24,6 +24,7 @@ AppBar appBarRoot(BuildContext context, bool isRequestScreen) {
       valueListenable: RootScreen.timeServerNotofire,
       builder: (context, timeServer, child) {
         return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             !isRequestScreen
                 ? GestureDetector(
@@ -41,13 +42,13 @@ AppBar appBarRoot(BuildContext context, bool isRequestScreen) {
                         child: Assets.icons.docs.svg(height: 26)),
                   )
                 : SizedBox.shrink(),
-            Spacer(),
             ValueListenableBuilder(
               valueListenable: RootScreen.timeServerNotofire,
               builder: (context, value, child) {
                 return NormalMedium(value ?? '');
               },
             ),
+            Assets.icons.user.svg(height: 26),
           ],
         );
       },

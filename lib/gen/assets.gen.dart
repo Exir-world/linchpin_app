@@ -35,8 +35,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/calendar.svg
   SvgGenImage get calendar => const SvgGenImage('assets/icons/calendar.svg');
 
+  /// File path: assets/icons/calendar1.svg
+  SvgGenImage get calendar1 => const SvgGenImage('assets/icons/calendar1.svg');
+
   /// File path: assets/icons/check-out.svg
   SvgGenImage get checkOut => const SvgGenImage('assets/icons/check-out.svg');
+
+  /// File path: assets/icons/check.svg
+  SvgGenImage get check => const SvgGenImage('assets/icons/check.svg');
 
   /// File path: assets/icons/chevron-up-down.svg
   SvgGenImage get chevronUpDown =>
@@ -69,6 +75,18 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/docs.svg
   SvgGenImage get docs => const SvgGenImage('assets/icons/docs.svg');
+
+  /// File path: assets/icons/flag1.svg
+  SvgGenImage get flag1 => const SvgGenImage('assets/icons/flag1.svg');
+
+  /// File path: assets/icons/flag2.svg
+  SvgGenImage get flag2 => const SvgGenImage('assets/icons/flag2.svg');
+
+  /// File path: assets/icons/flag3.svg
+  SvgGenImage get flag3 => const SvgGenImage('assets/icons/flag3.svg');
+
+  /// File path: assets/icons/flag4.svg
+  SvgGenImage get flag4 => const SvgGenImage('assets/icons/flag4.svg');
 
   /// File path: assets/icons/info.svg
   SvgGenImage get info => const SvgGenImage('assets/icons/info.svg');
@@ -113,6 +131,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/timer-tick.svg
   SvgGenImage get timerTick => const SvgGenImage('assets/icons/timer-tick.svg');
 
+  /// File path: assets/icons/user.svg
+  SvgGenImage get user => const SvgGenImage('assets/icons/user.svg');
+
   /// File path: assets/icons/verify.png
   AssetGenImage get verify => const AssetGenImage('assets/icons/verify.png');
 
@@ -127,7 +148,9 @@ class $AssetsIconsGen {
         boardTasksA,
         boardTasks,
         calendar,
+        calendar1,
         checkOut,
+        check,
         chevronUpDown,
         circleClock,
         clockAddPlusA,
@@ -137,6 +160,10 @@ class $AssetsIconsGen {
         clockDash,
         combined,
         docs,
+        flag1,
+        flag2,
+        flag3,
+        flag4,
         info,
         pause,
         play,
@@ -150,6 +177,7 @@ class $AssetsIconsGen {
         timerTick3,
         timerTick4,
         timerTick,
+        user,
         verify,
         winter
       ];

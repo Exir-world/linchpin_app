@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:linchpin_app/features/duties/presentation/duties_screen.dart';
 import 'package:linchpin_app/features/performance_report/presentation/last_quarter_report_screen.dart';
 import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
 import 'package:linchpin_app/features/time_management/presentation/time_management_screen.dart';
@@ -24,7 +25,7 @@ class _RootScreenState extends State<RootScreen> {
           return IndexedStack(
             index: value, // تعیین اینکه کدام تب فعال باشه
             children: [
-              Center(child: Text('وظایف')),
+              DutiesScreen(),
               TimeManagementScreen(), // صفحه اول
               LastQuarterReportScreen(), // صفحه دوم
             ],

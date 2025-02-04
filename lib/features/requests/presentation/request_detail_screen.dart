@@ -95,119 +95,133 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
       resizeToAvoidBottomInset: true,
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterFloat,
-      floatingActionButton: ValueListenableBuilder<bool>(
-        valueListenable: RequestDetailScreen.isButtonEnabled,
-        builder: (context, isEnabled, child) {
-          return GestureDetector(
-            onTap: isEnabled
-                ? () {
-                    final type = BoxRequestType.selectedItemNotifire.value;
-                    final startDate =
-                        RequestDetailScreen.startDateNotifire.value;
-                    final endDate = RequestDetailScreen.endDateNotifire.value;
-                    final description =
-                        ExplanationWidget.explanationNotifire.value;
+      floatingActionButton: ValueListenableBuilder(
+        valueListenable: BoxRequestType.selectedItemNotifire,
+        builder: (context, selectedItem, child) {
+          if (selectedItem != null) {
+            return ValueListenableBuilder<bool>(
+              valueListenable: RequestDetailScreen.isButtonEnabled,
+              builder: (context, isEnabled, child) {
+                return GestureDetector(
+                  onTap: isEnabled
+                      ? () {
+                          final type =
+                              BoxRequestType.selectedItemNotifire.value;
+                          final startDate =
+                              RequestDetailScreen.startDateNotifire.value;
+                          final endDate =
+                              RequestDetailScreen.endDateNotifire.value;
+                          final description =
+                              ExplanationWidget.explanationNotifire.value;
 
-                    String? formatDateTime(
-                        String date, String? hour, String? minute) {
-                      if (hour == null || minute == null) {
-                        return null;
-                      }
-                      final dateTime = DateTime.parse(date)
-                          .toLocal()
-                          .copyWith(
-                            hour: int.parse(hour),
-                            minute: int.parse(minute),
-                          )
-                          .toUtc();
-                      return dateTime.toString().replaceAll(' ', 'T');
-                    }
-
-                    void sendRequest(
-                        {required String startTime, String? endTime}) {
-                      BlocProvider.of<RequestsBloc>(context).add(
-                        RequestCreateEvent(
-                          type: type!,
-                          description: description,
-                          startTime: startTime,
-                          endTime: endTime,
-                        ),
-                      );
-                    }
-
-                    // بررسی شرایط برای هر نوع درخواست و ارسال آن
-                    switch (type) {
-                      case 'MANUAL_CHECK_IN':
-                      case 'MANUAL_CHECK_OUT':
-                        {
-                          // بررسی اینکه آیا تاریخ شروع و ساعت ورود پر شده‌اند
-                          if (startDate != null &&
-                              ClockBox.hourNotifireStrat.value != null &&
-                              ClockBox.minuteNotifireStart.value != null) {
-                            final startTime = formatDateTime(
-                              startDate,
-                              ClockBox.hourNotifireStrat.value,
-                              ClockBox.minuteNotifireStart.value,
-                            );
-                            if (startTime != null) {
-                              sendRequest(startTime: startTime);
+                          String? formatDateTime(
+                              String date, String? hour, String? minute) {
+                            if (hour == null || minute == null) {
+                              return null;
                             }
+                            final dateTime = DateTime.parse(date)
+                                .toLocal()
+                                .copyWith(
+                                  hour: int.parse(hour),
+                                  minute: int.parse(minute),
+                                )
+                                .toUtc();
+                            return dateTime.toString().replaceAll(' ', 'T');
                           }
-                          break;
-                        }
 
-                      case 'HOURLY_LEAVE':
-                        {
-                          // بررسی اینکه تاریخ شروع، ساعت شروع و ساعت پایان پر شده‌اند
-                          if (startDate != null &&
-                              ClockBox.hourNotifireStrat.value != null &&
-                              ClockBox.minuteNotifireStart.value != null &&
-                              ClockBox.hourNotifireEnd.value != null &&
-                              ClockBox.minuteNotifireEnd.value != null) {
-                            final startTime = formatDateTime(
-                              startDate,
-                              ClockBox.hourNotifireStrat.value,
-                              ClockBox.minuteNotifireStart.value,
+                          void sendRequest(
+                              {required String startTime, String? endTime}) {
+                            BlocProvider.of<RequestsBloc>(context).add(
+                              RequestCreateEvent(
+                                type: type!,
+                                description: description,
+                                startTime: startTime,
+                                endTime: endTime,
+                              ),
                             );
-                            final endTime = formatDateTime(
-                              startDate,
-                              ClockBox.hourNotifireEnd.value,
-                              ClockBox.minuteNotifireEnd.value,
-                            );
-                            if (startTime != null && endTime != null) {
-                              sendRequest(
-                                  startTime: startTime, endTime: endTime);
-                            }
                           }
-                          break;
-                        }
 
-                      case 'SICK_LEAVE':
-                      case 'DAILY_LEAVE':
-                        {
-                          // بررسی اینکه تاریخ شروع و تاریخ پایان پر شده‌اند
-                          if (startDate != null && endDate != null) {
-                            sendRequest(startTime: startDate, endTime: endDate);
+                          // بررسی شرایط برای هر نوع درخواست و ارسال آن
+                          switch (type) {
+                            case 'MANUAL_CHECK_IN':
+                            case 'MANUAL_CHECK_OUT':
+                              {
+                                // بررسی اینکه آیا تاریخ شروع و ساعت ورود پر شده‌اند
+                                if (startDate != null &&
+                                    ClockBox.hourNotifireStrat.value != null &&
+                                    ClockBox.minuteNotifireStart.value !=
+                                        null) {
+                                  final startTime = formatDateTime(
+                                    startDate,
+                                    ClockBox.hourNotifireStrat.value,
+                                    ClockBox.minuteNotifireStart.value,
+                                  );
+                                  if (startTime != null) {
+                                    sendRequest(startTime: startTime);
+                                  }
+                                }
+                                break;
+                              }
+
+                            case 'HOURLY_LEAVE':
+                              {
+                                // بررسی اینکه تاریخ شروع، ساعت شروع و ساعت پایان پر شده‌اند
+                                if (startDate != null &&
+                                    ClockBox.hourNotifireStrat.value != null &&
+                                    ClockBox.minuteNotifireStart.value !=
+                                        null &&
+                                    ClockBox.hourNotifireEnd.value != null &&
+                                    ClockBox.minuteNotifireEnd.value != null) {
+                                  final startTime = formatDateTime(
+                                    startDate,
+                                    ClockBox.hourNotifireStrat.value,
+                                    ClockBox.minuteNotifireStart.value,
+                                  );
+                                  final endTime = formatDateTime(
+                                    startDate,
+                                    ClockBox.hourNotifireEnd.value,
+                                    ClockBox.minuteNotifireEnd.value,
+                                  );
+                                  if (startTime != null && endTime != null) {
+                                    sendRequest(
+                                        startTime: startTime, endTime: endTime);
+                                  }
+                                }
+                                break;
+                              }
+
+                            case 'SICK_LEAVE':
+                            case 'DAILY_LEAVE':
+                              {
+                                // بررسی اینکه تاریخ شروع و تاریخ پایان پر شده‌اند
+                                if (startDate != null && endDate != null) {
+                                  sendRequest(
+                                      startTime: startDate, endTime: endDate);
+                                }
+                                break;
+                              }
                           }
-                          break;
                         }
-                    }
-                  }
-                : null,
-            child: Container(
-              height: 56,
-              margin: EdgeInsets.symmetric(horizontal: 24),
-              decoration: BoxDecoration(
-                color: isEnabled ? Color(0xff861C8C) : Color(0xffCAC4CF),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              alignment: Alignment.center,
-              child: NormalMedium(
-                'ثبت درخواست',
-                textColorInLight: Colors.white,
-              ),
-            ),
-          );
+                      : null,
+                  child: Container(
+                    height: 56,
+                    margin: EdgeInsets.symmetric(horizontal: 24),
+                    decoration: BoxDecoration(
+                      color: isEnabled ? Color(0xff861C8C) : Color(0xffCAC4CF),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    alignment: Alignment.center,
+                    child: NormalMedium(
+                      'ثبت درخواست',
+                      textColorInLight: Colors.white,
+                    ),
+                  ),
+                );
+              },
+            );
+          } else {
+            return Container();
+          }
         },
       ),
       body: GestureDetector(
