@@ -1,56 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/features/duties/presentation/all_duties_screen.dart';
+import 'package:linchpin_app/features/duties/presentation/duties_screen.dart';
 import 'package:linchpin_app/features/duties/presentation/my_task_screen.dart';
+import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
 
-class DutiesScreen extends StatefulWidget {
-  const DutiesScreen({super.key});
+class AllDutiesScreen extends StatefulWidget {
+  const AllDutiesScreen({super.key});
 
   @override
-  State<DutiesScreen> createState() => _DutiesScreenState();
+  State<AllDutiesScreen> createState() => _AllDutiesScreenState();
   static ValueNotifier<int> tabIndexNotifire = ValueNotifier(0);
 }
 
-class _DutiesScreenState extends State<DutiesScreen>
+class _AllDutiesScreenState extends State<AllDutiesScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
   @override
   void initState() {
-    super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
-        DutiesScreen.tabIndexNotifire.value = _tabController.index;
+        AllDutiesScreen.tabIndexNotifire.value = _tabController.index;
       }
     });
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      floatingActionButton: SizedBox(
-        height: 56,
-        width: 56,
-        child: FloatingActionButton(
-          backgroundColor: Color(0xff861C8C),
-          shape: CircleBorder(),
-          child: Icon(
-            Icons.add,
-            color: Colors.white,
-            size: 32,
-          ),
-          onPressed: () {},
-        ),
-      ),
+      appBar: appBarRoot(context, true),
       body: DefaultTabController(
         length: 2,
         child: Padding(
@@ -61,24 +41,15 @@ class _DutiesScreenState extends State<DutiesScreen>
                 children: [
                   BigDemiBold('لیست وظایف'),
                   Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AllDutiesScreen(),
-                          ));
-                    },
-                    child: Row(
-                      children: [
-                        Assets.icons.calendar1.svg(),
-                        SizedBox(width: 8),
-                        NormalMedium(
-                          'مشاهده همه روزها',
-                          textColorInLight: Color(0xff861C8C),
-                        ),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      Assets.icons.filter.svg(),
+                      SizedBox(width: 8),
+                      NormalMedium(
+                        'فیلتر کردن',
+                        textColorInLight: Color(0xff861C8C),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -108,7 +79,7 @@ class _DutiesScreenState extends State<DutiesScreen>
                             )),
                         SizedBox(width: 4),
                         ValueListenableBuilder(
-                          valueListenable: DutiesScreen.tabIndexNotifire,
+                          valueListenable: AllDutiesScreen.tabIndexNotifire,
                           builder: (context, value, child) {
                             return NormalMedium(
                               'وظایف من',
@@ -138,7 +109,7 @@ class _DutiesScreenState extends State<DutiesScreen>
                             )),
                         SizedBox(width: 4),
                         ValueListenableBuilder(
-                          valueListenable: DutiesScreen.tabIndexNotifire,
+                          valueListenable: AllDutiesScreen.tabIndexNotifire,
                           builder: (context, value, child) {
                             return NormalMedium(
                               'وظایف دیگران',
@@ -236,116 +207,6 @@ class _DutiesScreenState extends State<DutiesScreen>
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class TaskItem extends StatelessWidget {
-  final String title;
-  final String date;
-  final String tag;
-  final String flagTitle;
-  final Widget imageFlag;
-  final bool isOthers;
-  final Function() onTap;
-  const TaskItem({
-    super.key,
-    required this.title,
-    required this.date,
-    required this.tag,
-    required this.flagTitle,
-    required this.imageFlag,
-    required this.isOthers,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        margin: EdgeInsets.only(bottom: 12),
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Assets.icons.check.svg(height: 24),
-                SizedBox(width: 8),
-                NormalMedium(title),
-                Spacer(),
-                SmallRegular(date),
-              ],
-            ),
-            SizedBox(height: 24),
-            Row(
-              children: [
-                TagContainer(
-                  tag: tag,
-                  color: Color(0xffB10000),
-                ),
-                isOthers
-                    ? Row(
-                        children: [
-                          SizedBox(width: 16),
-                          Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: Assets.icons.avatar.svg(),
-                          ),
-                          SizedBox(width: 4),
-                          SmallMedium('زهرا'),
-                        ],
-                      )
-                    : Container(),
-                Spacer(),
-                imageFlag,
-                SizedBox(width: 4),
-                SmallMedium(
-                  flagTitle,
-                  textColorInLight: Color(0xffFD5B71),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class TagContainer extends StatelessWidget {
-  final Color color;
-  const TagContainer({
-    super.key,
-    required this.tag,
-    required this.color,
-  });
-
-  final String tag;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 79,
-      height: 26,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: .15),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      alignment: Alignment.center,
-      child: SmallRegular(
-        tag,
-        textColorInLight: color,
       ),
     );
   }

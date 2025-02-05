@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 import 'package:linchpin_app/core/customui/snackbar_verify.dart';
@@ -8,6 +9,7 @@ import 'package:linchpin_app/core/shared_preferences/shared_preferences_service.
 import 'package:linchpin_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:linchpin_app/features/root/presentation/root_screen.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:linchpin_app/gen/fonts.gen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -128,6 +130,19 @@ class _AuthScreenState extends State<AuthScreen> {
                       controller: AuthScreen.accountControllerNotifire.value,
                       textAlign: TextAlign.end,
                       keyboardType: TextInputType.phone,
+                      style: TextStyle(
+                        fontFamily: FontFamily.iRANSansXFAMedium,
+                        fontSize: 14,
+                        color: Color(0xff4f4f4f),
+                      ),
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(
+                            10), // محدودیت 10 کاراکتر
+                        FilteringTextInputFormatter.deny(
+                            RegExp(r'^0')), // جلوگیری از شروع با 0
+                        FilteringTextInputFormatter.allow(RegExp(
+                            r'^[1-9][0-9]*$')), // فقط اعداد بدون صفر در ابتدا
+                      ],
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -135,6 +150,13 @@ class _AuthScreenState extends State<AuthScreen> {
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
                             color: Color(0xffE0E0F9),
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Color(0xFF861C8C),
                             width: 1,
                           ),
                         ),
@@ -150,6 +172,11 @@ class _AuthScreenState extends State<AuthScreen> {
                       controller: AuthScreen.passControllerNotifire.value,
                       obscureText: obscureText,
                       textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontFamily: FontFamily.iRANSansXFAMedium,
+                        fontSize: 14,
+                        color: Color(0xff4f4f4f),
+                      ),
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -157,6 +184,13 @@ class _AuthScreenState extends State<AuthScreen> {
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
                             color: Color(0xffE0E0F9),
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Color(0xFF861C8C),
                             width: 1,
                           ),
                         ),

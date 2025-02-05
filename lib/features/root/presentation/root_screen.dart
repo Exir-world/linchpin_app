@@ -32,17 +32,27 @@ class _RootScreenState extends State<RootScreen> {
           );
         },
       ),
-      bottomNavigationBar: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color:
+                  Color(0xff828282).withValues(alpha: 0.20), // میزان تیرگی سایه
+              blurRadius: 100, // میزان محوشدگی سایه
+              spreadRadius: 0, // میزان گسترش سایه
+              offset: Offset(0, 8), // جهت سایه (افقی، عمودی)
+            ),
+          ],
         ),
-        child: ValueListenableBuilder(
-          valueListenable: RootScreen.itemSelectedNotifire,
-          builder: (context, value, child) {
-            return SizedBox(
-              height: 72,
-              child: Theme(
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          child: ValueListenableBuilder(
+            valueListenable: RootScreen.itemSelectedNotifire,
+            builder: (context, value, child) {
+              return Theme(
                 data: Theme.of(context).copyWith(
                   splashColor: Colors.transparent, // حذف رنگ splash
                   highlightColor: Colors.transparent, // حذف رنگ highlight
@@ -77,9 +87,9 @@ class _RootScreenState extends State<RootScreen> {
                     ),
                   ],
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

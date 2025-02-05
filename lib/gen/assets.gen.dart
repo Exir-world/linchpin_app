@@ -21,8 +21,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/activity.svg
   SvgGenImage get activity => const SvgGenImage('assets/icons/activity.svg');
 
+  /// File path: assets/icons/attach.svg
+  SvgGenImage get attach => const SvgGenImage('assets/icons/attach.svg');
+
   /// File path: assets/icons/autumn.svg
   SvgGenImage get autumn => const SvgGenImage('assets/icons/autumn.svg');
+
+  /// File path: assets/icons/avatar.svg
+  SvgGenImage get avatar => const SvgGenImage('assets/icons/avatar.svg');
 
   /// File path: assets/icons/board-tasks-a.svg
   SvgGenImage get boardTasksA =>
@@ -47,6 +53,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/chevron-up-down.svg
   SvgGenImage get chevronUpDown =>
       const SvgGenImage('assets/icons/chevron-up-down.svg');
+
+  /// File path: assets/icons/cir.svg
+  SvgGenImage get cir => const SvgGenImage('assets/icons/cir.svg');
 
   /// File path: assets/icons/circle_clock.svg
   SvgGenImage get circleClock =>
@@ -76,6 +85,12 @@ class $AssetsIconsGen {
   /// File path: assets/icons/docs.svg
   SvgGenImage get docs => const SvgGenImage('assets/icons/docs.svg');
 
+  /// File path: assets/icons/download.svg
+  SvgGenImage get download => const SvgGenImage('assets/icons/download.svg');
+
+  /// File path: assets/icons/filter.svg
+  SvgGenImage get filter => const SvgGenImage('assets/icons/filter.svg');
+
   /// File path: assets/icons/flag1.svg
   SvgGenImage get flag1 => const SvgGenImage('assets/icons/flag1.svg');
 
@@ -100,6 +115,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/plus.svg
   SvgGenImage get plus => const SvgGenImage('assets/icons/plus.svg');
 
+  /// File path: assets/icons/radio.svg
+  SvgGenImage get radio => const SvgGenImage('assets/icons/radio.svg');
+
   /// File path: assets/icons/ringing.svg
   SvgGenImage get ringing => const SvgGenImage('assets/icons/ringing.svg');
 
@@ -111,6 +129,9 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/tag.svg
   SvgGenImage get tag => const SvgGenImage('assets/icons/tag.svg');
+
+  /// File path: assets/icons/task.svg
+  SvgGenImage get task => const SvgGenImage('assets/icons/task.svg');
 
   /// File path: assets/icons/timer-off-sleep.svg
   SvgGenImage get timerOffSleep =>
@@ -144,7 +165,9 @@ class $AssetsIconsGen {
   List<dynamic> get values => [
         activityA,
         activity,
+        attach,
         autumn,
+        avatar,
         boardTasksA,
         boardTasks,
         calendar,
@@ -152,6 +175,7 @@ class $AssetsIconsGen {
         checkOut,
         check,
         chevronUpDown,
+        cir,
         circleClock,
         clockAddPlusA,
         clockAddPlus,
@@ -160,6 +184,8 @@ class $AssetsIconsGen {
         clockDash,
         combined,
         docs,
+        download,
+        filter,
         flag1,
         flag2,
         flag3,
@@ -168,10 +194,12 @@ class $AssetsIconsGen {
         pause,
         play,
         plus,
+        radio,
         ringing,
         spring,
         summer,
         tag,
+        task,
         timerOffSleep,
         timerTick2,
         timerTick3,
@@ -186,11 +214,23 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/img.svg
+  SvgGenImage get img => const SvgGenImage('assets/images/img.svg');
+
   /// File path: assets/images/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
 
+  /// File path: assets/images/mp3.svg
+  SvgGenImage get mp3 => const SvgGenImage('assets/images/mp3.svg');
+
+  /// File path: assets/images/pdf.svg
+  SvgGenImage get pdf => const SvgGenImage('assets/images/pdf.svg');
+
+  /// File path: assets/images/xls.svg
+  SvgGenImage get xls => const SvgGenImage('assets/images/xls.svg');
+
   /// List of all assets
-  List<AssetGenImage> get values => [logo];
+  List<dynamic> get values => [img, logo, mp3, pdf, xls];
 }
 
 class $AssetsTranslationsGen {

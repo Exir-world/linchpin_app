@@ -432,8 +432,8 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 10,
+                                    color: Colors.black.withValues(alpha: .15),
+                                    blurRadius: 20,
                                     offset: Offset(0, 5),
                                   ),
                                 ],
@@ -463,8 +463,8 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 10,
+                              color: Colors.black.withValues(alpha: .15),
+                              blurRadius: 20,
                               offset: Offset(0, 5),
                             ),
                           ],
