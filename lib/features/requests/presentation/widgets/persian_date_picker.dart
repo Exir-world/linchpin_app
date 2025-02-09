@@ -23,6 +23,10 @@ class PersianDatePicker extends StatefulWidget {
 
   @override
   State<PersianDatePicker> createState() => _PersianDatePickerState();
+
+  // لیستی از نوتیفایرها برای هر نمونه
+  static final Map<int, ValueNotifier<String?>> persianDateSlashNotifierMap =
+      {};
 }
 
 class _PersianDatePickerState extends State<PersianDatePicker> {
@@ -32,16 +36,23 @@ class _PersianDatePickerState extends State<PersianDatePicker> {
   @override
   void initState() {
     super.initState();
+
     isPickerOpenNotifier = ValueNotifier<bool>(false);
+
+    // استفاده از شناسه منحصر به فرد برای هر نمونه
     persianDateSlashNotifier = ValueNotifier<String?>(null);
+    PersianDatePicker.persianDateSlashNotifierMap[widget.hashCode] =
+        persianDateSlashNotifier;
   }
 
-  @override
-  void dispose() {
-    isPickerOpenNotifier.dispose();
-    persianDateSlashNotifier.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   isPickerOpenNotifier.dispose();
+  //   persianDateSlashNotifier.dispose();
+  //   PersianDatePicker.persianDateSlashNotifierMap
+  //       .remove(widget.hashCode); // حذف نوتیفایر از Map
+  //   super.dispose();
+  // }
 
   void _openCalendar() {
     PersianCalendar.openCalendar(
@@ -52,10 +63,9 @@ class _PersianDatePickerState extends State<PersianDatePicker> {
         persianDateSlashNotifier.value = persianDateSlash;
         widget.onDateSelected
             ?.call(persianDateSlash, persianDateHyphen, englishDateIso8601);
-        _closeCalendar(); // غیرفعال کردن border بعد از انتخاب تاریخ
+        _closeCalendar();
       },
       onCalendarStateChange: (isOpen) {
-        // تغییرات وضعیت تقویم
         isPickerOpenNotifier.value = isOpen;
       },
     );
@@ -66,22 +76,20 @@ class _PersianDatePickerState extends State<PersianDatePicker> {
     PersianCalendar.closeDropdown();
   }
 
-  Future<bool> _onWillPop() async {
-    if (isPickerOpenNotifier.value) {
-      _closeCalendar(); // بسته شدن تقویم هنگام فشردن دکمه بک
-      return false; // جلوگیری از برگشت به صفحه قبلی
-    }
-    return true; // اجازه برگشت به صفحه قبلی
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onWillPop,
+      onWillPop: () async {
+        if (isPickerOpenNotifier.value) {
+          _closeCalendar();
+          return false;
+        }
+        return true;
+      },
       child: GestureDetector(
         onTap: () {
           if (isPickerOpenNotifier.value) {
-            _closeCalendar(); // بسته شدن تقویم وقتی بیرون از آن کلیک می‌شود
+            _closeCalendar();
           }
         },
         child: Padding(
@@ -124,7 +132,8 @@ class _PersianDatePickerState extends State<PersianDatePicker> {
                                     Color(0xffCAC4CF), BlendMode.srcIn),
                               ),
                               const SizedBox(width: 8),
-                              persianDateSlash == null
+                              persianDateSlash == null ||
+                                      persianDateSlash.isEmpty
                                   ? NormalRegular(
                                       "--/--/--",
                                       textColorInLight: const Color(0xffCAC4CF),

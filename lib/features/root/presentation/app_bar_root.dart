@@ -64,7 +64,130 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                     return NormalMedium(value ?? '');
                   },
                 ),
-                Assets.icons.user.svg(height: 26),
+                GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true, // to full height
+                        useSafeArea: true, // to show under status bar
+                        backgroundColor: Colors
+                            .transparent, // to show BorderRadius of Container
+                        builder: (context) {
+                          return IOSModalStyle(
+                            childBody: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      width: 23,
+                                      height: 4,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(2),
+                                        color: Color(0xff000000)
+                                            .withValues(alpha: .15),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 32),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        height: 64,
+                                        width: 64,
+                                        decoration: BoxDecoration(
+                                          color: Colors.amber,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Assets.icons.avatar.svg(),
+                                      ),
+                                      SizedBox(width: 16),
+                                      Column(
+                                        children: [
+                                          LargeDemiBold('فرهاد رضوانی'),
+                                          SizedBox(height: 8),
+                                          NormalMedium('۰۹۳۶۱۲۳۴۵۸۶'),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 64),
+                                  _ItemProfile(
+                                    image: Assets.icons.notification
+                                        .svg(height: 24),
+                                    title: 'اعلانات',
+                                  ),
+                                  SizedBox(height: 24),
+                                  _ItemProfile(
+                                    image: Assets.icons.wallet.svg(height: 24),
+                                    title: 'گزارشات مالی',
+                                  ),
+                                  SizedBox(height: 24),
+                                  _ItemProfile(
+                                    image:
+                                        Assets.icons.calendar.svg(height: 24),
+                                    title: 'محاسبه حقوق',
+                                  ),
+                                  SizedBox(height: 24),
+                                  _ItemProfile(
+                                    image: Assets.icons.star.svg(height: 24),
+                                    title: 'امتیازات',
+                                  ),
+                                  SizedBox(height: 24),
+                                  _ItemProfile(
+                                    image: Assets.icons.setting.svg(height: 24),
+                                    title: 'تنظیمات برنامه',
+                                  ),
+                                  SizedBox(height: 64),
+                                  _ItemProfile(
+                                    image:
+                                        Assets.icons.question.svg(height: 24),
+                                    title: 'سوالات متداول',
+                                  ),
+                                  SizedBox(height: 24),
+                                  _ItemProfile(
+                                    image: Assets.icons.scale.svg(height: 24),
+                                    title: 'قوانین',
+                                  ),
+                                  SizedBox(height: 24),
+                                  _ItemProfile(
+                                    image: Assets.icons.code.svg(height: 24),
+                                    title: 'تغییرات آپدیت ها',
+                                  ),
+                                  SizedBox(height: 64),
+                                  Row(
+                                    children: [
+                                      Assets.icons.logout.svg(height: 22),
+                                      SizedBox(width: 8),
+                                      NormalMedium(
+                                        'خروج از حساب',
+                                        textColorInLight: Color(0xffD80B0F),
+                                      ),
+                                      Spacer(),
+                                    ],
+                                  ),
+                                  SizedBox(height: 64),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: SmallMedium(
+                                      'Verson 2.00',
+                                      textColorInLight: Color(0xffCAC4CF),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Container(
+                        color: Colors.transparent,
+                        height: kToolbarHeight,
+                        padding: EdgeInsets.only(right: 12),
+                        child: Assets.icons.user.svg(height: 26))),
               ],
             );
           },
@@ -72,4 +195,65 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
       ),
     ),
   );
+}
+
+class _ItemProfile extends StatelessWidget {
+  final Widget image;
+  final String title;
+  const _ItemProfile({
+    required this.image,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        image,
+        SizedBox(width: 8),
+        NormalMedium(title),
+        Spacer(),
+        Icon(
+          Icons.arrow_forward_ios_rounded,
+          color: Color(0xffDADADA),
+          size: 16,
+        ),
+      ],
+    );
+  }
+}
+
+class IOSModalStyle extends StatelessWidget {
+  final Widget childBody;
+
+  const IOSModalStyle({
+    super.key,
+    required this.childBody,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white, // color of card
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+            ),
+            width: double.infinity,
+            child: childBody,
+          )
+        ],
+      ),
+    );
+  }
 }

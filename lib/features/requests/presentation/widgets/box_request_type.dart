@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 import 'package:linchpin_app/features/requests/domain/entity/request_types_entity.dart';
 import 'package:linchpin_app/features/requests/presentation/request_detail_screen.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/clock_box.dart';
+import 'package:linchpin_app/features/requests/presentation/widgets/explanation_widget.dart';
+import 'package:linchpin_app/features/requests/presentation/widgets/persian_date_picker.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
 
 class BoxRequestType extends StatefulWidget {
@@ -77,10 +78,32 @@ class _BoxRequestTypeState extends State<BoxRequestType> {
                           selecteditemName = title;
                           BoxRequestType.selectedItemNotifire.value =
                               item.requestId;
+
+                          // پاک کردن مقادیر تاریخ‌ها
                           RequestDetailScreen.startDateNotifire.value = null;
                           RequestDetailScreen.endDateNotifire.value = null;
-                          ClockBox.hourNotifireStrat.value = null;
-                          ClockBox.minuteNotifireStart.value = null;
+
+                          // پاک کردن مقدار ساعت و دقیقه
+                          RequestDetailScreen.startHourNotifire.value = null;
+                          RequestDetailScreen.startMinuteNotifire.value = null;
+                          RequestDetailScreen.endHourNotifire.value = null;
+                          RequestDetailScreen.endMinuteNotifire.value = null;
+
+                          RequestDetailScreen.isButtonEnabled.value = false;
+                          RequestDetailScreen.isEndDateFilled.value = false;
+                          RequestDetailScreen.isEndHourFilled.value = false;
+                          RequestDetailScreen.isEndMinuteFilled.value = false;
+                          RequestDetailScreen.isStartDateFilled.value = false;
+                          RequestDetailScreen.isStartHourFilled.value = false;
+                          RequestDetailScreen.isStartMinuteFilled.value = false;
+
+                          ExplanationWidget.explanationNotifire.value = "";
+                          PersianDatePicker.persianDateSlashNotifierMap
+                              .forEach((key, notifier) {
+                            notifier.value = null;
+                          });
+
+                          // بستن دراپ‌داون
                           _closeDropdown();
                         });
                       },

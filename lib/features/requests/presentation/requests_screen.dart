@@ -92,6 +92,32 @@ class _RequestsScreenState extends State<RequestsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarRoot(context, true),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: SizedBox(
+        height: 56,
+        width: 56,
+        child: FloatingActionButton(
+          backgroundColor: Color(0xff861C8C),
+          shape: CircleBorder(),
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+            size: 32,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => RequestDetailScreen()),
+            ).then((value) {
+              if (value == true) {
+                setState(() {
+                  BlocProvider.of<RequestsBloc>(context).add(RequestUser());
+                });
+              }
+            });
+          },
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
@@ -118,38 +144,44 @@ class _RequestsScreenState extends State<RequestsScreen> {
                         children: [
                           BigDemiBold('درخواست ها'),
                           Spacer(),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        RequestDetailScreen()),
-                              ).then((value) {
-                                if (value == true) {
-                                  setState(() {
-                                    BlocProvider.of<RequestsBloc>(context)
-                                        .add(RequestUser());
-                                  });
-                                }
-                              });
-                            },
-                            child: Container(
-                              color: Colors.transparent,
-                              padding: EdgeInsets.only(
-                                  right: 24, bottom: 12, top: 12),
-                              child: Row(
-                                children: [
-                                  Assets.icons.plus.svg(),
-                                  SizedBox(width: 8),
-                                  NormalMedium(
-                                    'ثبت درخواست جدید',
-                                    textColorInLight: Color(0xff861C8C),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          Assets.icons.filter.svg(),
+                          SizedBox(width: 8),
+                          NormalMedium(
+                            'فیلتر کردن',
+                            textColorInLight: Color(0xff861C8C),
                           ),
+                          // GestureDetector(
+                          //   onTap: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //           builder: (context) =>
+                          //               RequestDetailScreen()),
+                          //     ).then((value) {
+                          //       if (value == true) {
+                          //         setState(() {
+                          //           BlocProvider.of<RequestsBloc>(context)
+                          //               .add(RequestUser());
+                          //         });
+                          //       }
+                          //     });
+                          //   },
+                          //   child: Container(
+                          //     color: Colors.transparent,
+                          //     padding: EdgeInsets.only(
+                          //         right: 24, bottom: 12, top: 12),
+                          //     child: Row(
+                          //       children: [
+                          //         Assets.icons.plus.svg(),
+                          //         SizedBox(width: 8),
+                          //         NormalMedium(
+                          //           'ثبت درخواست جدید',
+                          //           textColorInLight: Color(0xff861C8C),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                       SizedBox(height: 24),
@@ -232,12 +264,93 @@ class _RequestsScreenState extends State<RequestsScreen> {
                                                     ? Container()
                                                     : GestureDetector(
                                                         onTap: () {
-                                                          BlocProvider.of<
-                                                                      RequestsBloc>(
-                                                                  context)
-                                                              .add(RequestCancelEvent(data
-                                                                  .id
-                                                                  .toString()));
+                                                          showDialog<TimeOfDay>(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return Dialog(
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8)),
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                child:
+                                                                    Container(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .symmetric(
+                                                                    vertical:
+                                                                        24,
+                                                                    horizontal:
+                                                                        24,
+                                                                  ),
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      NormalMedium(
+                                                                        'از لغو درخواست خود اطمینان دارید؟',
+                                                                      ),
+                                                                      SizedBox(
+                                                                          height:
+                                                                              24),
+                                                                      Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.spaceBetween,
+                                                                        children: [
+                                                                          Expanded(
+                                                                            child:
+                                                                                GestureDetector(
+                                                                              onTap: () {
+                                                                                BlocProvider.of<RequestsBloc>(context).add(RequestCancelEvent(data.id.toString()));
+                                                                                Navigator.pop(context);
+                                                                              },
+                                                                              child: Container(
+                                                                                height: 44,
+                                                                                decoration: BoxDecoration(
+                                                                                  color: Color(0xff861C8C),
+                                                                                  borderRadius: BorderRadius.circular(12),
+                                                                                ),
+                                                                                alignment: Alignment.center,
+                                                                                child: NormalMedium(
+                                                                                  'بله',
+                                                                                  textColorInLight: Colors.white,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                              width: 24),
+                                                                          Expanded(
+                                                                            child:
+                                                                                GestureDetector(
+                                                                              onTap: () {
+                                                                                Navigator.pop(context);
+                                                                              },
+                                                                              child: Container(
+                                                                                height: 44,
+                                                                                decoration: BoxDecoration(
+                                                                                  color: Color(0xffCAC4CF),
+                                                                                  borderRadius: BorderRadius.circular(12),
+                                                                                ),
+                                                                                alignment: Alignment.center,
+                                                                                child: NormalMedium('خیر', textColorInLight: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                          );
                                                         },
                                                         child: Assets.icons.tag
                                                             .svg()),

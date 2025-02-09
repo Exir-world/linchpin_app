@@ -38,6 +38,9 @@ class $AssetsIconsGen {
   SvgGenImage get boardTasks =>
       const SvgGenImage('assets/icons/board-tasks.svg');
 
+  /// File path: assets/icons/calculate.svg
+  SvgGenImage get calculate => const SvgGenImage('assets/icons/calculate.svg');
+
   /// File path: assets/icons/calendar.svg
   SvgGenImage get calendar => const SvgGenImage('assets/icons/calendar.svg');
 
@@ -79,6 +82,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/clock-dash.svg
   SvgGenImage get clockDash => const SvgGenImage('assets/icons/clock-dash.svg');
 
+  /// File path: assets/icons/code.svg
+  SvgGenImage get code => const SvgGenImage('assets/icons/code.svg');
+
   /// File path: assets/icons/combined.svg
   SvgGenImage get combined => const SvgGenImage('assets/icons/combined.svg');
 
@@ -106,6 +112,13 @@ class $AssetsIconsGen {
   /// File path: assets/icons/info.svg
   SvgGenImage get info => const SvgGenImage('assets/icons/info.svg');
 
+  /// File path: assets/icons/logout.svg
+  SvgGenImage get logout => const SvgGenImage('assets/icons/logout.svg');
+
+  /// File path: assets/icons/notification.svg
+  SvgGenImage get notification =>
+      const SvgGenImage('assets/icons/notification.svg');
+
   /// File path: assets/icons/pause.svg
   SvgGenImage get pause => const SvgGenImage('assets/icons/pause.svg');
 
@@ -115,14 +128,26 @@ class $AssetsIconsGen {
   /// File path: assets/icons/plus.svg
   SvgGenImage get plus => const SvgGenImage('assets/icons/plus.svg');
 
+  /// File path: assets/icons/question.svg
+  SvgGenImage get question => const SvgGenImage('assets/icons/question.svg');
+
   /// File path: assets/icons/radio.svg
   SvgGenImage get radio => const SvgGenImage('assets/icons/radio.svg');
 
   /// File path: assets/icons/ringing.svg
   SvgGenImage get ringing => const SvgGenImage('assets/icons/ringing.svg');
 
+  /// File path: assets/icons/scale.svg
+  SvgGenImage get scale => const SvgGenImage('assets/icons/scale.svg');
+
+  /// File path: assets/icons/setting.svg
+  SvgGenImage get setting => const SvgGenImage('assets/icons/setting.svg');
+
   /// File path: assets/icons/spring.svg
   SvgGenImage get spring => const SvgGenImage('assets/icons/spring.svg');
+
+  /// File path: assets/icons/star.svg
+  SvgGenImage get star => const SvgGenImage('assets/icons/star.svg');
 
   /// File path: assets/icons/summer.svg
   SvgGenImage get summer => const SvgGenImage('assets/icons/summer.svg');
@@ -158,6 +183,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/verify.png
   AssetGenImage get verify => const AssetGenImage('assets/icons/verify.png');
 
+  /// File path: assets/icons/wallet.svg
+  SvgGenImage get wallet => const SvgGenImage('assets/icons/wallet.svg');
+
   /// File path: assets/icons/winter.svg
   SvgGenImage get winter => const SvgGenImage('assets/icons/winter.svg');
 
@@ -170,6 +198,7 @@ class $AssetsIconsGen {
         avatar,
         boardTasksA,
         boardTasks,
+        calculate,
         calendar,
         calendar1,
         checkOut,
@@ -182,6 +211,7 @@ class $AssetsIconsGen {
         clockAdd,
         clockClose,
         clockDash,
+        code,
         combined,
         docs,
         download,
@@ -191,12 +221,18 @@ class $AssetsIconsGen {
         flag3,
         flag4,
         info,
+        logout,
+        notification,
         pause,
         play,
         plus,
+        question,
         radio,
         ringing,
+        scale,
+        setting,
         spring,
+        star,
         summer,
         tag,
         task,
@@ -207,6 +243,7 @@ class $AssetsIconsGen {
         timerTick,
         user,
         verify,
+        wallet,
         winter
       ];
 }
