@@ -187,23 +187,23 @@ class TaskDescWidget extends StatelessWidget {
             textColorInLight: Color(0xff828282),
           ),
           SizedBox(height: 24),
-          SizedBox(
-            height: 26,
-            child: ListView.builder(
-              itemCount: 3,
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: TagContainer(
-                    tag: 'دیزاین',
-                    color: Color(0xffB10000),
-                  ),
-                );
-              },
-            ),
-          ),
+          // SizedBox(
+          //   height: 26,
+          //   child: ListView.builder(
+          //     itemCount: 3,
+          //     shrinkWrap: true,
+          //     scrollDirection: Axis.horizontal,
+          //     itemBuilder: (context, index) {
+          //       return Padding(
+          //         padding: const EdgeInsets.only(left: 8),
+          //         child: TagContainer(
+          //           tag: 'دیزاین',
+          //           color: Color(0xffB10000),
+          //         ),
+          //       );
+          //     },
+          //   ),
+          // ),
           SizedBox(height: 24),
           Row(
             children: [

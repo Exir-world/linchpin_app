@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin_app/core/locator/di/di.dart';
 import 'package:linchpin_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:linchpin_app/features/auth/presentation/auth_screen.dart';
+import 'package:linchpin_app/features/duties/presentation/bloc/duties_bloc.dart';
 import 'package:linchpin_app/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
 import 'package:linchpin_app/features/requests/presentation/bloc/requests_bloc.dart';
 import 'package:linchpin_app/features/time_management/presentation/bloc/time_management_bloc.dart';
@@ -42,6 +43,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => getIt<AuthBloc>(),
+        ),
+        BlocProvider(
+          create: (context) => getIt<DutiesBloc>(),
         ),
       ],
       child: MaterialApp(

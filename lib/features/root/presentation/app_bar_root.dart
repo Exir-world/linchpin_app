@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin_app/core/common/colors.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
+import 'package:linchpin_app/core/shared_preferences/shared_preferences_key.dart';
+import 'package:linchpin_app/core/shared_preferences/shared_preferences_service.dart';
+import 'package:linchpin_app/features/auth/presentation/auth_screen.dart';
 import 'package:linchpin_app/features/requests/presentation/requests_screen.dart';
 import 'package:linchpin_app/features/root/presentation/root_screen.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
@@ -72,6 +75,10 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                         useSafeArea: true, // to show under status bar
                         backgroundColor: Colors
                             .transparent, // to show BorderRadius of Container
+                        sheetAnimationStyle: AnimationStyle(
+                          reverseCurve: Curves.easeIn,
+                          duration: Duration(milliseconds: 400),
+                        ),
                         builder: (context) {
                           return IOSModalStyle(
                             childBody: Padding(
@@ -113,7 +120,7 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 64),
+                                  SizedBox(height: 48),
                                   _ItemProfile(
                                     image: Assets.icons.notification
                                         .svg(height: 24),
@@ -140,12 +147,14 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                                     image: Assets.icons.setting.svg(height: 24),
                                     title: 'تنظیمات برنامه',
                                   ),
-                                  SizedBox(height: 64),
+                                  SizedBox(height: 24),
                                   _ItemProfile(
                                     image:
                                         Assets.icons.question.svg(height: 24),
                                     title: 'سوالات متداول',
                                   ),
+                                  SizedBox(height: 24),
+                                  Divider(color: Colors.grey.shade100),
                                   SizedBox(height: 24),
                                   _ItemProfile(
                                     image: Assets.icons.scale.svg(height: 24),
@@ -156,19 +165,148 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                                     image: Assets.icons.code.svg(height: 24),
                                     title: 'تغییرات آپدیت ها',
                                   ),
-                                  SizedBox(height: 64),
-                                  Row(
-                                    children: [
-                                      Assets.icons.logout.svg(height: 22),
-                                      SizedBox(width: 8),
-                                      NormalMedium(
-                                        'خروج از حساب',
-                                        textColorInLight: Color(0xffD80B0F),
-                                      ),
-                                      Spacer(),
-                                    ],
+                                  // SizedBox(height: 24),
+                                  SizedBox(height: 24),
+                                  Divider(color: Colors.grey.shade100),
+                                  SizedBox(height: 24),
+                                  GestureDetector(
+                                    onTap: () {
+                                      showDialog<TimeOfDay>(
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8)),
+                                            backgroundColor: Colors.white,
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 24,
+                                                horizontal: 24,
+                                              ),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  NormalMedium(
+                                                    'می‌خواهید از حساب خود خارج شوید؟',
+                                                  ),
+                                                  SizedBox(height: 24),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            PrefService
+                                                                prefService =
+                                                                PrefService();
+                                                            prefService
+                                                                .readCacheString(
+                                                                    SharedKey
+                                                                        .jwtToken)
+                                                                .then(
+                                                              (value) {
+                                                                prefService
+                                                                    .removeCache(
+                                                                        SharedKey
+                                                                            .expires);
+                                                                prefService
+                                                                    .removeCache(
+                                                                        SharedKey
+                                                                            .refreshToken);
+                                                                prefService
+                                                                    .removeCache(
+                                                                        value);
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pushAndRemoveUntil(
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            AuthScreen(),
+                                                                  ),
+                                                                  (Route<dynamic>
+                                                                          route) =>
+                                                                      false,
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            height: 44,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Color(
+                                                                  0xff861C8C),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12),
+                                                            ),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: NormalMedium(
+                                                              'بله',
+                                                              textColorInLight:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 24),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: Container(
+                                                            height: 44,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Color(
+                                                                  0xffCAC4CF),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12),
+                                                            ),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: NormalMedium(
+                                                                'خیر',
+                                                                textColorInLight:
+                                                                    Colors
+                                                                        .white),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Assets.icons.logout.svg(height: 22),
+                                        SizedBox(width: 8),
+                                        NormalMedium(
+                                          'خروج از حساب',
+                                          textColorInLight: Color(0xffD80B0F),
+                                        ),
+                                        Spacer(),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(height: 64),
+                                  SizedBox(height: 32),
                                   Align(
                                     alignment: Alignment.center,
                                     child: SmallMedium(

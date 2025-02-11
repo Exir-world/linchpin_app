@@ -22,6 +22,16 @@ import 'package:linchpin_app/features/auth/domain/use_case/auth_usecase.dart'
     as _i1065;
 import 'package:linchpin_app/features/auth/presentation/bloc/auth_bloc.dart'
     as _i1069;
+import 'package:linchpin_app/features/duties/data/data_source/api_duties.dart'
+    as _i904;
+import 'package:linchpin_app/features/duties/data/repository/duties_repository_impl.dart'
+    as _i904;
+import 'package:linchpin_app/features/duties/domain/repository/duties_repository.dart'
+    as _i753;
+import 'package:linchpin_app/features/duties/domain/use_case/duties_usecase.dart'
+    as _i853;
+import 'package:linchpin_app/features/duties/presentation/bloc/duties_bloc.dart'
+    as _i490;
 import 'package:linchpin_app/features/performance_report/data/data_source/api_last_quarter_report.dart'
     as _i146;
 import 'package:linchpin_app/features/performance_report/data/repository/last_quarter_report_repository_impl.dart'
@@ -74,6 +84,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i526.ApiTimeMamagement>(
         () => _i526.ApiTimeMamagement(gh<_i361.Dio>()));
     gh.singleton<_i96.ApiAuth>(() => _i96.ApiAuth(gh<_i361.Dio>()));
+    gh.singleton<_i904.ApiDuties>(() => _i904.ApiDuties(gh<_i361.Dio>()));
     gh.singleton<_i58.AuthRepository>(
       () => _i979.AuthRepositoryImpl(gh<_i96.ApiAuth>()),
       registerFor: {_prod},
@@ -101,6 +112,14 @@ extension GetItInjectableX on _i174.GetIt {
         _i781.TimeManagementUsecase(gh<_i1063.TimeManagementRepository>()));
     gh.factory<_i1041.RequestsBloc>(
         () => _i1041.RequestsBloc(gh<_i171.RequestUsecase>()));
+    gh.singleton<_i753.DutiesRepository>(
+      () => _i904.DutiesRepositoryImpl(gh<_i904.ApiDuties>()),
+      registerFor: {_prod},
+    );
+    gh.singleton<_i853.DutiesUsecase>(
+        () => _i853.DutiesUsecase(gh<_i753.DutiesRepository>()));
+    gh.factory<_i490.DutiesBloc>(
+        () => _i490.DutiesBloc(gh<_i853.DutiesUsecase>()));
     gh.factory<_i134.TimeManagementBloc>(
         () => _i134.TimeManagementBloc(gh<_i781.TimeManagementUsecase>()));
     gh.factory<_i1069.AuthBloc>(
