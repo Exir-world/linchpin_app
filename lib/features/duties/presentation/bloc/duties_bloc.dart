@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:linchpin_app/core/resources/data_state.dart';
+import 'package:linchpin_app/features/duties/domain/entity/task_detail_entity.dart';
 import 'package:linchpin_app/features/duties/domain/entity/tasks_entity.dart';
 import 'package:linchpin_app/features/duties/domain/use_case/duties_usecase.dart';
 
@@ -13,6 +14,8 @@ class DutiesBloc extends Bloc<DutiesEvent, DutiesState> {
   DutiesBloc(this.dutiesUsecase) : super(DutiesInitial()) {
     on<TasksEvent>(_tasksEvent);
     on<AllTasksEvent>(_allTasksEvent);
+    on<TaskDetailEvent>(_taskDetailEvent);
+    on<SubtaskDoneEvent>(_subtaskDoneEvent);
   }
   Future<void> _tasksEvent(TasksEvent event, Emitter<DutiesState> emit) async {
     emit(TasksLoading());
@@ -42,6 +45,37 @@ class DutiesBloc extends Bloc<DutiesEvent, DutiesState> {
 
     if (dataState is DataFailed) {
       emit(AllTasksError(dataState.error!));
+    }
+  }
+
+  Future<void> _taskDetailEvent(
+      TaskDetailEvent event, Emitter<DutiesState> emit) async {
+    emit(TaskDetailLoading());
+
+    DataState dataState = await dutiesUsecase.taskDetail(event.taskId);
+
+    if (dataState is DataSuccess) {
+      emit(TaskDetailCompleted(dataState.data));
+    }
+
+    if (dataState is DataFailed) {
+      emit(TaskDetailError(dataState.error!));
+    }
+  }
+
+  Future<void> _subtaskDoneEvent(
+      SubtaskDoneEvent event, Emitter<DutiesState> emit) async {
+    emit(SubtaskDoneLoading());
+
+    DataState dataState =
+        await dutiesUsecase.subtaskDone(event.subtaskId, event.done);
+
+    if (dataState is DataSuccess) {
+      emit(SubtaskDoneCompleted(dataState.data));
+    }
+
+    if (dataState is DataFailed) {
+      emit(SubtaskDoneError(dataState.error!));
     }
   }
 }

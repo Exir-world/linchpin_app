@@ -21,3 +21,18 @@ class AllTasksEvent extends DutiesEvent {
 
   AllTasksEvent({this.startDate, this.endDate, this.priorityId, this.userId});
 }
+
+// جزئیات درخواست
+class TaskDetailEvent extends DutiesEvent {
+  final int taskId;
+
+  TaskDetailEvent({required this.taskId});
+}
+
+// ساب تسک رو انجام دادم یا ندادم
+class SubtaskDoneEvent extends DutiesEvent {
+  final int subtaskId;
+  final bool done;
+
+  SubtaskDoneEvent({required this.subtaskId, required this.done});
+}

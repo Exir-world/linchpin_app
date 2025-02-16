@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 import 'package:linchpin_app/core/customui/snackbar_verify.dart';
+import 'package:linchpin_app/core/locator/di/di.dart';
 import 'package:linchpin_app/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin_app/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -16,13 +17,12 @@ class AuthScreen extends StatefulWidget {
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
-  static ValueNotifier<TextEditingController> accountControllerNotifire =
-      ValueNotifier(TextEditingController());
-  static ValueNotifier<TextEditingController> passControllerNotifire =
-      ValueNotifier(TextEditingController());
+  static late ValueNotifier<TextEditingController> accountControllerNotifire;
+  static late ValueNotifier<TextEditingController> passControllerNotifire;
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
+  late AuthBloc _bloc;
   bool obscureText = true;
   final _formKey = GlobalKey<FormState>();
   DateTime? _lastPressedTime;
@@ -30,8 +30,14 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   void initState() {
-    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _bloc = getIt<AuthBloc>();
+    // مقداردهی مجدد در صورت نیاز
+    AuthScreen.accountControllerNotifire =
+        ValueNotifier(TextEditingController());
+    AuthScreen.passControllerNotifire = ValueNotifier(TextEditingController());
     _checkAuthStatus();
+    super.initState();
   }
 
   // بررسی توکن و وضعیت ورود
@@ -62,9 +68,24 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    // ابتدا مقدار داخل ValueNotifier (TextEditingController) را آزاد کنید
+    AuthScreen.accountControllerNotifire.value.dispose();
+    AuthScreen.passControllerNotifire.value.dispose();
+
+    // حالا خود ValueNotifier را dispose کنید
     AuthScreen.accountControllerNotifire.dispose();
     AuthScreen.passControllerNotifire.dispose();
+    _bloc.close();
+
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      PaintingBinding.instance.reassembleApplication();
+    }
   }
 
   Future<bool> _onWillPop() async {
@@ -87,188 +108,192 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is LoginCompletedState) {
-          prefService.createCacheString(
-              SharedKey.jwtToken, state.loginEntity.accessToken ?? '');
-          prefService.createCacheString(
-              SharedKey.refreshToken, state.loginEntity.refreshToken ?? '');
-          prefService.createCacheInt(
-              SharedKey.expires, state.loginEntity.expires ?? 0);
-          _navigateToRoot();
-        } else if (state is LoginErrorState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            snackBarVerify(
-              context: context,
-              title: 'خطا در ورود',
-              desc: state.errorText,
-              icon: Assets.icons.activity.svg(),
-            ),
-          );
-        }
-      },
-      child: WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Align(
-                        alignment: Alignment.center,
-                        child: Assets.images.logo.image(height: 50)),
-                    SizedBox(height: 80),
-                    NormalMedium('نام کاربری'),
-                    SizedBox(height: 12),
-                    TextFormField(
-                      controller: AuthScreen.accountControllerNotifire.value,
-                      textAlign: TextAlign.end,
-                      keyboardType: TextInputType.phone,
-                      style: TextStyle(
-                        fontFamily: FontFamily.iRANSansXFAMedium,
-                        fontSize: 14,
-                        color: Color(0xff4f4f4f),
-                      ),
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(
-                            10), // محدودیت 10 کاراکتر
-                        FilteringTextInputFormatter.deny(
-                            RegExp(r'^0')), // جلوگیری از شروع با 0
-                        FilteringTextInputFormatter.allow(RegExp(
-                            r'^[1-9][0-9]*$')), // فقط اعداد بدون صفر در ابتدا
-                      ],
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Color(0xffE0E0F9),
-                            width: 1,
-                          ),
+    return BlocProvider(
+      create: (context) => _bloc,
+      child: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is LoginCompletedState) {
+            prefService.createCacheString(
+                SharedKey.jwtToken, state.loginEntity.accessToken ?? '');
+            prefService.createCacheString(
+                SharedKey.refreshToken, state.loginEntity.refreshToken ?? '');
+            prefService.createCacheInt(
+                SharedKey.expires, state.loginEntity.expires ?? 0);
+            _navigateToRoot();
+          } else if (state is LoginErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              snackBarVerify(
+                context: context,
+                title: 'خطا در ورود',
+                desc: state.errorText,
+                icon: Assets.icons.activity.svg(),
+              ),
+            );
+          }
+        },
+        child: WillPopScope(
+          onWillPop: _onWillPop,
+          child: Scaffold(
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Align(
+                          alignment: Alignment.center,
+                          child: Assets.images.logo.image(height: 50)),
+                      SizedBox(height: 80),
+                      NormalMedium('نام کاربری'),
+                      SizedBox(height: 12),
+                      TextFormField(
+                        controller: AuthScreen.accountControllerNotifire.value,
+                        textAlign: TextAlign.end,
+                        keyboardType: TextInputType.phone,
+                        style: TextStyle(
+                          fontFamily: FontFamily.iRANSansXFAMedium,
+                          fontSize: 14,
+                          color: Color(0xff4f4f4f),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Color(0xFF861C8C),
-                            width: 1,
-                          ),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 24),
-                    NormalMedium('رمز عبور'),
-                    SizedBox(height: 12),
-                    TextFormField(
-                      controller: AuthScreen.passControllerNotifire.value,
-                      obscureText: obscureText,
-                      textAlign: TextAlign.end,
-                      style: TextStyle(
-                        fontFamily: FontFamily.iRANSansXFAMedium,
-                        fontSize: 14,
-                        color: Color(0xff4f4f4f),
-                      ),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Color(0xffE0E0F9),
-                            width: 1,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Color(0xFF861C8C),
-                            width: 1,
-                          ),
-                        ),
-                        prefixIcon: ValueListenableBuilder(
-                          valueListenable:
-                              AuthScreen.passControllerNotifire.value,
-                          builder: (context, value, child) {
-                            return value.text.isNotEmpty
-                                ? GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        obscureText = !obscureText;
-                                      });
-                                    },
-                                    child: Icon(
-                                      obscureText
-                                          ? Icons.visibility_off
-                                          : Icons.visibility,
-                                      color: Color(0xffCAC4CF),
-                                    ),
-                                  )
-                                : Container();
-                          },
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 48),
-                    GestureDetector(
-                      onTap: () {
-                        if (AuthScreen.accountControllerNotifire.value.text
-                                .isNotEmpty &&
-                            AuthScreen
-                                .passControllerNotifire.value.text.isNotEmpty) {
-                          BlocProvider.of<AuthBloc>(context).add(LoginEvent(
-                            phoneNumber:
-                                AuthScreen.accountControllerNotifire.value.text,
-                            password:
-                                AuthScreen.passControllerNotifire.value.text,
-                          ));
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarVerify(
-                              context: context,
-                              title: 'خطا',
-                              desc: 'لطفاً نام کاربری و رمز عبور را وارد کنید',
-                              icon: Assets.icons.activity.svg(),
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(
+                              10), // محدودیت 10 کاراکتر
+                          FilteringTextInputFormatter.deny(
+                              RegExp(r'^0')), // جلوگیری از شروع با 0
+                          FilteringTextInputFormatter.allow(RegExp(
+                              r'^[1-9][0-9]*$')), // فقط اعداد بدون صفر در ابتدا
+                        ],
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: Color(0xffE0E0F9),
+                              width: 1,
                             ),
-                          );
-                        }
-                      },
-                      child: Container(
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: Color(0xff861C8C),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        alignment: Alignment.center,
-                        child: BlocBuilder<AuthBloc, AuthState>(
-                          builder: (context, state) {
-                            if (state is LoginLoadingState) {
-                              return CupertinoActivityIndicator(
-                                color: Colors.white,
-                              );
-                            } else {
-                              return LargeMedium(
-                                'ورود',
-                                textColorInLight: Colors.white,
-                              );
-                            }
-                          },
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: Color(0xFF861C8C),
+                              width: 1,
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 48),
-                  ],
+                      SizedBox(height: 24),
+                      NormalMedium('رمز عبور'),
+                      SizedBox(height: 12),
+                      TextFormField(
+                        controller: AuthScreen.passControllerNotifire.value,
+                        obscureText: obscureText,
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontFamily: FontFamily.iRANSansXFAMedium,
+                          fontSize: 14,
+                          color: Color(0xff4f4f4f),
+                        ),
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: Color(0xffE0E0F9),
+                              width: 1,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: Color(0xFF861C8C),
+                              width: 1,
+                            ),
+                          ),
+                          prefixIcon: ValueListenableBuilder(
+                            valueListenable:
+                                AuthScreen.passControllerNotifire.value,
+                            builder: (context, value, child) {
+                              return value.text.isNotEmpty
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          obscureText = !obscureText;
+                                        });
+                                      },
+                                      child: Icon(
+                                        obscureText
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color: Color(0xffCAC4CF),
+                                      ),
+                                    )
+                                  : Container();
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 48),
+                      GestureDetector(
+                        onTap: () {
+                          if (AuthScreen.accountControllerNotifire.value.text
+                                  .isNotEmpty &&
+                              AuthScreen.passControllerNotifire.value.text
+                                  .isNotEmpty) {
+                            _bloc.add(LoginEvent(
+                              phoneNumber: AuthScreen
+                                  .accountControllerNotifire.value.text,
+                              password:
+                                  AuthScreen.passControllerNotifire.value.text,
+                            ));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBarVerify(
+                                context: context,
+                                title: 'خطا',
+                                desc:
+                                    'لطفاً نام کاربری و رمز عبور را وارد کنید',
+                                icon: Assets.icons.activity.svg(),
+                              ),
+                            );
+                          }
+                        },
+                        child: Container(
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: Color(0xff861C8C),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          alignment: Alignment.center,
+                          child: BlocBuilder<AuthBloc, AuthState>(
+                            builder: (context, state) {
+                              if (state is LoginLoadingState) {
+                                return CupertinoActivityIndicator(
+                                  color: Colors.white,
+                                );
+                              } else {
+                                return LargeMedium(
+                                  'ورود',
+                                  textColorInLight: Colors.white,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 48),
+                    ],
+                  ),
                 ),
               ),
             ),

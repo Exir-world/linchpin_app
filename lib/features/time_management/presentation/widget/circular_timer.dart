@@ -263,7 +263,7 @@ class _CircularTimerState extends State<CircularTimer> {
 
   @override
   void dispose() {
-    _timer.cancel(); // متوقف کردن تایمر هنگام بسته شدن ویجت
+    _timer.cancel();
     super.dispose();
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 import 'package:linchpin_app/core/customui/loading_widget.dart';
+import 'package:linchpin_app/core/extension/context_extension.dart';
 import 'package:linchpin_app/features/duties/presentation/bloc/duties_bloc.dart';
 import 'package:linchpin_app/features/duties/presentation/duties_screen.dart';
 import 'package:linchpin_app/features/duties/presentation/my_task_screen.dart';
@@ -13,14 +14,17 @@ class AllDutiesScreen extends StatefulWidget {
 
   @override
   State<AllDutiesScreen> createState() => _AllDutiesScreenState();
-  static ValueNotifier<int> tabIndexNotifire = ValueNotifier(0);
+  static late ValueNotifier<int> tabIndexNotifire;
 }
 
 class _AllDutiesScreenState extends State<AllDutiesScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late TabController _tabController;
+
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    AllDutiesScreen.tabIndexNotifire = ValueNotifier(0);
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       AllDutiesScreen.tabIndexNotifire.value = _tabController.index;
@@ -30,13 +34,57 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
   }
 
   @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    AllDutiesScreen.tabIndexNotifire.dispose();
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      PaintingBinding.instance.reassembleApplication();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DutiesBloc, DutiesState>(
-      builder: (context, state) {
-        if (state is AllTasksCompleted) {
-          return Scaffold(
-            appBar: appBarRoot(context, true),
-            body: DefaultTabController(
+    return Scaffold(
+      appBar: appBarRoot(context, true),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: SizedBox(
+        height: 56,
+        width: 56,
+        child: FloatingActionButton(
+          backgroundColor: Color(0xff861C8C),
+          shape: CircleBorder(),
+          child: Container(
+            height: 56,
+            width: 56,
+            decoration: BoxDecoration(
+                color: Color(0xff861C8C),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(8, 8),
+                    blurRadius: 15,
+                    color: Color(0xffE549FE).withValues(alpha: 0.15),
+                  ),
+                ]),
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 32,
+            ),
+          ),
+          onPressed: () {},
+        ),
+      ),
+      body: BlocBuilder<DutiesBloc, DutiesState>(
+        builder: (context, state) {
+          if (state is AllTasksCompleted) {
+            return DefaultTabController(
               length: 2,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
@@ -142,56 +190,75 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
                             child: Column(
                               children: [
                                 SizedBox(height: 24),
-                                ListView.builder(
-                                  itemCount: state.tasksEntity.myTasks?.length,
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.only(bottom: 80),
-                                  itemBuilder: (context, index) {
-                                    final data =
-                                        state.tasksEntity.myTasks![index];
-                                    return TaskItem(
-                                      title: data.title ?? '',
-                                      date: data.date ?? '',
-                                      tag: data.taskTags!,
-                                      flagTitle: data.priority?.title ?? '',
-                                      imageFlag: Assets.icons.flag1.svg(),
-                                      isOthers: false,
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MyTaskScreen(),
-                                            ));
-                                      },
-                                      isListTag: false,
-                                      icon: data.done!
-                                          ? Assets.icons.check.svg(height: 24)
-                                          : Container(
-                                              width: 17,
-                                              height: 17,
-                                              margin: EdgeInsets.all(4),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Color(0xff030712)
-                                                        .withValues(
-                                                            alpha: 0.12),
-                                                    blurRadius: 2.4,
-                                                    offset: Offset(0, 1.2),
-                                                    spreadRadius: 1.2,
+                                state.tasksEntity.myTasks!.isNotEmpty
+                                    ? ListView.builder(
+                                        itemCount:
+                                            state.tasksEntity.myTasks?.length,
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        padding: EdgeInsets.only(bottom: 80),
+                                        itemBuilder: (context, index) {
+                                          final data =
+                                              state.tasksEntity.myTasks![index];
+                                          return TaskItem(
+                                            title: data.title ?? '',
+                                            date: data.date ?? '',
+                                            tag: data.taskTags!,
+                                            flagTitle:
+                                                data.priority?.title ?? '',
+                                            flagColor: int.parse(data
+                                                .priority!.color!
+                                                .replaceAll("#", "0xff")),
+                                            isOthers: false,
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MyTaskScreen(
+                                                            taskId: data.id!),
+                                                  ));
+                                            },
+                                            isListTag: false,
+                                            icon: data.done!
+                                                ? Assets.icons.check
+                                                    .svg(height: 24)
+                                                : Container(
+                                                    width: 17,
+                                                    height: 17,
+                                                    margin: EdgeInsets.all(4),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      shape: BoxShape.circle,
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color:
+                                                              Color(0xff030712)
+                                                                  .withValues(
+                                                                      alpha:
+                                                                          0.12),
+                                                          blurRadius: 2.4,
+                                                          offset:
+                                                              Offset(0, 1.2),
+                                                          spreadRadius: 1.2,
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                      imageUrl: null,
-                                      avatarName: null,
-                                    );
-                                  },
-                                ),
+                                            imageUrl: null,
+                                            avatarName: null,
+                                          );
+                                        },
+                                      )
+                                    : SizedBox(
+                                        height: context.screenHeight / 2,
+                                        child: Center(
+                                          child: NormalRegular(
+                                            'وظیفه ای تعریف نشده.',
+                                            textColorInLight: Color(0xffCAC4CF),
+                                          ),
+                                        ),
+                                      ),
                               ],
                             ),
                           ),
@@ -199,57 +266,75 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
                             child: Column(
                               children: [
                                 SizedBox(height: 24),
-                                ListView.builder(
-                                  itemCount:
-                                      state.tasksEntity.otherTasks?.length,
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.only(bottom: 80),
-                                  itemBuilder: (context, index) {
-                                    final data =
-                                        state.tasksEntity.otherTasks![index];
-                                    return TaskItem(
-                                      title: data.title ?? '',
-                                      date: data.date ?? '',
-                                      tag: data.taskTags!,
-                                      flagTitle: data.priority?.title ?? '',
-                                      imageFlag: Assets.icons.flag1.svg(),
-                                      isOthers: true,
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MyTaskScreen(),
-                                            ));
-                                      },
-                                      isListTag: false,
-                                      icon: data.done!
-                                          ? Assets.icons.check.svg(height: 24)
-                                          : Container(
-                                              width: 17,
-                                              height: 17,
-                                              margin: EdgeInsets.all(4),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Color(0xff030712)
-                                                        .withValues(
-                                                            alpha: 0.12),
-                                                    blurRadius: 2.4,
-                                                    offset: Offset(0, 1.2),
-                                                    spreadRadius: 1.2,
+                                state.tasksEntity.otherTasks!.isNotEmpty
+                                    ? ListView.builder(
+                                        itemCount: state
+                                            .tasksEntity.otherTasks?.length,
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        padding: EdgeInsets.only(bottom: 80),
+                                        itemBuilder: (context, index) {
+                                          final data = state
+                                              .tasksEntity.otherTasks![index];
+                                          return TaskItem(
+                                            title: data.title ?? '',
+                                            date: data.date ?? '',
+                                            tag: data.taskTags!,
+                                            flagTitle:
+                                                data.priority?.title ?? '',
+                                            flagColor: int.parse(data
+                                                .priority!.color!
+                                                .replaceAll("#", "0xff")),
+                                            isOthers: true,
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MyTaskScreen(
+                                                            taskId: data.id!),
+                                                  ));
+                                            },
+                                            isListTag: false,
+                                            icon: data.done!
+                                                ? Assets.icons.check
+                                                    .svg(height: 24)
+                                                : Container(
+                                                    width: 17,
+                                                    height: 17,
+                                                    margin: EdgeInsets.all(4),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      shape: BoxShape.circle,
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color:
+                                                              Color(0xff030712)
+                                                                  .withValues(
+                                                                      alpha:
+                                                                          0.12),
+                                                          blurRadius: 2.4,
+                                                          offset:
+                                                              Offset(0, 1.2),
+                                                          spreadRadius: 1.2,
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                      imageUrl: null,
-                                      avatarName: data.user?.name ?? '',
-                                    );
-                                  },
-                                ),
+                                            imageUrl: null,
+                                            avatarName: data.user?.name ?? '',
+                                          );
+                                        },
+                                      )
+                                    : SizedBox(
+                                        height: context.screenHeight / 2,
+                                        child: Center(
+                                          child: NormalRegular(
+                                            'وظیفه ای تعریف نشده.',
+                                            textColorInLight: Color(0xffCAC4CF),
+                                          ),
+                                        ),
+                                      ),
                               ],
                             ),
                           ),
@@ -259,20 +344,20 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
                   ],
                 ),
               ),
-            ),
-          );
-        } else if (state is AllTasksError) {
-          return Scaffold(
-            body: Center(child: Text(state.textError)),
-          );
-        } else if (state is AllTasksLoading) {
-          return LoadingWidget();
-        } else {
-          return Scaffold(
-            body: Center(child: Text('data')),
-          );
-        }
-      },
+            );
+          } else if (state is AllTasksError) {
+            return Scaffold(
+              body: Center(child: Text(state.textError)),
+            );
+          } else if (state is AllTasksLoading) {
+            return LoadingWidget();
+          } else {
+            return Scaffold(
+              body: Center(child: Text('data')),
+            );
+          }
+        },
+      ),
     );
   }
 }

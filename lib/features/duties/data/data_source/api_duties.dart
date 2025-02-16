@@ -18,4 +18,19 @@ class ApiDuties {
     });
     return response;
   }
+
+  // جزئیات درخواست
+  Future<dynamic> taskDetail(int taskId) async {
+    final response = await httpclient.get('tasks/$taskId');
+    return response;
+  }
+
+  // ساب تسک رو انجام دادم یا ندادم
+  Future<dynamic> subtaskDone(int subtaskId, bool done) async {
+    final response = await httpclient.post('tasks/subtask/done', data: {
+      "subtaskId": subtaskId,
+      "done": done,
+    });
+    return response;
+  }
 }

@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:linchpin_app/core/common/colors.dart';
 import 'package:linchpin_app/core/common/dimens.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
+import 'package:linchpin_app/core/customui/loading_widget.dart';
 import 'package:linchpin_app/core/customui/snackbar_verify.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
+import 'package:linchpin_app/core/locator/di/di.dart';
 import 'package:linchpin_app/core/translate/locale_keys.dart';
 import 'package:linchpin_app/features/root/presentation/root_screen.dart';
 import 'package:linchpin_app/features/time_management/presentation/bloc/time_management_bloc.dart';
@@ -22,7 +22,9 @@ class TimeManagementScreen extends StatefulWidget {
   State<TimeManagementScreen> createState() => _TimeManagementScreenState();
 }
 
-class _TimeManagementScreenState extends State<TimeManagementScreen> {
+class _TimeManagementScreenState extends State<TimeManagementScreen>
+    with WidgetsBindingObserver {
+  late TimeManagementBloc _bloc;
   bool _isLoading = false;
 
   String? currentStatus;
@@ -74,350 +76,335 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    _bloc = getIt<TimeManagementBloc>();
     currentStatus = null;
     nameStatus = null;
-    BlocProvider.of<TimeManagementBloc>(context)
-        .add(DailyEvent(actionType: 'daily'));
+    _bloc.add(DailyEvent(actionType: 'daily'));
     formatDateTime(DateTime.now()); // نمایش تاریخ و زمان فرمت‌شده
     super.initState();
   }
 
   @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _bloc.close();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      PaintingBinding.instance.reassembleApplication();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TimeManagementBloc, TimeManagementState>(
-      listener: (context, state) {
-        if (state is DailyLoadingState) {
-          setState(() {
-            _isLoading = true;
-          });
-        } else if (state is DailyComplitedState) {
-          nameStatus == null
-              ? null
-              : nameStatus == 'check-in'
-                  ? ScaffoldMessenger.of(context).showSnackBar(
-                      snackBarVerify(
-                        context: context,
-                        title: 'ثبت ورود انجام شد.',
-                        desc: '',
-                        icon: Assets.icons.verify.image(),
-                      ),
-                    )
-                  : nameStatus == 'check-out'
-                      ? ScaffoldMessenger.of(context).showSnackBar(
-                          snackBarVerify(
-                            context: context,
-                            title: 'خروج شما انجام شد.',
-                            desc: '',
-                            icon: Assets.icons.verify.image(),
-                          ),
-                        )
-                      : nameStatus == 'stop-start'
-                          ? ScaffoldMessenger.of(context).showSnackBar(
-                              snackBarVerify(
-                                context: context,
-                                title: 'زمان متوقف شد.',
-                                desc: '',
-                                icon: Assets.icons.verify.image(),
-                              ),
-                            )
-                          : ScaffoldMessenger.of(context)
-                              .showSnackBar(snackBarVerify(
+    return BlocProvider(
+      create: (context) => _bloc,
+      child: BlocConsumer<TimeManagementBloc, TimeManagementState>(
+        listener: (context, state) {
+          if (state is DailyLoadingState) {
+            setState(() {
+              _isLoading = true;
+            });
+          } else if (state is DailyComplitedState) {
+            nameStatus == null
+                ? null
+                : nameStatus == 'check-in'
+                    ? ScaffoldMessenger.of(context).showSnackBar(
+                        snackBarVerify(
+                          context: context,
+                          title: 'ثبت ورود انجام شد.',
+                          desc: '',
+                          icon: Assets.icons.verify.image(),
+                        ),
+                      )
+                    : nameStatus == 'check-out'
+                        ? ScaffoldMessenger.of(context).showSnackBar(
+                            snackBarVerify(
                               context: context,
-                              title: 'ادامه ساعت کاری فعال شد.',
+                              title: 'خروج شما انجام شد.',
                               desc: '',
                               icon: Assets.icons.verify.image(),
-                            ));
-          setState(() {
-            _isLoading = false;
-          });
-        } else {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      },
-      builder: (context, state) {
-        if (state is DailyComplitedState) {
-          // فرض میکنیم که workDuration از state به دست میاد
-          int workDuration = state.dailyEntity.workDuration ??
-              0; // دریافت مدت زمان کاری به ثانیه
+                            ),
+                          )
+                        : nameStatus == 'stop-start'
+                            ? ScaffoldMessenger.of(context).showSnackBar(
+                                snackBarVerify(
+                                  context: context,
+                                  title: 'زمان متوقف شد.',
+                                  desc: '',
+                                  icon: Assets.icons.verify.image(),
+                                ),
+                              )
+                            : ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBarVerify(
+                                context: context,
+                                title: 'ادامه ساعت کاری فعال شد.',
+                                desc: '',
+                                icon: Assets.icons.verify.image(),
+                              ));
+            setState(() {
+              _isLoading = false;
+            });
+          } else {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        },
+        builder: (context, state) {
+          if (state is DailyComplitedState) {
+            // فرض میکنیم که workDuration از state به دست میاد
+            int workDuration = state.dailyEntity.workDuration ??
+                0; // دریافت مدت زمان کاری به ثانیه
 
-          // تبدیل workDuration به فرمت ساعت و دقیقه
-          String formattedTime = convertSecondsToTime(workDuration);
-          currentStatus = state.dailyEntity.currentStatus;
-          lN = state.dailyEntity.user?.name ?? '';
-          lkh = state.dailyEntity.lastEndTime;
-          ls = formattedTime;
-          lv = state.dailyEntity.todayStartTime;
-          return Scaffold(
-            backgroundColor: BACKGROUND_LIGHT_COLOR,
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: VERTICAL_SPACING_5x),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      BigRegular(LocaleKeys.goodDay.tr()),
-                      SizedBox(width: 4),
-                      BigBold(
-                        _truncateText(state.dailyEntity.user?.name ?? '', 10),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: VERTICAL_SPACING_6x),
-                  CircularTimer(
-                    initTime: currentStatus == 'CHECKED_IN'
-                        ? 0
-                        : currentStatus == 'STOP'
-                            ? 0
-                            : null,
-                    endTime: state.dailyEntity.eachTimeDuration,
-                    openAppTime: state.dailyEntity.currentDuration!,
-                    isTimerAllowed: currentStatus == 'STOP' ? false : true,
-                    shouldReset: currentStatus ==
-                        'CHECKED_OUT', // فقط در صورت "ثبت ورود" ریست شود
-                    remainingDuration: state.dailyEntity.remainingDuration!,
-                    stopDuration: state.dailyEntity.stopDuration!,
-                  ),
-                  SizedBox(height: VERTICAL_SPACING_10x),
-                  currentStatus == 'CHECKED_OUT'
-                      ? ButtonStatus(
-                          colorBackgerand: Color(0xff58EC89),
-                          title: 'ثبت ورود',
-                          icon: Assets.icons.timerTick.svg(),
-                          onTap: () {
-                            nameStatus = 'check-in';
-                            BlocProvider.of<TimeManagementBloc>(context)
-                                .add(DailyEvent(actionType: 'check-in'));
-                          },
-                        )
-                      : currentStatus == 'CHECKED_IN'
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ButtonStatus(
-                                  colorBackgerand: Color(0xffEC5858),
-                                  title: 'ثبت خروج',
-                                  icon: Assets.icons.timerTick.svg(),
-                                  onTap: () {
-                                    nameStatus = 'check-out';
-                                    BlocProvider.of<TimeManagementBloc>(context)
-                                        .add(DailyEvent(
-                                            actionType: 'check-out'));
-                                  },
-                                ),
-                                SizedBox(width: 40),
-                                ButtonStatus(
-                                  colorBackgerand: Color(0xffFFA656),
-                                  title: 'توقف',
-                                  icon: Assets.icons.pause.svg(),
-                                  onTap: () {
-                                    nameStatus = 'stop-start';
-                                    BlocProvider.of<TimeManagementBloc>(context)
-                                        .add(DailyEvent(
-                                            actionType: 'stop-start'));
-                                  },
-                                ),
-                              ],
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ButtonStatus(
-                                  colorBackgerand: Color(0xffEC5858),
-                                  title: 'ثبت خروج',
-                                  icon: Assets.icons.timerTick.svg(),
-                                  onTap: () {
-                                    nameStatus = 'check-out';
-                                    BlocProvider.of<TimeManagementBloc>(context)
-                                        .add(DailyEvent(
-                                            actionType: 'check-out'));
-                                  },
-                                ),
-                                SizedBox(width: 40),
-                                ButtonStatus(
-                                  colorBackgerand: Color(0xff58EC89),
-                                  title: 'ادامه',
-                                  icon: Assets.icons.play.svg(height: 30),
-                                  onTap: () {
-                                    nameStatus = 'stop-end';
-                                    BlocProvider.of<TimeManagementBloc>(context)
-                                        .add(
-                                            DailyEvent(actionType: 'stop-end'));
-                                  },
-                                ),
-                              ],
-                            ),
-                  SizedBox(height: VERTICAL_SPACING_8x),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _BoxEntryExit(
-                        image: Assets.icons.timerTick2.svg(),
-                        title: 'زمان ورود',
-                        time: state.dailyEntity.todayStartTime ?? '-',
-                      ),
-                      SizedBox(width: 12),
-                      _BoxEntryExit(
-                        image: Assets.icons.timerTick3.svg(),
-                        title: 'ساعات کار',
-                        time: formattedTime == '00:00' ? '-' : formattedTime,
-                      ),
-                      SizedBox(width: 12),
-                      _BoxEntryExit(
-                        image: Assets.icons.timerTick4.svg(),
-                        title: 'زمان خروج',
-                        time: state.dailyEntity.lastEndTime ?? '-',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        } else if (state is DailyLoadingState) {
-          return Scaffold(
-            backgroundColor: BACKGROUND_LIGHT_COLOR,
-            body: SingleChildScrollView(
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      SizedBox(height: VERTICAL_SPACING_5x),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          BigRegular(LocaleKeys.goodDay.tr()),
-                          SizedBox(width: 4),
-                          BigBold(
-                            _truncateText(lN ?? '', 10),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: VERTICAL_SPACING_6x),
-                      CircularTimer(
-                        initTime: null,
-                        endTime: null,
-                        openAppTime: 0,
-                        isTimerAllowed: false,
-                        shouldReset: false,
-                        remainingDuration: 0,
-                        stopDuration: 0,
-                      ),
-                      SizedBox(height: VERTICAL_SPACING_10x),
-                      currentStatus == 'CHECKED_OUT'
-                          ? ButtonStatus(
-                              colorBackgerand: Color(0xff58EC89),
-                              title: 'ثبت ورود',
-                              icon: Assets.icons.timerTick.svg(),
-                              onTap: () {},
-                            )
-                          : currentStatus == 'CHECKED_IN'
-                              ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ButtonStatus(
-                                      colorBackgerand: Color(0xffEC5858),
-                                      title: 'ثبت خروج',
-                                      icon: Assets.icons.timerTick.svg(),
-                                      onTap: () {},
-                                    ),
-                                    SizedBox(width: 40),
-                                    ButtonStatus(
-                                      colorBackgerand: Color(0xffFFA656),
-                                      title: 'توقف',
-                                      icon: Assets.icons.pause.svg(),
-                                      onTap: () {},
-                                    ),
-                                  ],
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ButtonStatus(
-                                      colorBackgerand: Color(0xffEC5858),
-                                      title: 'ثبت خروج',
-                                      icon: Assets.icons.timerTick.svg(),
-                                      onTap: () {},
-                                    ),
-                                    SizedBox(width: 40),
-                                    ButtonStatus(
-                                      colorBackgerand: Color(0xff58EC89),
-                                      title: 'ادامه',
-                                      icon: Assets.icons.play.svg(height: 30),
-                                      onTap: () {},
-                                    ),
-                                  ],
-                                ),
-                      SizedBox(height: VERTICAL_SPACING_8x),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _BoxEntryExit(
-                            image: Assets.icons.timerTick2.svg(),
-                            title: 'زمان ورود',
-                            time: lv ?? '-',
-                          ),
-                          SizedBox(width: 12),
-                          _BoxEntryExit(
-                            image: Assets.icons.timerTick3.svg(),
-                            title: 'ساعات کار',
-                            time: ls ?? '-',
-                          ),
-                          SizedBox(width: 12),
-                          _BoxEntryExit(
-                            image: Assets.icons.timerTick4.svg(),
-                            title: 'زمان خروج',
-                            time: lkh ?? '-',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  if (_isLoading)
-                    Container(
-                      width: context.screenWidth,
-                      height: context.screenHeight - 200,
-                      color: Colors.white.withValues(alpha: .5),
-                      child: Center(
-                        child: Container(
-                          width: 70,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: .15),
-                                blurRadius: 20,
-                                offset: Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: SpinKitFadingCube(
-                              size: 24,
-                              color: Color(0xff670099),
-                            ),
-                          ),
+            // تبدیل workDuration به فرمت ساعت و دقیقه
+            String formattedTime = convertSecondsToTime(workDuration);
+            currentStatus = state.dailyEntity.currentStatus;
+            lN = state.dailyEntity.user?.name ?? '';
+            lkh = state.dailyEntity.lastEndTime;
+            ls = formattedTime;
+            lv = state.dailyEntity.todayStartTime;
+            return Scaffold(
+              backgroundColor: BACKGROUND_LIGHT_COLOR,
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: VERTICAL_SPACING_5x),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        BigRegular(LocaleKeys.goodDay.tr()),
+                        SizedBox(width: 4),
+                        BigBold(
+                          _truncateText(state.dailyEntity.user?.name ?? '', 10),
                         ),
-                      ),
+                      ],
                     ),
-                ],
+                    SizedBox(height: VERTICAL_SPACING_6x),
+                    CircularTimer(
+                      initTime: currentStatus == 'CHECKED_IN'
+                          ? 0
+                          : currentStatus == 'STOP'
+                              ? 0
+                              : null,
+                      endTime: state.dailyEntity.eachTimeDuration,
+                      openAppTime: state.dailyEntity.currentDuration!,
+                      isTimerAllowed: currentStatus == 'STOP' ? false : true,
+                      shouldReset: currentStatus ==
+                          'CHECKED_OUT', // فقط در صورت "ثبت ورود" ریست شود
+                      remainingDuration: state.dailyEntity.remainingDuration!,
+                      stopDuration: state.dailyEntity.stopDuration!,
+                    ),
+                    SizedBox(height: VERTICAL_SPACING_10x),
+                    currentStatus == 'CHECKED_OUT'
+                        ? ButtonStatus(
+                            colorBackgerand: Color(0xff58EC89),
+                            title: 'ثبت ورود',
+                            icon: Assets.icons.timerTick.svg(),
+                            onTap: () {
+                              nameStatus = 'check-in';
+                              _bloc.add(DailyEvent(actionType: 'check-in'));
+                            },
+                          )
+                        : currentStatus == 'CHECKED_IN'
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ButtonStatus(
+                                    colorBackgerand: Color(0xffEC5858),
+                                    title: 'ثبت خروج',
+                                    icon: Assets.icons.timerTick.svg(),
+                                    onTap: () {
+                                      nameStatus = 'check-out';
+                                      _bloc.add(
+                                          DailyEvent(actionType: 'check-out'));
+                                    },
+                                  ),
+                                  SizedBox(width: 40),
+                                  ButtonStatus(
+                                    colorBackgerand: Color(0xffFFA656),
+                                    title: 'توقف',
+                                    icon: Assets.icons.pause.svg(),
+                                    onTap: () {
+                                      nameStatus = 'stop-start';
+                                      _bloc.add(
+                                          DailyEvent(actionType: 'stop-start'));
+                                    },
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ButtonStatus(
+                                    colorBackgerand: Color(0xffEC5858),
+                                    title: 'ثبت خروج',
+                                    icon: Assets.icons.timerTick.svg(),
+                                    onTap: () {
+                                      nameStatus = 'check-out';
+                                      _bloc.add(
+                                          DailyEvent(actionType: 'check-out'));
+                                    },
+                                  ),
+                                  SizedBox(width: 40),
+                                  ButtonStatus(
+                                    colorBackgerand: Color(0xff58EC89),
+                                    title: 'ادامه',
+                                    icon: Assets.icons.play.svg(height: 30),
+                                    onTap: () {
+                                      nameStatus = 'stop-end';
+                                      _bloc.add(
+                                          DailyEvent(actionType: 'stop-end'));
+                                    },
+                                  ),
+                                ],
+                              ),
+                    SizedBox(height: VERTICAL_SPACING_8x),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _BoxEntryExit(
+                          image: Assets.icons.timerTick2.svg(),
+                          title: 'زمان ورود',
+                          time: state.dailyEntity.todayStartTime ?? '-',
+                        ),
+                        SizedBox(width: 12),
+                        _BoxEntryExit(
+                          image: Assets.icons.timerTick3.svg(),
+                          title: 'ساعات کار',
+                          time: formattedTime == '00:00' ? '-' : formattedTime,
+                        ),
+                        SizedBox(width: 12),
+                        _BoxEntryExit(
+                          image: Assets.icons.timerTick4.svg(),
+                          title: 'زمان خروج',
+                          time: state.dailyEntity.lastEndTime ?? '-',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        } else if (state is DailyErrorState) {
-          return Scaffold(
-            body: Center(child: Text(state.errorText)),
-          );
-        } else {
-          return Scaffold(
-            body: Center(child: Text('data')),
-          );
-        }
-      },
+            );
+          } else if (state is DailyLoadingState) {
+            return Scaffold(
+              backgroundColor: BACKGROUND_LIGHT_COLOR,
+              body: SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(height: VERTICAL_SPACING_5x),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            BigRegular(LocaleKeys.goodDay.tr()),
+                            SizedBox(width: 4),
+                            BigBold(
+                              _truncateText(lN ?? '', 10),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: VERTICAL_SPACING_6x),
+                        CircularTimer(
+                          initTime: null,
+                          endTime: null,
+                          openAppTime: 0,
+                          isTimerAllowed: false,
+                          shouldReset: false,
+                          remainingDuration: 0,
+                          stopDuration: 0,
+                        ),
+                        SizedBox(height: VERTICAL_SPACING_10x),
+                        currentStatus == 'CHECKED_OUT'
+                            ? ButtonStatus(
+                                colorBackgerand: Color(0xff58EC89),
+                                title: 'ثبت ورود',
+                                icon: Assets.icons.timerTick.svg(),
+                                onTap: () {},
+                              )
+                            : currentStatus == 'CHECKED_IN'
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ButtonStatus(
+                                        colorBackgerand: Color(0xffEC5858),
+                                        title: 'ثبت خروج',
+                                        icon: Assets.icons.timerTick.svg(),
+                                        onTap: () {},
+                                      ),
+                                      SizedBox(width: 40),
+                                      ButtonStatus(
+                                        colorBackgerand: Color(0xffFFA656),
+                                        title: 'توقف',
+                                        icon: Assets.icons.pause.svg(),
+                                        onTap: () {},
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ButtonStatus(
+                                        colorBackgerand: Color(0xffEC5858),
+                                        title: 'ثبت خروج',
+                                        icon: Assets.icons.timerTick.svg(),
+                                        onTap: () {},
+                                      ),
+                                      SizedBox(width: 40),
+                                      ButtonStatus(
+                                        colorBackgerand: Color(0xff58EC89),
+                                        title: 'ادامه',
+                                        icon: Assets.icons.play.svg(height: 30),
+                                        onTap: () {},
+                                      ),
+                                    ],
+                                  ),
+                        SizedBox(height: VERTICAL_SPACING_8x),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _BoxEntryExit(
+                              image: Assets.icons.timerTick2.svg(),
+                              title: 'زمان ورود',
+                              time: lv ?? '-',
+                            ),
+                            SizedBox(width: 12),
+                            _BoxEntryExit(
+                              image: Assets.icons.timerTick3.svg(),
+                              title: 'ساعات کار',
+                              time: ls ?? '-',
+                            ),
+                            SizedBox(width: 12),
+                            _BoxEntryExit(
+                              image: Assets.icons.timerTick4.svg(),
+                              title: 'زمان خروج',
+                              time: lkh ?? '-',
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    if (_isLoading) LoadingWidget(),
+                  ],
+                ),
+              ),
+            );
+          } else if (state is DailyErrorState) {
+            return Scaffold(
+              body: Center(child: Text(state.errorText)),
+            );
+          } else {
+            return Scaffold(
+              body: Center(child: Text('data')),
+            );
+          }
+        },
+      ),
     );
   }
 }

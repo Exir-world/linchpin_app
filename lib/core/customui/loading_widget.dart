@@ -22,7 +22,7 @@ class LoadingWidget extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: .15),
+                color: Color(0xff670099).withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: Offset(0, 5),
               ),

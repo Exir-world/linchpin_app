@@ -1,72 +1,126 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
+import 'package:linchpin_app/core/customui/loading_widget.dart';
+import 'package:linchpin_app/core/locator/di/di.dart';
+import 'package:linchpin_app/features/duties/data/models/task_detail_model/attachment.dart';
+import 'package:linchpin_app/features/duties/data/models/task_detail_model/priority.dart';
+import 'package:linchpin_app/features/duties/data/models/task_detail_model/task_tag.dart';
+import 'package:linchpin_app/features/duties/presentation/bloc/duties_bloc.dart';
 import 'package:linchpin_app/features/duties/presentation/duties_screen.dart';
+import 'package:linchpin_app/features/duties/presentation/widgets/subtask_widget.dart';
 import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
 import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
-class MyTaskScreen extends StatelessWidget {
-  const MyTaskScreen({super.key});
+class MyTaskScreen extends StatefulWidget {
+  final int taskId;
+  const MyTaskScreen({super.key, required this.taskId});
+
+  @override
+  State<MyTaskScreen> createState() => _MyTaskScreenState();
+}
+
+class _MyTaskScreenState extends State<MyTaskScreen>
+    with WidgetsBindingObserver {
+  late DutiesBloc _bloc;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    _bloc = getIt<DutiesBloc>();
+    _bloc.add(TaskDetailEvent(taskId: widget.taskId));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _bloc.close();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      PaintingBinding.instance.reassembleApplication();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBarRoot(context, true),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // کارت جزئیات تسک
-              TaskDescWidget(),
-              SizedBox(height: 16),
-              // کارت پیوست ها
-              AttachTaskWidget(),
-              SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Assets.icons.task.svg(height: 24),
-                        SizedBox(width: 8),
-                        NormalMedium('ساب تسک ها'),
-                      ],
-                    ),
-                    SizedBox(height: 24),
-                    ListView.builder(
-                      itemCount: 3,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.only(bottom: 12),
-                          child: Row(
-                            children: [
-                              index == 2
-                                  ? Assets.icons.check.svg()
-                                  : Assets.icons.cir.svg(),
-                              SizedBox(width: 12),
-                              SmallRegular(
-                                'طراحی بنر سیکادا',
-                                decoration: index == 2
-                                    ? TextDecoration.lineThrough
-                                    : null,
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
+    return BlocProvider(
+      create: (context) => _bloc,
+      child: Scaffold(
+        appBar: appBarRoot(context, true),
+        body: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: BlocBuilder<DutiesBloc, DutiesState>(
+              buildWhen: (previous, current) {
+                if (current is TaskDetailCompleted ||
+                    current is TaskDetailLoading ||
+                    current is TaskDetailError) {
+                  return true;
+                } else {
+                  return false;
+                }
+              },
+              builder: (context, state) {
+                if (state is TaskDetailCompleted) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // کارت جزئیات تسک
+                      TaskDescWidget(
+                        title: state.taskDetailEntity.title!,
+                        desc: state.taskDetailEntity.description!,
+                        taskTags: state.taskDetailEntity.taskTags!,
+                        creatorApprove: state.taskDetailEntity.creatorApprove!,
+                        name: state.taskDetailEntity.user!.name!,
+                        priority: state.taskDetailEntity.priority!,
+                        date: state.taskDetailEntity.date!,
+                      ),
+
+                      // کارت پیوست ها
+                      state.taskDetailEntity.attachments!.isNotEmpty
+                          ? Column(
+                              children: [
+                                SizedBox(height: 16),
+                                AttachTaskWidget(
+                                  attachment:
+                                      state.taskDetailEntity.attachments!,
+                                ),
+                              ],
+                            )
+                          : SizedBox(),
+
+                      state.taskDetailEntity.subTasks!.isNotEmpty
+                          ? Column(
+                              children: [
+                                SizedBox(height: 16),
+                                SubtaskWidget(
+                                  subTask: state.taskDetailEntity.subTasks!,
+                                  bloc: _bloc,
+                                ),
+                              ],
+                            )
+                          : SizedBox(),
+                    ],
+                  );
+                } else if (state is TaskDetailLoading) {
+                  return LoadingWidget();
+                } else if (state is TaskDetailError) {
+                  return Center(child: Text(state.textError));
+                } else {
+                  return Center(child: Text('data'));
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -75,10 +129,32 @@ class MyTaskScreen extends StatelessWidget {
 }
 
 // کارت پیوست ها
-class AttachTaskWidget extends StatelessWidget {
+class AttachTaskWidget extends StatefulWidget {
+  final List<Attachment> attachment;
   const AttachTaskWidget({
     super.key,
+    required this.attachment,
   });
+
+  @override
+  State<AttachTaskWidget> createState() => _AttachTaskWidgetState();
+}
+
+class _AttachTaskWidgetState extends State<AttachTaskWidget> {
+  String formatFileSize(int bytes) {
+    if (bytes < 1024) {
+      return '$bytes بایت'; // کمتر از 1KB
+    } else if (bytes < 1024 * 1024) {
+      double kb = bytes / 1024;
+      return '${kb.toStringAsFixed(2)} کیلوبایت';
+    } else if (bytes < 1024 * 1024 * 1024) {
+      double mb = bytes / (1024 * 1024);
+      return '${mb.toStringAsFixed(2)} مگابایت';
+    } else {
+      double gb = bytes / (1024 * 1024 * 1024);
+      return '${gb.toStringAsFixed(2)} گیگابایت';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +162,13 @@ class AttachTaskWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(0, 3),
+            blurRadius: 30,
+            color: Color(0xff828282).withValues(alpha: 0.04),
+          ),
+        ],
       ),
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Column(
@@ -99,10 +182,11 @@ class AttachTaskWidget extends StatelessWidget {
           ),
           SizedBox(height: 24),
           ListView.builder(
-            itemCount: 2,
+            itemCount: widget.attachment.length,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
+              final data = widget.attachment[index];
               return Container(
                 height: 72,
                 margin: EdgeInsets.only(bottom: 8),
@@ -113,20 +197,29 @@ class AttachTaskWidget extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Assets.icons.download.svg(height: 20),
+                    DownloadButton(
+                      fileUrl: data.link!,
+                      fileName: data.fileName!,
+                    ),
                     Spacer(),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        SmallMedium('Design Brief.pdf'),
+                        SmallMedium(data.fileName!),
                         VerySmallRegular(
-                          '۳۱۳ کیلوبایت',
+                          formatFileSize(data.fileSize!),
                           textColorInLight: Color(0xff88719B),
                         ),
                       ],
                     ),
                     SizedBox(width: 16),
-                    Assets.images.pdf.svg(),
+                    data.fileType == 'IMG'
+                        ? Assets.images.img.svg()
+                        : data.fileType == 'PDF'
+                            ? Assets.images.pdf.svg()
+                            : data.fileType == 'XLS'
+                                ? Assets.images.xls.svg()
+                                : Assets.images.mp3.svg(),
                   ],
                 ),
               );
@@ -140,16 +233,38 @@ class AttachTaskWidget extends StatelessWidget {
 
 // کارت جزئیات تسک
 class TaskDescWidget extends StatelessWidget {
+  final String title;
+  final String desc;
+  final List<TaskTag> taskTags;
+  final bool creatorApprove;
+  final String name;
+  final Priority priority;
+  final String date;
   const TaskDescWidget({
     super.key,
+    required this.title,
+    required this.desc,
+    required this.taskTags,
+    required this.creatorApprove,
+    required this.name,
+    required this.priority,
+    required this.date,
   });
 
   @override
   Widget build(BuildContext context) {
+    int colorFlag = int.parse(priority.color!.replaceAll("#", "0xff"));
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(0, 3),
+            blurRadius: 30,
+            color: Color(0xff828282).withValues(alpha: 0.04),
+          ),
+        ],
       ),
       padding: EdgeInsets.all(16),
       child: Column(
@@ -157,69 +272,75 @@ class TaskDescWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xff030712).withValues(alpha: .12),
-                      blurRadius: 0,
-                      spreadRadius: 1.2,
+              creatorApprove
+                  ? Assets.icons.check.svg(height: 24)
+                  : Container(
+                      width: 17,
+                      height: 17,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xff030712).withValues(alpha: .12),
+                            blurRadius: 0,
+                            spreadRadius: 1.2,
+                          ),
+                          BoxShadow(
+                            color: Color(0xff030712).withValues(alpha: .12),
+                            blurRadius: 2.4,
+                            offset: Offset(0, 1.2),
+                          ),
+                        ],
+                      ),
                     ),
-                    BoxShadow(
-                      color: Color(0xff030712).withValues(alpha: .12),
-                      blurRadius: 2.4,
-                      offset: Offset(0, 1.2),
-                    ),
-                  ],
-                ),
-              ),
               SizedBox(width: 12),
-              NormalMedium('طراحی لندینگ سیکادا'),
+              NormalMedium(title),
             ],
           ),
           SizedBox(height: 24),
           SmallRegular(
-            'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است،',
+            desc,
             textColorInLight: Color(0xff828282),
           ),
           SizedBox(height: 24),
-          // SizedBox(
-          //   height: 26,
-          //   child: ListView.builder(
-          //     itemCount: 3,
-          //     shrinkWrap: true,
-          //     scrollDirection: Axis.horizontal,
-          //     itemBuilder: (context, index) {
-          //       return Padding(
-          //         padding: const EdgeInsets.only(left: 8),
-          //         child: TagContainer(
-          //           tag: 'دیزاین',
-          //           color: Color(0xffB10000),
-          //         ),
-          //       );
-          //     },
-          //   ),
-          // ),
+          SizedBox(
+            height: 26,
+            child: ListView.builder(
+              itemCount: taskTags.length,
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                final data = taskTags[index];
+                int color = int.parse(data.color!.replaceAll("#", "0xff"));
+                int textColor =
+                    int.parse(data.textColor!.replaceAll("#", "0xff"));
+                return Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: TagContainer(
+                    title: data.title!,
+                    color: color,
+                    textColor: textColor,
+                    isList: true,
+                  ),
+                );
+              },
+            ),
+          ),
           SizedBox(height: 24),
           Row(
             children: [
               Assets.icons.avatar.svg(),
               SizedBox(width: 8),
-              SmallMedium('زهرا محمدی'),
-              Spacer(),
-              Assets.icons.flag1.svg(),
-              SizedBox(width: 4),
               SmallMedium(
-                'مهم و فوری',
-                textColorInLight: Color(0xffFD5B71),
+                name,
+                textColorInLight: Color(0xff88719B),
               ),
               Spacer(),
+              PriorityWidget(colorFlag: colorFlag, title: priority.title!),
+              Spacer(),
               SmallRegular(
-                '22 آذر',
+                date,
                 textColorInLight: Color(0xff88719B),
               ),
               SizedBox(width: 4),
@@ -228,6 +349,142 @@ class TaskDescWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// پرچم و عنوان اهمیت وظیفه
+class PriorityWidget extends StatelessWidget {
+  final int colorFlag;
+  final String title;
+  const PriorityWidget({
+    super.key,
+    required this.colorFlag,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Assets.icons.flag.svg(color: Color(colorFlag)),
+        SizedBox(width: 4),
+        SmallMedium(
+          title,
+          textColorInLight: Color(colorFlag),
+        ),
+      ],
+    );
+  }
+}
+
+class DownloadButton extends StatefulWidget {
+  final String fileUrl;
+  final String fileName;
+
+  const DownloadButton({
+    super.key,
+    required this.fileUrl,
+    required this.fileName,
+  });
+
+  @override
+  State<DownloadButton> createState() => _DownloadButtonState();
+}
+
+class _DownloadButtonState extends State<DownloadButton> {
+  bool isDownloaded = false;
+  bool isDownloading = false;
+  int downloadProgress = 0;
+  String? filePath;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFileExists();
+  }
+
+  Future<void> _checkFileExists() async {
+    Directory? tempDir = await getExternalStorageDirectory();
+    filePath = '${tempDir?.path}/${widget.fileName}';
+    if (await File(filePath!).exists()) {
+      setState(() {
+        isDownloaded = true;
+      });
+    }
+  }
+
+  Future<void> downloadFile() async {
+    try {
+      setState(() {
+        isDownloading = true;
+        downloadProgress = 0;
+      });
+
+      await Dio().download(
+        widget.fileUrl,
+        filePath!,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            int progress = ((received / total) * 100).floor();
+            if (progress != downloadProgress) {
+              setState(() {
+                downloadProgress = progress;
+              });
+            }
+          }
+        },
+      );
+
+      setState(() {
+        isDownloaded = true;
+        isDownloading = false;
+      });
+
+      _openFile();
+    } catch (e) {
+      print('Download failed: $e');
+      setState(() {
+        isDownloading = false;
+        downloadProgress = 0;
+      });
+    }
+  }
+
+  Future<void> _openFile() async {
+    final result = await OpenFile.open(filePath!);
+    print('OpenFile result: ${result.message}');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: isDownloading
+          ? null
+          : isDownloaded
+              ? _openFile // اگر دانلود شده بود، فقط باز کن
+              : downloadFile, // اگر دانلود نشده بود، دانلود کن
+      child: isDownloading
+          ? Stack(
+              alignment: Alignment.center,
+              children: [
+                const SizedBox(
+                  height: 32,
+                  width: 32,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                Text(
+                  '$downloadProgress%',
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            )
+          : isDownloaded
+              ? Assets.icons.arrowUp.svg(height: 24)
+              : const Icon(Icons.download, size: 24, color: Color(0xff861C8C)),
     );
   }
 }

@@ -148,13 +148,13 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                                     title: 'تنظیمات برنامه',
                                   ),
                                   SizedBox(height: 24),
+                                  Divider(color: Colors.grey.shade100),
+                                  SizedBox(height: 24),
                                   _ItemProfile(
                                     image:
                                         Assets.icons.question.svg(height: 24),
                                     title: 'سوالات متداول',
                                   ),
-                                  SizedBox(height: 24),
-                                  Divider(color: Colors.grey.shade100),
                                   SizedBox(height: 24),
                                   _ItemProfile(
                                     image: Assets.icons.scale.svg(height: 24),

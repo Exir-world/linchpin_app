@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -78,13 +79,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     final dioProvider = _$DioProvider();
     gh.factory<_i361.Dio>(() => dioProvider.httpclient);
+    gh.singleton<_i96.ApiAuth>(() => _i96.ApiAuth(gh<_i361.Dio>()));
+    gh.singleton<_i904.ApiDuties>(() => _i904.ApiDuties(gh<_i361.Dio>()));
     gh.singleton<_i146.ApiLastQuarterReport>(
         () => _i146.ApiLastQuarterReport(gh<_i361.Dio>()));
     gh.singleton<_i862.ApiRequest>(() => _i862.ApiRequest(gh<_i361.Dio>()));
     gh.singleton<_i526.ApiTimeMamagement>(
         () => _i526.ApiTimeMamagement(gh<_i361.Dio>()));
-    gh.singleton<_i96.ApiAuth>(() => _i96.ApiAuth(gh<_i361.Dio>()));
-    gh.singleton<_i904.ApiDuties>(() => _i904.ApiDuties(gh<_i361.Dio>()));
     gh.singleton<_i58.AuthRepository>(
       () => _i979.AuthRepositoryImpl(gh<_i96.ApiAuth>()),
       registerFor: {_prod},
@@ -93,14 +94,14 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i150.RequestRepositoryImpl(gh<_i862.ApiRequest>()),
       registerFor: {_prod},
     );
-    gh.singleton<_i171.RequestUsecase>(
-        () => _i171.RequestUsecase(gh<_i688.RequestRepository>()));
     gh.singleton<_i1063.TimeManagementRepository>(
       () => _i400.TimeManagementRepositoryImpl(gh<_i526.ApiTimeMamagement>()),
       registerFor: {_prod},
     );
-    gh.singleton<_i1065.AuthUsecase>(
-        () => _i1065.AuthUsecase(gh<_i58.AuthRepository>()));
+    gh.singleton<_i171.RequestUsecase>(
+      () => _i171.RequestUsecaseImpl(gh<_i688.RequestRepository>()),
+      registerFor: {_prod},
+    );
     gh.factoryAsync<_i361.Response<dynamic>>(
         () => dioProvider.refresh(gh<String>()));
     gh.singleton<_i133.LastQuarterReportRepository>(
@@ -108,27 +109,38 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i146.ApiLastQuarterReport>()),
       registerFor: {_prod},
     );
-    gh.singleton<_i781.TimeManagementUsecase>(() =>
-        _i781.TimeManagementUsecase(gh<_i1063.TimeManagementRepository>()));
     gh.factory<_i1041.RequestsBloc>(
         () => _i1041.RequestsBloc(gh<_i171.RequestUsecase>()));
     gh.singleton<_i753.DutiesRepository>(
       () => _i904.DutiesRepositoryImpl(gh<_i904.ApiDuties>()),
       registerFor: {_prod},
     );
-    gh.singleton<_i853.DutiesUsecase>(
-        () => _i853.DutiesUsecase(gh<_i753.DutiesRepository>()));
-    gh.factory<_i490.DutiesBloc>(
-        () => _i490.DutiesBloc(gh<_i853.DutiesUsecase>()));
+    gh.singleton<_i1065.AuthUsecase>(
+      () => _i1065.AuthUsecaseImpl(gh<_i58.AuthRepository>()),
+      registerFor: {_prod},
+    );
+    gh.singleton<_i781.TimeManagementUsecase>(
+      () => _i781.TimeManagementUsecaseImpl(
+          gh<_i1063.TimeManagementRepository>()),
+      registerFor: {_prod},
+    );
     gh.factory<_i134.TimeManagementBloc>(
         () => _i134.TimeManagementBloc(gh<_i781.TimeManagementUsecase>()));
     gh.factory<_i1069.AuthBloc>(
         () => _i1069.AuthBloc(gh<_i1065.AuthUsecase>()));
-    gh.singleton<_i285.LastQuarterReportUsecase>(() =>
-        _i285.LastQuarterReportUsecase(
-            gh<_i133.LastQuarterReportRepository>()));
+    gh.singleton<_i285.LastQuarterReportUsecase>(
+      () => _i285.LastQuarterReportUsecaseImpl(
+          gh<_i133.LastQuarterReportRepository>()),
+      registerFor: {_prod},
+    );
+    gh.singleton<_i853.DutiesUsecase>(
+      () => _i853.DutiesUsecaseImpl(gh<_i753.DutiesRepository>()),
+      registerFor: {_prod},
+    );
     gh.factory<_i981.LastQuarterReportBloc>(() =>
         _i981.LastQuarterReportBloc(gh<_i285.LastQuarterReportUsecase>()));
+    gh.factory<_i490.DutiesBloc>(
+        () => _i490.DutiesBloc(gh<_i853.DutiesUsecase>()));
     return this;
   }
 }

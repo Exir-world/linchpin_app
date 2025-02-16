@@ -33,3 +33,33 @@ final class AllTasksError extends DutiesState {
 
   AllTasksError(this.textError);
 }
+
+// جزئیات درخواست
+final class TaskDetailLoading extends DutiesState {}
+
+final class TaskDetailCompleted extends DutiesState {
+  final TaskDetailEntity taskDetailEntity;
+
+  TaskDetailCompleted(this.taskDetailEntity);
+}
+
+final class TaskDetailError extends DutiesState {
+  final String textError;
+
+  TaskDetailError(this.textError);
+}
+
+// ساب تسک رو انجام دادم یا ندادم
+final class SubtaskDoneLoading extends DutiesState {}
+
+final class SubtaskDoneCompleted extends DutiesState {
+  final TaskDetailEntity taskDetailEntity;
+
+  SubtaskDoneCompleted(this.taskDetailEntity);
+}
+
+final class SubtaskDoneError extends DutiesState {
+  final String textError;
+
+  SubtaskDoneError(this.textError);
+}

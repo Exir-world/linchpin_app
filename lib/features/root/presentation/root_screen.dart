@@ -10,11 +10,34 @@ class RootScreen extends StatefulWidget {
 
   @override
   State<RootScreen> createState() => _RootScreenState();
-  static ValueNotifier<int> itemSelectedNotifire = ValueNotifier(1);
-  static ValueNotifier<String?> timeServerNotofire = ValueNotifier(null);
+  static late ValueNotifier<int> itemSelectedNotifire;
+  static late ValueNotifier<String?> timeServerNotofire;
 }
 
-class _RootScreenState extends State<RootScreen> {
+class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    RootScreen.itemSelectedNotifire = ValueNotifier(1);
+    RootScreen.timeServerNotofire = ValueNotifier(null);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    RootScreen.itemSelectedNotifire.dispose();
+    RootScreen.timeServerNotofire.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      PaintingBinding.instance.reassembleApplication();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,0 +1,2 @@
+D:/linchpin_app/android/app/.cxx/Debug/z2s4a4y3/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/linchpin_app/android/app/.cxx/Debug/z2s4a4y3/armeabi-v7a/CMakeFiles/rebuild_cache.dir
