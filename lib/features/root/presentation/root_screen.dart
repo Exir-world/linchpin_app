@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin_app/features/duties/presentation/duties_screen.dart';
+import 'package:linchpin_app/features/growth/presentation/growth_screen.dart';
 import 'package:linchpin_app/features/performance_report/presentation/last_quarter_report_screen.dart';
 import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
 import 'package:linchpin_app/features/time_management/presentation/time_management_screen.dart';
@@ -18,7 +19,7 @@ class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    RootScreen.itemSelectedNotifire = ValueNotifier(1);
+    RootScreen.itemSelectedNotifire = ValueNotifier(0);
     RootScreen.timeServerNotofire = ValueNotifier(null);
     super.initState();
   }
@@ -47,10 +48,12 @@ class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
         builder: (context, value, child) {
           return IndexedStack(
             index: value, // تعیین اینکه کدام تب فعال باشه
+
             children: [
+              TimeManagementScreen(),
               DutiesScreen(),
-              TimeManagementScreen(), // صفحه اول
-              LastQuarterReportScreen(), // صفحه دوم
+              LastQuarterReportScreen(),
+              GrowthScreen(),
             ],
           );
         },
@@ -86,26 +89,33 @@ class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
                   backgroundColor: Colors.white,
                   currentIndex: value,
                   elevation: 0,
+                  type: BottomNavigationBarType.fixed,
                   onTap: (value) {
                     RootScreen.itemSelectedNotifire.value = value;
                   },
                   items: [
                     BottomNavigationBarItem(
                       icon: value == 0
-                          ? Assets.icons.boardTasksA.svg()
-                          : Assets.icons.boardTasks.svg(),
+                          ? Assets.icons.clockAddPlusA.svg()
+                          : Assets.icons.clockAddPlus.svg(),
                       label: "",
                     ),
                     BottomNavigationBarItem(
                       icon: value == 1
-                          ? Assets.icons.clockAddPlusA.svg()
-                          : Assets.icons.clockAddPlus.svg(),
+                          ? Assets.icons.boardTasksA.svg()
+                          : Assets.icons.boardTasks.svg(),
                       label: "",
                     ),
                     BottomNavigationBarItem(
                       icon: value == 2
                           ? Assets.icons.activityA.svg()
                           : Assets.icons.activity.svg(),
+                      label: "",
+                    ),
+                    BottomNavigationBarItem(
+                      icon: value == 3
+                          ? Assets.icons.leaves.svg()
+                          : Assets.icons.leavesOff.svg(),
                       label: "",
                     ),
                   ],

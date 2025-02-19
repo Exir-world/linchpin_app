@@ -33,6 +33,16 @@ import 'package:linchpin_app/features/duties/domain/use_case/duties_usecase.dart
     as _i853;
 import 'package:linchpin_app/features/duties/presentation/bloc/duties_bloc.dart'
     as _i490;
+import 'package:linchpin_app/features/growth/data/data_source/api_growth.dart'
+    as _i564;
+import 'package:linchpin_app/features/growth/data/repository/growth_repository_impl.dart'
+    as _i614;
+import 'package:linchpin_app/features/growth/domain/repository/growth_repository.dart'
+    as _i568;
+import 'package:linchpin_app/features/growth/domain/use_case/growth_usecase.dart'
+    as _i817;
+import 'package:linchpin_app/features/growth/presentation/bloc/growth_bloc.dart'
+    as _i66;
 import 'package:linchpin_app/features/performance_report/data/data_source/api_last_quarter_report.dart'
     as _i146;
 import 'package:linchpin_app/features/performance_report/data/repository/last_quarter_report_repository_impl.dart'
@@ -81,6 +91,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i361.Dio>(() => dioProvider.httpclient);
     gh.singleton<_i96.ApiAuth>(() => _i96.ApiAuth(gh<_i361.Dio>()));
     gh.singleton<_i904.ApiDuties>(() => _i904.ApiDuties(gh<_i361.Dio>()));
+    gh.singleton<_i564.ApiGrowth>(() => _i564.ApiGrowth(gh<_i361.Dio>()));
     gh.singleton<_i146.ApiLastQuarterReport>(
         () => _i146.ApiLastQuarterReport(gh<_i361.Dio>()));
     gh.singleton<_i862.ApiRequest>(() => _i862.ApiRequest(gh<_i361.Dio>()));
@@ -90,6 +101,16 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i979.AuthRepositoryImpl(gh<_i96.ApiAuth>()),
       registerFor: {_prod},
     );
+    gh.singleton<_i568.GrowthRepository>(
+      () => _i614.GrowthRepositoryImpl(gh<_i564.ApiGrowth>()),
+      registerFor: {_prod},
+    );
+    gh.singleton<_i817.GrowthUsecase>(
+      () => _i817.GrowthUsecaseUsecaseImpl(gh<_i568.GrowthRepository>()),
+      registerFor: {_prod},
+    );
+    gh.factory<_i66.GrowthBloc>(
+        () => _i66.GrowthBloc(gh<_i817.GrowthUsecase>()));
     gh.singleton<_i688.RequestRepository>(
       () => _i150.RequestRepositoryImpl(gh<_i862.ApiRequest>()),
       registerFor: {_prod},

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin_app/core/locator/di/di.dart';
 import 'package:linchpin_app/features/auth/presentation/auth_screen.dart';
 import 'package:linchpin_app/features/duties/presentation/bloc/duties_bloc.dart';
+import 'package:linchpin_app/features/growth/presentation/bloc/growth_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +31,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<DutiesBloc>(
           create: (context) => getIt<DutiesBloc>(),
+        ),
+        BlocProvider<GrowthBloc>(
+          create: (context) => getIt<GrowthBloc>(),
         ),
       ],
       child: MaterialApp(

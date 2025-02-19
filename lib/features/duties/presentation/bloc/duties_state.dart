@@ -22,10 +22,8 @@ final class TasksError extends DutiesState {
 // لیست وظایف خودم و دیگران (همه روزها)
 final class AllTasksLoading extends DutiesState {}
 
-final class AllTasksCompleted extends DutiesState {
-  final TasksEntity tasksEntity;
-
-  AllTasksCompleted(this.tasksEntity);
+final class AllTasksCompleted extends TasksCompleted {
+  AllTasksCompleted(super.tasksEntity);
 }
 
 final class AllTasksError extends DutiesState {

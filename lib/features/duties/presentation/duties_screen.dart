@@ -20,7 +20,7 @@ class DutiesScreen extends StatefulWidget {
 }
 
 class _DutiesScreenState extends State<DutiesScreen>
-    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late TabController _tabController;
   late DutiesBloc _bloc;
 
@@ -28,9 +28,9 @@ class _DutiesScreenState extends State<DutiesScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _tabController = TabController(length: 0, vsync: this);
     DutiesScreen.tabIndexNotifire = ValueNotifier(0);
     _bloc = getIt<DutiesBloc>();
-    _tabController = TabController(length: 2, vsync: this);
 
     _tabController.addListener(() {
       DutiesScreen.tabIndexNotifire.value = _tabController.index;
@@ -91,7 +91,13 @@ class _DutiesScreenState extends State<DutiesScreen>
             onPressed: () {},
           ),
         ),
-        body: BlocBuilder<DutiesBloc, DutiesState>(
+        body: BlocConsumer<DutiesBloc, DutiesState>(
+          listener: (context, state) {
+            if (state is TasksCompleted) {
+              int tabLength = state.tasksEntity.otherTasks!.isNotEmpty ? 2 : 1;
+              _tabController = TabController(length: tabLength, vsync: this);
+            }
+          },
           buildWhen: (previous, current) {
             if (current is TasksCompleted ||
                 current is TasksLoading ||
@@ -104,11 +110,12 @@ class _DutiesScreenState extends State<DutiesScreen>
           builder: (context, state) {
             if (state is TasksCompleted) {
               return DefaultTabController(
-                length: 2,
+                length: _tabController.length,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                   child: Column(
                     children: [
+                      // عنوان لیست وظایف و مشاهده همه روزها
                       Row(
                         children: [
                           BigDemiBold('لیست وظایف'),
@@ -135,256 +142,102 @@ class _DutiesScreenState extends State<DutiesScreen>
                         ],
                       ),
                       SizedBox(height: 24),
-                      TabBar(
-                        controller: _tabController,
-                        indicatorColor: Color(0xff861C8C),
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        indicatorPadding: EdgeInsets.symmetric(horizontal: 12),
-                        overlayColor:
-                            WidgetStatePropertyAll(Colors.transparent),
-                        tabs: [
-                          Tab(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                    width: 24,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xffF5EEFC),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: SmallMedium(
-                                      state.tasksEntity.myTasks?.length
-                                              .toString() ??
-                                          '0',
-                                      textColorInLight: Color(0xff861C8C),
-                                    )),
-                                SizedBox(width: 4),
-                                ValueListenableBuilder(
-                                  valueListenable:
-                                      DutiesScreen.tabIndexNotifire,
-                                  builder: (context, value, child) {
-                                    return NormalMedium(
-                                      'وظایف من',
-                                      textColorInLight:
-                                          value == 0 ? null : Color(0xff828282),
-                                    );
-                                  },
+
+                      // اگر وظایف دیگران داشت، نمایش داده شود
+                      state.tasksEntity.otherTasks!.isNotEmpty
+                          ? TabBar(
+                              controller: _tabController,
+                              indicatorColor: Color(0xff861C8C),
+                              indicatorSize: TabBarIndicatorSize.tab,
+                              indicatorPadding:
+                                  EdgeInsets.symmetric(horizontal: 12),
+                              overlayColor:
+                                  WidgetStatePropertyAll(Colors.transparent),
+                              tabs: [
+                                Tab(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                          width: 24,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffF5EEFC),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: SmallMedium(
+                                            state.tasksEntity.myTasks?.length
+                                                    .toString() ??
+                                                '0',
+                                            textColorInLight: Color(0xff861C8C),
+                                          )),
+                                      SizedBox(width: 4),
+                                      ValueListenableBuilder(
+                                        valueListenable:
+                                            DutiesScreen.tabIndexNotifire,
+                                        builder: (context, value, child) {
+                                          return NormalMedium(
+                                            'وظایف من',
+                                            textColorInLight: value == 0
+                                                ? null
+                                                : Color(0xff828282),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Tab(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                          width: 24,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffF5EEFC),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: SmallMedium(
+                                            state.tasksEntity.otherTasks?.length
+                                                    .toString() ??
+                                                '0',
+                                            textColorInLight: Color(0xff861C8C),
+                                          )),
+                                      SizedBox(width: 4),
+                                      ValueListenableBuilder(
+                                        valueListenable:
+                                            DutiesScreen.tabIndexNotifire,
+                                        builder: (context, value, child) {
+                                          return NormalMedium(
+                                            'وظایف دیگران',
+                                            textColorInLight: value == 1
+                                                ? null
+                                                : Color(0xff828282),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
-                            ),
-                          ),
-                          Tab(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                    width: 24,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xffF5EEFC),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: SmallMedium(
-                                      state.tasksEntity.otherTasks?.length
-                                              .toString() ??
-                                          '0',
-                                      textColorInLight: Color(0xff861C8C),
-                                    )),
-                                SizedBox(width: 4),
-                                ValueListenableBuilder(
-                                  valueListenable:
-                                      DutiesScreen.tabIndexNotifire,
-                                  builder: (context, value, child) {
-                                    return NormalMedium(
-                                      'وظایف دیگران',
-                                      textColorInLight:
-                                          value == 1 ? null : Color(0xff828282),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                            )
+                          : SizedBox(),
+                      // لیست وظایف
                       Expanded(
                         child: TabBarView(
                           controller: _tabController,
                           children: [
-                            SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 50,
-                                    margin:
-                                        EdgeInsets.only(top: 24, bottom: 16),
-                                    decoration: BoxDecoration(
-                                      color: Color(0xffF5EEFC),
-                                      borderRadius: BorderRadius.circular(37),
-                                    ),
-                                    alignment: Alignment.center,
-                                    padding: EdgeInsets.symmetric(vertical: 5),
-                                    child: SmallRegular('امروز'),
-                                  ),
-                                  state.tasksEntity.myTasks!.isNotEmpty
-                                      ? ListView.builder(
-                                          itemCount:
-                                              state.tasksEntity.myTasks?.length,
-                                          shrinkWrap: true,
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          padding: EdgeInsets.only(bottom: 80),
-                                          itemBuilder: (context, index) {
-                                            final data = state
-                                                .tasksEntity.myTasks![index];
-                                            return TaskItem(
-                                              title: data.title ?? '',
-                                              date: data.date ?? '',
-                                              tag: data.taskTags!,
-                                              flagTitle:
-                                                  data.priority?.title ?? '',
-                                              flagColor: int.parse(data
-                                                  .priority!.color!
-                                                  .replaceAll("#", "0xff")),
-                                              isOthers: false,
-                                              onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          MyTaskScreen(
-                                                              taskId: data.id!),
-                                                    ));
-                                              },
-                                              isListTag: false,
-                                              icon: data.done!
-                                                  ? Assets.icons.check
-                                                      .svg(height: 24)
-                                                  : Container(
-                                                      width: 17,
-                                                      height: 17,
-                                                      margin: EdgeInsets.all(4),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        shape: BoxShape.circle,
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Color(
-                                                                    0xff030712)
-                                                                .withValues(
-                                                                    alpha:
-                                                                        0.12),
-                                                            blurRadius: 2.4,
-                                                            offset:
-                                                                Offset(0, 1.2),
-                                                            spreadRadius: 1.2,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                              imageUrl: null,
-                                              avatarName: null,
-                                            );
-                                          },
-                                        )
-                                      : SizedBox(
-                                          height: context.screenHeight / 2,
-                                          child: Center(
-                                            child: NormalRegular(
-                                              'وظیفه ای تعریف نشده.',
-                                              textColorInLight:
-                                                  Color(0xffCAC4CF),
-                                            ),
-                                          ),
-                                        ),
-                                ],
-                              ),
-                            ),
-                            SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 50,
-                                    margin:
-                                        EdgeInsets.only(top: 24, bottom: 16),
-                                    decoration: BoxDecoration(
-                                      color: Color(0xffF5EEFC),
-                                      borderRadius: BorderRadius.circular(37),
-                                    ),
-                                    alignment: Alignment.center,
-                                    padding: EdgeInsets.symmetric(vertical: 5),
-                                    child: SmallRegular('امروز'),
-                                  ),
-                                  state.tasksEntity.otherTasks!.isNotEmpty
-                                      ? ListView.builder(
-                                          itemCount: state
-                                              .tasksEntity.otherTasks?.length,
-                                          shrinkWrap: true,
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          padding: EdgeInsets.only(bottom: 80),
-                                          itemBuilder: (context, index) {
-                                            final data = state
-                                                .tasksEntity.otherTasks![index];
-                                            return TaskItem(
-                                              title: data.title ?? '',
-                                              date: data.date ?? '',
-                                              tag: data.taskTags!,
-                                              flagTitle:
-                                                  data.priority?.title ?? '',
-                                              flagColor: int.parse(data
-                                                  .priority!.color!
-                                                  .replaceAll("#", "0xff")),
-                                              isOthers: true,
-                                              onTap: () {},
-                                              isListTag: false,
-                                              icon: data.done!
-                                                  ? Assets.icons.check
-                                                      .svg(height: 24)
-                                                  : Container(
-                                                      width: 17,
-                                                      height: 17,
-                                                      margin: EdgeInsets.all(4),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        shape: BoxShape.circle,
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Color(
-                                                                    0xff030712)
-                                                                .withValues(
-                                                                    alpha:
-                                                                        0.12),
-                                                            blurRadius: 2.4,
-                                                            offset:
-                                                                Offset(0, 1.2),
-                                                            spreadRadius: 1.2,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                              imageUrl: data.user?.profileImage,
-                                              avatarName: data.user?.name ?? '',
-                                            );
-                                          },
-                                        )
-                                      : SizedBox(
-                                          height: context.screenHeight / 2,
-                                          child: Center(
-                                            child: NormalRegular(
-                                              'وظیفه ای تعریف نشده.',
-                                              textColorInLight:
-                                                  Color(0xffCAC4CF),
-                                            ),
-                                          ),
-                                        ),
-                                ],
-                              ),
-                            ),
+                            // لیست وظایف من
+                            MyListTask(state: state, isAllDuties: false),
+
+                            if (state.tasksEntity.otherTasks!.isNotEmpty)
+                              // لیست وظایف دیگران
+                              OtherListTask(state: state, isAllDuties: false),
                           ],
                         ),
                       ),
@@ -405,6 +258,183 @@ class _DutiesScreenState extends State<DutiesScreen>
             }
           },
         ),
+      ),
+    );
+  }
+}
+
+class OtherListTask extends StatelessWidget {
+  final TasksCompleted state;
+  final bool isAllDuties;
+  const OtherListTask({
+    super.key,
+    required this.state,
+    required this.isAllDuties,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          isAllDuties
+              ? SizedBox(height: 24)
+              : Container(
+                  width: 50,
+                  margin: EdgeInsets.only(top: 24, bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Color(0xffF5EEFC),
+                    borderRadius: BorderRadius.circular(37),
+                  ),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 5),
+                  child: SmallRegular('امروز'),
+                ),
+          state.tasksEntity.otherTasks!.isNotEmpty
+              ? ListView.builder(
+                  itemCount: state.tasksEntity.otherTasks?.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.only(bottom: 80),
+                  itemBuilder: (context, index) {
+                    final data = state.tasksEntity.otherTasks![index];
+                    return TaskItem(
+                      title: data.title ?? '',
+                      date: data.date ?? '',
+                      tag: data.taskTags!,
+                      flagTitle: data.priority?.title ?? '',
+                      flagColor: int.parse(
+                          data.priority!.color!.replaceAll("#", "0xff")),
+                      isOthers: true,
+                      onTap: () {},
+                      isListTag: false,
+                      icon: data.done!
+                          ? Assets.icons.check.svg(height: 24)
+                          : Container(
+                              width: 17,
+                              height: 17,
+                              margin: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xff030712)
+                                        .withValues(alpha: 0.12),
+                                    blurRadius: 2.4,
+                                    offset: Offset(0, 1.2),
+                                    spreadRadius: 1.2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                      imageUrl: data.user?.profileImage,
+                      avatarName: data.user?.name ?? '',
+                    );
+                  },
+                )
+              : SizedBox(
+                  height: context.screenHeight / 2,
+                  child: Center(
+                    child: NormalRegular(
+                      'وظیفه ای تعریف نشده.',
+                      textColorInLight: Color(0xffCAC4CF),
+                    ),
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+}
+
+class MyListTask extends StatelessWidget {
+  final TasksCompleted state;
+  final bool isAllDuties;
+  const MyListTask({
+    super.key,
+    required this.state,
+    required this.isAllDuties,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          isAllDuties
+              ? SizedBox(height: 24)
+              : Container(
+                  width: 50,
+                  margin: EdgeInsets.only(top: 24, bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Color(0xffF5EEFC),
+                    borderRadius: BorderRadius.circular(37),
+                  ),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 5),
+                  child: SmallRegular('امروز'),
+                ),
+          state.tasksEntity.myTasks!.isNotEmpty
+              ? ListView.builder(
+                  itemCount: state.tasksEntity.myTasks?.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.only(bottom: 80),
+                  itemBuilder: (context, index) {
+                    final data = state.tasksEntity.myTasks![index];
+                    return TaskItem(
+                      title: data.title ?? '',
+                      date: data.date ?? '',
+                      tag: data.taskTags!,
+                      flagTitle: data.priority?.title ?? '',
+                      flagColor: int.parse(
+                          data.priority!.color!.replaceAll("#", "0xff")),
+                      isOthers: false,
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  MyTaskScreen(taskId: data.id!),
+                            ));
+                      },
+                      isListTag: false,
+                      icon: data.done!
+                          ? Assets.icons.check.svg(height: 24)
+                          : Container(
+                              width: 17,
+                              height: 17,
+                              margin: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xff030712)
+                                        .withValues(alpha: 0.12),
+                                    blurRadius: 2.4,
+                                    offset: Offset(0, 1.2),
+                                    spreadRadius: 1.2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                      imageUrl: null,
+                      avatarName: null,
+                    );
+                  },
+                )
+              : SizedBox(
+                  height: context.screenHeight / 2,
+                  child: Center(
+                    child: NormalRegular(
+                      'وظیفه ای تعریف نشده.',
+                      textColorInLight: Color(0xffCAC4CF),
+                    ),
+                  ),
+                ),
+        ],
       ),
     );
   }

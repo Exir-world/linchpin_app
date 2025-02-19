@@ -106,6 +106,12 @@ class $AssetsIconsGen {
   /// File path: assets/icons/info.svg
   SvgGenImage get info => const SvgGenImage('assets/icons/info.svg');
 
+  /// File path: assets/icons/leaves.svg
+  SvgGenImage get leaves => const SvgGenImage('assets/icons/leaves.svg');
+
+  /// File path: assets/icons/leaves_off.svg
+  SvgGenImage get leavesOff => const SvgGenImage('assets/icons/leaves_off.svg');
+
   /// File path: assets/icons/logout.svg
   SvgGenImage get logout => const SvgGenImage('assets/icons/logout.svg');
 
@@ -213,6 +219,8 @@ class $AssetsIconsGen {
     filter,
     flag,
     info,
+    leaves,
+    leavesOff,
     logout,
     notification,
     pause,

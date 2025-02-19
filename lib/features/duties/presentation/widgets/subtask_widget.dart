@@ -7,10 +7,12 @@ import 'package:linchpin_app/gen/assets.gen.dart';
 class SubtaskWidget extends StatefulWidget {
   final List<SubTask> subTask;
   final DutiesBloc bloc;
+  final bool isAdmin;
   const SubtaskWidget({
     super.key,
     required this.subTask,
     required this.bloc,
+    required this.isAdmin,
   });
 
   @override
@@ -71,7 +73,7 @@ class _SubtaskWidgetState extends State<SubtaskWidget> {
             itemBuilder: (context, index) {
               final data = subTasks[index];
               return GestureDetector(
-                onTap: () => _toggleSubtask(index),
+                onTap: widget.isAdmin ? null : () => _toggleSubtask(index),
                 child: Container(
                   margin: EdgeInsets.only(bottom: 12),
                   child: Row(

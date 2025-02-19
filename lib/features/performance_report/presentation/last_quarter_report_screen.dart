@@ -48,7 +48,6 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
     return BlocProvider(
       create: (context) => _bloc,
       child: Scaffold(
-        backgroundColor: Color(0xffFAFAFF),
         body: SafeArea(
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),

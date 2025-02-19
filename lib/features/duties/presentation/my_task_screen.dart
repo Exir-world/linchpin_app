@@ -106,6 +106,7 @@ class _MyTaskScreenState extends State<MyTaskScreen>
                                 SubtaskWidget(
                                   subTask: state.taskDetailEntity.subTasks!,
                                   bloc: _bloc,
+                                  isAdmin: false,
                                 ),
                               ],
                             )
@@ -484,7 +485,8 @@ class _DownloadButtonState extends State<DownloadButton> {
             )
           : isDownloaded
               ? Assets.icons.arrowUp.svg(height: 24)
-              : const Icon(Icons.download, size: 24, color: Color(0xff861C8C)),
+              : const Icon(Icons.file_download_outlined,
+                  size: 24, color: Color(0xff861C8C)),
     );
   }
 }
