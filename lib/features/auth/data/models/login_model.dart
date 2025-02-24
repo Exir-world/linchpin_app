@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:linchpin_app/features/auth/domain/entity/login_entity.dart';
+import 'package:Linchpin/features/auth/domain/entity/login_entity.dart';
 
 @immutable
 class LoginModel extends LoginEntity {

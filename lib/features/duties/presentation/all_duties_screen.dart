@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/customui/loading_widget.dart';
-import 'package:linchpin_app/features/duties/presentation/bloc/duties_bloc.dart';
-import 'package:linchpin_app/features/duties/presentation/duties_screen.dart';
-import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
+import 'package:Linchpin/core/customui/loading_widget.dart';
+import 'package:Linchpin/features/duties/presentation/bloc/duties_bloc.dart';
+import 'package:Linchpin/features/duties/presentation/duties_screen.dart';
+import 'package:Linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:Linchpin/gen/assets.gen.dart';
 
 class AllDutiesScreen extends StatefulWidget {
   const AllDutiesScreen({super.key});
@@ -17,16 +17,25 @@ class AllDutiesScreen extends StatefulWidget {
 
 class _AllDutiesScreenState extends State<AllDutiesScreen>
     with TickerProviderStateMixin, WidgetsBindingObserver {
-  late TabController _tabController;
+  late TabController _tabControllerOne;
+  late TabController _tabControllerTwo;
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     AllDutiesScreen.tabIndexNotifire = ValueNotifier(0);
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() {
-      AllDutiesScreen.tabIndexNotifire.value = _tabController.index;
+    _tabControllerOne = TabController(length: 1, vsync: this);
+    _tabControllerTwo = TabController(length: 2, vsync: this);
+    // استفاده از addPostFrameCallback که باعث میشه کد بعد از رندر شدن صفحه اجرا بشه
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _tabControllerOne.addListener(() {
+        AllDutiesScreen.tabIndexNotifire.value = _tabControllerOne.index;
+      });
+      _tabControllerTwo.addListener(() {
+        AllDutiesScreen.tabIndexNotifire.value = _tabControllerTwo.index;
+      });
     });
+
     BlocProvider.of<DutiesBloc>(context).add(AllTasksEvent());
     super.initState();
   }
@@ -35,7 +44,8 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     AllDutiesScreen.tabIndexNotifire.dispose();
-    _tabController.dispose();
+    _tabControllerOne.dispose();
+    _tabControllerTwo.dispose();
     super.dispose();
   }
 
@@ -79,11 +89,22 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
           onPressed: () {},
         ),
       ),
-      body: BlocBuilder<DutiesBloc, DutiesState>(
+      body: BlocConsumer<DutiesBloc, DutiesState>(
+        listener: (context, state) {
+          if (state is AllTasksCompleted) {
+            if (state.tasksEntity.otherTasks!.isNotEmpty) {
+              _tabControllerTwo = TabController(length: 2, vsync: this);
+            } else {
+              _tabControllerOne = TabController(length: 1, vsync: this);
+            }
+          }
+        },
         builder: (context, state) {
           if (state is AllTasksCompleted) {
             return DefaultTabController(
-              length: 2,
+              length: state.tasksEntity.otherTasks!.isNotEmpty
+                  ? _tabControllerTwo.length
+                  : _tabControllerOne.length,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                 child: Column(
@@ -107,7 +128,7 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
                     SizedBox(height: 24),
                     state.tasksEntity.otherTasks!.isNotEmpty
                         ? TabBar(
-                            controller: _tabController, // اضافه کردن کنترلر
+                            controller: _tabControllerTwo, // اضافه کردن کنترلر
                             indicatorColor: Color(0xff861C8C),
                             indicatorSize: TabBarIndicatorSize.tab,
                             indicatorPadding:
@@ -150,50 +171,54 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
                                   ],
                                 ),
                               ),
-                              Tab(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                        width: 24,
-                                        height: 20,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xffF5EEFC),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        alignment: Alignment.center,
-                                        child: SmallMedium(
-                                          state.tasksEntity.otherTasks?.length
-                                                  .toString() ??
-                                              '0',
-                                          textColorInLight: Color(0xff861C8C),
-                                        )),
-                                    SizedBox(width: 4),
-                                    ValueListenableBuilder(
-                                      valueListenable:
-                                          AllDutiesScreen.tabIndexNotifire,
-                                      builder: (context, value, child) {
-                                        return NormalMedium(
-                                          'وظایف دیگران',
-                                          textColorInLight: value == 1
-                                              ? null
-                                              : Color(0xff828282),
-                                        );
-                                      },
-                                    ),
-                                  ],
+                              if (state.tasksEntity.otherTasks!.isNotEmpty)
+                                Tab(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                          width: 24,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffF5EEFC),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: SmallMedium(
+                                            state.tasksEntity.otherTasks?.length
+                                                    .toString() ??
+                                                '0',
+                                            textColorInLight: Color(0xff861C8C),
+                                          )),
+                                      SizedBox(width: 4),
+                                      ValueListenableBuilder(
+                                        valueListenable:
+                                            AllDutiesScreen.tabIndexNotifire,
+                                        builder: (context, value, child) {
+                                          return NormalMedium(
+                                            'وظایف دیگران',
+                                            textColorInLight: value == 1
+                                                ? null
+                                                : Color(0xff828282),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
                             ],
                           )
                         : SizedBox(),
                     Expanded(
                       child: TabBarView(
-                        controller: _tabController,
+                        controller: state.tasksEntity.otherTasks!.isNotEmpty
+                            ? _tabControllerTwo
+                            : _tabControllerOne,
                         children: [
                           MyListTask(state: state, isAllDuties: true),
-                          OtherListTask(state: state, isAllDuties: true),
+                          if (state.tasksEntity.otherTasks!.isNotEmpty)
+                            OtherListTask(state: state, isAllDuties: true),
                         ],
                       ),
                     ),

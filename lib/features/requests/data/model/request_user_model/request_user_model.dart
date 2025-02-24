@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:linchpin_app/features/requests/domain/entity/request_user_entity.dart';
+import 'package:Linchpin/features/requests/domain/entity/request_user_entity.dart';
 
 @immutable
 class RequestUserModel extends RequestUserEntity {

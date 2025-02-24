@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/box_request_type.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/clock_picker.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
+import 'package:Linchpin/features/requests/presentation/widgets/box_request_type.dart';
+import 'package:Linchpin/features/requests/presentation/widgets/clock_picker.dart';
+import 'package:Linchpin/gen/assets.gen.dart';
 
 class ClockPickerExample extends StatefulWidget {
   final String title;
   final void Function(TimeOfDay) onChange;
-  const ClockPickerExample(
-      {super.key, required this.title, required this.onChange});
+  const ClockPickerExample({
+    super.key,
+    required this.title,
+    required this.onChange,
+  });
 
   @override
   State<StatefulWidget> createState() => _ClockPickerExampleState();

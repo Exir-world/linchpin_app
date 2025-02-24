@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:linchpin_app/core/common/constants.dart';
-import 'package:linchpin_app/core/shared_preferences/shared_preferences_key.dart';
-import 'package:linchpin_app/core/shared_preferences/shared_preferences_service.dart';
+import 'package:Linchpin/core/common/constants.dart';
+import 'package:Linchpin/core/shared_preferences/shared_preferences_key.dart';
+import 'package:Linchpin/core/shared_preferences/shared_preferences_service.dart';
 
 @module
 @lazySingleton

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/common/colors.dart';
-import 'package:linchpin_app/core/common/dimens.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
+import 'package:Linchpin/core/common/colors.dart';
+import 'package:Linchpin/core/common/dimens.dart';
+import 'package:Linchpin/core/extension/context_extension.dart';
 
 abstract class BaseIconWidget extends StatelessWidget {
   final IconData iconData;

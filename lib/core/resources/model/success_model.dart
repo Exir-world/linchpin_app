@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/resources/entity/success_entity.dart';
+import 'package:Linchpin/core/resources/entity/success_entity.dart';
 
 @immutable
 class SuccessModel extends SuccessEntity {

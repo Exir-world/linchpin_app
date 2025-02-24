@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin_app/core/common/dimens.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/customui/error_ui_widget.dart';
-import 'package:linchpin_app/core/customui/loading_widget.dart';
-import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/features/requests/presentation/bloc/requests_bloc.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/box_request_type.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/clock_picker_example.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/explanation_widget.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/persian_date_picker.dart';
-import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
+import 'package:Linchpin/core/common/dimens.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
+import 'package:Linchpin/core/customui/error_ui_widget.dart';
+import 'package:Linchpin/core/customui/loading_widget.dart';
+import 'package:Linchpin/core/locator/di/di.dart';
+import 'package:Linchpin/features/requests/presentation/bloc/requests_bloc.dart';
+import 'package:Linchpin/features/requests/presentation/widgets/box_request_type.dart';
+import 'package:Linchpin/features/requests/presentation/widgets/clock_picker_example.dart';
+import 'package:Linchpin/features/requests/presentation/widgets/explanation_widget.dart';
+import 'package:Linchpin/features/requests/presentation/widgets/persian_date_picker.dart';
+import 'package:Linchpin/features/root/presentation/app_bar_root.dart';
 
 class RequestDetailScreen extends StatefulWidget {
   const RequestDetailScreen({super.key});
@@ -325,7 +325,6 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
           },
           child: SafeArea(
             child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
               child: BlocConsumer<RequestsBloc, RequestsState>(
                 listener: (context, state) {
                   if (state is RequestCreateCompleted) {

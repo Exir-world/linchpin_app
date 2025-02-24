@@ -1,4 +1,4 @@
-package com.example.linchpin_app
+package com.example.Linchpin
 
 import io.flutter.embedding.android.FlutterActivity
 

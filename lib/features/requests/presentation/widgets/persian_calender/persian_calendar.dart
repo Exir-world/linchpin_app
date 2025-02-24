@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
+import 'package:Linchpin/core/extension/context_extension.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 import 'day_view.dart';
 import 'month_view.dart';

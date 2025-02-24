@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/features/auth/presentation/auth_screen.dart';
-import 'package:linchpin_app/features/duties/presentation/bloc/duties_bloc.dart';
-import 'package:linchpin_app/features/growth/presentation/bloc/growth_bloc.dart';
+import 'package:Linchpin/core/locator/di/di.dart';
+import 'package:Linchpin/features/auth/presentation/auth_screen.dart';
+import 'package:Linchpin/features/duties/presentation/bloc/duties_bloc.dart';
+import 'package:Linchpin/features/growth/presentation/bloc/growth_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

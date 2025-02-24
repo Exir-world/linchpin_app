@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin_app/core/common/dimens.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/customui/loading_widget.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
-import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:Linchpin/core/common/dimens.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
+import 'package:Linchpin/core/customui/loading_widget.dart';
+import 'package:Linchpin/core/extension/context_extension.dart';
+import 'package:Linchpin/core/locator/di/di.dart';
+import 'package:Linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
+import 'package:Linchpin/gen/assets.gen.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class LastQuarterReportScreen extends StatefulWidget {
@@ -50,7 +50,6 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
       child: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: padding_Horizantalx),

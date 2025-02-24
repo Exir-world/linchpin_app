@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin_app/core/common/dimens.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/customui/loading_widget.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
-import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/features/requests/presentation/bloc/requests_bloc.dart';
-import 'package:linchpin_app/features/requests/presentation/request_detail_screen.dart';
-import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:Linchpin/core/common/dimens.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
+import 'package:Linchpin/core/customui/loading_widget.dart';
+import 'package:Linchpin/core/extension/context_extension.dart';
+import 'package:Linchpin/core/locator/di/di.dart';
+import 'package:Linchpin/features/requests/presentation/bloc/requests_bloc.dart';
+import 'package:Linchpin/features/requests/presentation/request_detail_screen.dart';
+import 'package:Linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:Linchpin/gen/assets.gen.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class RequestsScreen extends StatefulWidget {
@@ -154,7 +154,6 @@ class _RequestsScreenState extends State<RequestsScreen>
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
             child: BlocConsumer<RequestsBloc, RequestsState>(
               listener: (context, state) {
                 if (state is RequestCancelCompleted) {

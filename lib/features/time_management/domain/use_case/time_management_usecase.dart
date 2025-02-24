@@ -1,8 +1,8 @@
 import 'package:injectable/injectable.dart';
-import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/core/resources/data_state.dart';
-import 'package:linchpin_app/features/time_management/domain/entity/daily_entity.dart';
-import 'package:linchpin_app/features/time_management/domain/repository/time_management_repository.dart';
+import 'package:Linchpin/core/locator/di/di.dart';
+import 'package:Linchpin/core/resources/data_state.dart';
+import 'package:Linchpin/features/time_management/domain/entity/daily_entity.dart';
+import 'package:Linchpin/features/time_management/domain/repository/time_management_repository.dart';
 
 abstract class TimeManagementUsecase {
   final TimeManagementRepository timeManagementRepository;

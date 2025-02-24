@@ -2,17 +2,17 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/customui/loading_widget.dart';
-import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/features/duties/data/models/task_detail_model/attachment.dart';
-import 'package:linchpin_app/features/duties/data/models/task_detail_model/priority.dart';
-import 'package:linchpin_app/features/duties/data/models/task_detail_model/task_tag.dart';
-import 'package:linchpin_app/features/duties/presentation/bloc/duties_bloc.dart';
-import 'package:linchpin_app/features/duties/presentation/duties_screen.dart';
-import 'package:linchpin_app/features/duties/presentation/widgets/subtask_widget.dart';
-import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
+import 'package:Linchpin/core/customui/loading_widget.dart';
+import 'package:Linchpin/core/locator/di/di.dart';
+import 'package:Linchpin/features/duties/data/models/task_detail_model/attachment.dart';
+import 'package:Linchpin/features/duties/data/models/task_detail_model/priority.dart';
+import 'package:Linchpin/features/duties/data/models/task_detail_model/task_tag.dart';
+import 'package:Linchpin/features/duties/presentation/bloc/duties_bloc.dart';
+import 'package:Linchpin/features/duties/presentation/duties_screen.dart';
+import 'package:Linchpin/features/duties/presentation/widgets/subtask_widget.dart';
+import 'package:Linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:Linchpin/gen/assets.gen.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -59,7 +59,6 @@ class _MyTaskScreenState extends State<MyTaskScreen>
         body: Padding(
           padding: const EdgeInsets.all(24.0),
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
             child: BlocBuilder<DutiesBloc, DutiesState>(
               buildWhen: (previous, current) {
                 if (current is TaskDetailCompleted ||

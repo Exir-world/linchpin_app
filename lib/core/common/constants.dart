@@ -2,6 +2,7 @@
 
 class Constants {
   static const baseUrl = "https://linchpin.ex.pro/api/";
+  // static const baseUrl = "http://192.168.88.155:3000/api/";
   static const int OTP_TIMER_SECONDS = 90;
   static const int OTP_LENGTH = 5;
   static const int CONNECTION_TIMEOUT_SECONDS = 60;

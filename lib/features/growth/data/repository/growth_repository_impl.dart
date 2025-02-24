@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/core/resources/data_state.dart';
-import 'package:linchpin_app/core/utils/handle_error.dart';
-import 'package:linchpin_app/features/growth/data/data_source/api_growth.dart';
-import 'package:linchpin_app/features/growth/data/models/user_self_model/user_self_model.dart';
-import 'package:linchpin_app/features/growth/domain/entity/user_self_entity.dart';
-import 'package:linchpin_app/features/growth/domain/repository/growth_repository.dart';
+import 'package:Linchpin/core/locator/di/di.dart';
+import 'package:Linchpin/core/resources/data_state.dart';
+import 'package:Linchpin/core/utils/handle_error.dart';
+import 'package:Linchpin/features/growth/data/data_source/api_growth.dart';
+import 'package:Linchpin/features/growth/data/models/user_self_model/user_self_model.dart';
+import 'package:Linchpin/features/growth/domain/entity/user_self_entity.dart';
+import 'package:Linchpin/features/growth/domain/repository/growth_repository.dart';
 
 @Singleton(as: GrowthRepository, env: [Env.prod])
 class GrowthRepositoryImpl extends GrowthRepository {

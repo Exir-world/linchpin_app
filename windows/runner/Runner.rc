@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "linchpin_app" "\0"
+            VALUE "FileDescription", "Linchpin" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "linchpin_app" "\0"
+            VALUE "InternalName", "Linchpin" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "linchpin_app.exe" "\0"
-            VALUE "ProductName", "linchpin_app" "\0"
+            VALUE "OriginalFilename", "Linchpin.exe" "\0"
+            VALUE "ProductName", "Linchpin" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

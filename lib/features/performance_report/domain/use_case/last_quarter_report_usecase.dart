@@ -1,8 +1,8 @@
 import 'package:injectable/injectable.dart';
-import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/core/resources/data_state.dart';
-import 'package:linchpin_app/features/performance_report/domain/entity/months_entity.dart';
-import 'package:linchpin_app/features/performance_report/domain/repository/last_quarter_report_repository.dart';
+import 'package:Linchpin/core/locator/di/di.dart';
+import 'package:Linchpin/core/resources/data_state.dart';
+import 'package:Linchpin/features/performance_report/domain/entity/months_entity.dart';
+import 'package:Linchpin/features/performance_report/domain/repository/last_quarter_report_repository.dart';
 
 abstract class LastQuarterReportUsecase {
   final LastQuarterReportRepository lastQuarterReportRepository;

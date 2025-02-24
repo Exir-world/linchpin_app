@@ -3,14 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:linchpin_app/core/common/dimens.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/customui/loading_widget.dart';
-import 'package:linchpin_app/features/growth/data/models/user_self_model/user_item.dart';
-import 'package:linchpin_app/features/growth/presentation/bloc/growth_bloc.dart';
-import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
-import 'package:linchpin_app/gen/fonts.gen.dart';
+import 'package:Linchpin/core/common/dimens.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
+import 'package:Linchpin/core/customui/loading_widget.dart';
+import 'package:Linchpin/features/growth/data/models/user_self_model/user_item.dart';
+import 'package:Linchpin/features/growth/presentation/bloc/growth_bloc.dart';
+import 'package:Linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:Linchpin/gen/assets.gen.dart';
+import 'package:Linchpin/gen/fonts.gen.dart';
 
 class GrowthScreen extends StatefulWidget {
   const GrowthScreen({super.key});
@@ -63,7 +63,6 @@ class _GrowthScreenState extends State<GrowthScreen>
           if (state is UserSelfCompletedState) {
             _userItems ??= state.userSelfEntity.userItems;
             return SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: padding_Horizantalx),

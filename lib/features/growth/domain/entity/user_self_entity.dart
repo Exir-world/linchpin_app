@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:linchpin_app/features/growth/data/models/user_self_model/user_item.dart';
+import 'package:Linchpin/features/growth/data/models/user_self_model/user_item.dart';
 
 class UserSelfEntity extends Equatable {
   final int? score;

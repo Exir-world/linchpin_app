@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/common/dimens.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
+import 'package:Linchpin/core/common/dimens.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
 
 // نمایش پیغام موفقیت آمیز از پایین صفحه
 SnackBar snackBarVerify({

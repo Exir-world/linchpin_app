@@ -1,12 +1,13 @@
+import 'package:Linchpin/features/notifications/presentation/notifications_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/common/colors.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/shared_preferences/shared_preferences_key.dart';
-import 'package:linchpin_app/core/shared_preferences/shared_preferences_service.dart';
-import 'package:linchpin_app/features/auth/presentation/auth_screen.dart';
-import 'package:linchpin_app/features/requests/presentation/requests_screen.dart';
-import 'package:linchpin_app/features/root/presentation/root_screen.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:Linchpin/core/common/colors.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
+import 'package:Linchpin/core/shared_preferences/shared_preferences_key.dart';
+import 'package:Linchpin/core/shared_preferences/shared_preferences_service.dart';
+import 'package:Linchpin/features/auth/presentation/auth_screen.dart';
+import 'package:Linchpin/features/requests/presentation/requests_screen.dart';
+import 'package:Linchpin/features/root/presentation/root_screen.dart';
+import 'package:Linchpin/gen/assets.gen.dart';
 
 PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
   return PreferredSize(
@@ -125,27 +126,42 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                                     image: Assets.icons.notification
                                         .svg(height: 24),
                                     title: 'اعلانات',
+                                    onTap: () {
+                                      _navigateToScreen(
+                                        context,
+                                        NotificationsScreen(),
+                                      );
+                                    },
                                   ),
                                   SizedBox(height: 24),
                                   _ItemProfile(
                                     image: Assets.icons.wallet.svg(height: 24),
                                     title: 'گزارشات مالی',
+                                    onTap: () {
+                                      _navigateToScreen(
+                                        context,
+                                        RequestsScreen(),
+                                      );
+                                    },
                                   ),
                                   SizedBox(height: 24),
                                   _ItemProfile(
                                     image:
                                         Assets.icons.calendar.svg(height: 24),
                                     title: 'محاسبه حقوق',
+                                    onTap: () {},
                                   ),
                                   SizedBox(height: 24),
                                   _ItemProfile(
                                     image: Assets.icons.star.svg(height: 24),
                                     title: 'امتیازات',
+                                    onTap: () {},
                                   ),
                                   SizedBox(height: 24),
                                   _ItemProfile(
                                     image: Assets.icons.setting.svg(height: 24),
                                     title: 'تنظیمات برنامه',
+                                    onTap: () {},
                                   ),
                                   SizedBox(height: 24),
                                   Divider(color: Colors.grey.shade100),
@@ -154,16 +170,19 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                                     image:
                                         Assets.icons.question.svg(height: 24),
                                     title: 'سوالات متداول',
+                                    onTap: () {},
                                   ),
                                   SizedBox(height: 24),
                                   _ItemProfile(
                                     image: Assets.icons.scale.svg(height: 24),
                                     title: 'قوانین',
+                                    onTap: () {},
                                   ),
                                   SizedBox(height: 24),
                                   _ItemProfile(
                                     image: Assets.icons.code.svg(height: 24),
                                     title: 'تغییرات آپدیت ها',
+                                    onTap: () {},
                                   ),
                                   // SizedBox(height: 24),
                                   SizedBox(height: 24),
@@ -338,25 +357,30 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
 class _ItemProfile extends StatelessWidget {
   final Widget image;
   final String title;
+  final Function() onTap;
   const _ItemProfile({
     required this.image,
     required this.title,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        image,
-        SizedBox(width: 8),
-        NormalMedium(title),
-        Spacer(),
-        Icon(
-          Icons.arrow_forward_ios_rounded,
-          color: Color(0xffDADADA),
-          size: 16,
-        ),
-      ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        children: [
+          image,
+          SizedBox(width: 8),
+          NormalMedium(title),
+          Spacer(),
+          Icon(
+            Icons.arrow_forward_ios_rounded,
+            color: Color(0xffDADADA),
+            size: 16,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -394,4 +418,27 @@ class IOSModalStyle extends StatelessWidget {
       ),
     );
   }
+}
+
+void _navigateToScreen(BuildContext context, Widget screen) {
+  String screenName = screen.runtimeType.toString();
+
+  if (NavigationManager.activeScreen.value == screenName) {
+    return Navigator.pop(context);
+  }
+  NavigationManager.activeScreen.value = screenName;
+
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => screen,
+      settings: RouteSettings(name: screenName),
+    ),
+  ).then((_) {
+    NavigationManager.activeScreen.value = null;
+  });
+}
+
+class NavigationManager {
+  static ValueNotifier<String?> activeScreen = ValueNotifier<String?>(null);
 }

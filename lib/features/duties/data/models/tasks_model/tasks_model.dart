@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:linchpin_app/features/duties/domain/entity/tasks_entity.dart';
+import 'package:Linchpin/features/duties/domain/entity/tasks_entity.dart';
 
 import 'my_task.dart';
 import 'other_task.dart';

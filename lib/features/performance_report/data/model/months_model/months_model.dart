@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:linchpin_app/features/performance_report/domain/entity/months_entity.dart';
+import 'package:Linchpin/features/performance_report/domain/entity/months_entity.dart';
 
 @immutable
 class MonthsModel extends MonthsEntity {

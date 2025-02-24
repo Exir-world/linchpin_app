@@ -1,6 +1,6 @@
-import 'package:linchpin_app/core/resources/data_state.dart';
-import 'package:linchpin_app/features/duties/domain/entity/task_detail_entity.dart';
-import 'package:linchpin_app/features/duties/domain/entity/tasks_entity.dart';
+import 'package:Linchpin/core/resources/data_state.dart';
+import 'package:Linchpin/features/duties/domain/entity/task_detail_entity.dart';
+import 'package:Linchpin/features/duties/domain/entity/tasks_entity.dart';
 
 abstract class DutiesRepository {
   // لیست وظایف خودم و دیگران

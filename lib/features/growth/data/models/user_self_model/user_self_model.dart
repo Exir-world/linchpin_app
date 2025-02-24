@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:linchpin_app/features/growth/domain/entity/user_self_entity.dart';
+import 'package:Linchpin/features/growth/domain/entity/user_self_entity.dart';
 
 import 'user_item.dart';
 

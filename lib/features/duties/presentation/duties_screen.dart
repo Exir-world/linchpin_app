@@ -1,15 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/customui/loading_widget.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
-import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/features/duties/data/models/tasks_model/task_tag.dart';
-import 'package:linchpin_app/features/duties/presentation/all_duties_screen.dart';
-import 'package:linchpin_app/features/duties/presentation/bloc/duties_bloc.dart';
-import 'package:linchpin_app/features/duties/presentation/my_task_screen.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
+import 'package:Linchpin/core/customui/loading_widget.dart';
+import 'package:Linchpin/core/extension/context_extension.dart';
+import 'package:Linchpin/core/locator/di/di.dart';
+import 'package:Linchpin/features/duties/data/models/tasks_model/task_tag.dart';
+import 'package:Linchpin/features/duties/presentation/all_duties_screen.dart';
+import 'package:Linchpin/features/duties/presentation/bloc/duties_bloc.dart';
+import 'package:Linchpin/features/duties/presentation/my_task_screen.dart';
+import 'package:Linchpin/gen/assets.gen.dart';
 
 class DutiesScreen extends StatefulWidget {
   const DutiesScreen({super.key});
@@ -28,7 +28,7 @@ class _DutiesScreenState extends State<DutiesScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _tabController = TabController(length: 0, vsync: this);
+    _tabController = TabController(length: 1, vsync: this);
     DutiesScreen.tabIndexNotifire = ValueNotifier(0);
     _bloc = getIt<DutiesBloc>();
 
@@ -115,7 +115,7 @@ class _DutiesScreenState extends State<DutiesScreen>
                   padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                   child: Column(
                     children: [
-                      // عنوان لیست وظایف و مشاهده همه روزها
+                      // عنوان لیست وظایف و مشاهده تمام وظایف
                       Row(
                         children: [
                           BigDemiBold('لیست وظایف'),
@@ -133,7 +133,7 @@ class _DutiesScreenState extends State<DutiesScreen>
                                 Assets.icons.calendar1.svg(),
                                 SizedBox(width: 8),
                                 NormalMedium(
-                                  'مشاهده همه روزها',
+                                  'همه وظایف',
                                   textColorInLight: Color(0xff861C8C),
                                 ),
                               ],

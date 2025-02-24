@@ -2,17 +2,17 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin_app/core/common/colors.dart';
-import 'package:linchpin_app/core/common/dimens.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/customui/loading_widget.dart';
-import 'package:linchpin_app/core/customui/snackbar_verify.dart';
-import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/core/translate/locale_keys.dart';
-import 'package:linchpin_app/features/root/presentation/root_screen.dart';
-import 'package:linchpin_app/features/time_management/presentation/bloc/time_management_bloc.dart';
-import 'package:linchpin_app/features/time_management/presentation/widget/circular_timer.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:Linchpin/core/common/colors.dart';
+import 'package:Linchpin/core/common/dimens.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
+import 'package:Linchpin/core/customui/loading_widget.dart';
+import 'package:Linchpin/core/customui/snackbar_verify.dart';
+import 'package:Linchpin/core/locator/di/di.dart';
+import 'package:Linchpin/core/translate/locale_keys.dart';
+import 'package:Linchpin/features/root/presentation/root_screen.dart';
+import 'package:Linchpin/features/time_management/presentation/bloc/time_management_bloc.dart';
+import 'package:Linchpin/features/time_management/presentation/widget/circular_timer.dart';
+import 'package:Linchpin/gen/assets.gen.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class TimeManagementScreen extends StatefulWidget {

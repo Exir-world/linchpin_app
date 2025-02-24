@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
+import 'package:Linchpin/core/common/text_widgets.dart';
+import 'package:Linchpin/core/extension/context_extension.dart';
 
 class ErrorUiWidget extends StatelessWidget {
   final String title;
