@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:Linchpin/core/common/dimens.dart';
-import 'package:Linchpin/core/common/text_widgets.dart';
-import 'package:Linchpin/core/customui/loading_widget.dart';
-import 'package:Linchpin/core/extension/context_extension.dart';
-import 'package:Linchpin/core/locator/di/di.dart';
-import 'package:Linchpin/features/requests/presentation/bloc/requests_bloc.dart';
-import 'package:Linchpin/features/requests/presentation/request_detail_screen.dart';
-import 'package:Linchpin/features/root/presentation/app_bar_root.dart';
-import 'package:Linchpin/gen/assets.gen.dart';
+import 'package:linchpin/core/common/dimens.dart';
+import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/customui/error_ui_widget.dart';
+import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/features/requests/presentation/bloc/requests_bloc.dart';
+import 'package:linchpin/features/requests/presentation/request_detail_screen.dart';
+import 'package:linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class RequestsScreen extends StatefulWidget {
@@ -382,10 +383,12 @@ class _RequestsScreenState extends State<RequestsScreen>
                 } else if (state is RequestsLoading) {
                   return LoadingWidget();
                 } else if (state is RequestsError) {
-                  return SizedBox(
-                      width: context.screenWidth,
-                      height: context.screenHeight,
-                      child: Center(child: SmallRegular(state.textError)));
+                  return ErrorUiWidget(
+                    title: state.textError,
+                    onTap: () {
+                      _bloc.add(RequestUser());
+                    },
+                  );
                 } else {
                   return SizedBox(
                     width: context.screenWidth,

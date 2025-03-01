@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:Linchpin/core/common/dimens.dart';
-import 'package:Linchpin/gen/fonts.gen.dart';
+import 'package:linchpin/core/common/dimens.dart';
+import 'package:linchpin/gen/fonts.gen.dart';
 
 class TextStyles {
   static const TextStyle defaultStyle = TextStyle(

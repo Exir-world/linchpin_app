@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>ما به موقعیت مکانی شما برای ارائه خدمات نیاز داریم.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>ما نیاز داریم تا در پس‌زمینه هم موقعیت شما را دریافت کنیم.</string>
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+    	<key>PreciseLocation</key>
+    	<string>ما برای دقت بیشتر از GPS استفاده می‌کنیم.</string>
+	</dict>
 	<key>CFBundleLocalizations</key>
 	<array>
 	<string>en</string>
@@ -10,7 +19,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Linchpin App</string>
+	<string>linchpin App</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -18,7 +27,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Linchpin</string>
+	<string>linchpin</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

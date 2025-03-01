@@ -1,4 +1,4 @@
-# Linchpin
+# linchpin
 
 A new Flutter project.
 

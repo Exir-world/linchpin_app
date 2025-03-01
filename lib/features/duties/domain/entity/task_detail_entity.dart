@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:Linchpin/features/duties/data/models/task_detail_model/attachment.dart';
-import 'package:Linchpin/features/duties/data/models/task_detail_model/priority.dart';
-import 'package:Linchpin/features/duties/data/models/task_detail_model/sub_task.dart';
-import 'package:Linchpin/features/duties/data/models/task_detail_model/task_tag.dart';
-import 'package:Linchpin/features/duties/data/models/tasks_model/user.dart';
+import 'package:linchpin/features/duties/data/models/task_detail_model/attachment.dart';
+import 'package:linchpin/features/duties/data/models/task_detail_model/priority.dart';
+import 'package:linchpin/features/duties/data/models/task_detail_model/sub_task.dart';
+import 'package:linchpin/features/duties/data/models/task_detail_model/task_tag.dart';
+import 'package:linchpin/features/duties/data/models/tasks_model/user.dart';
 
 class TaskDetailEntity extends Equatable {
   final int? id;

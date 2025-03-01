@@ -1,8 +1,8 @@
 import 'package:injectable/injectable.dart';
-import 'package:Linchpin/core/locator/di/di.dart';
-import 'package:Linchpin/core/resources/data_state.dart';
-import 'package:Linchpin/features/growth/domain/entity/user_self_entity.dart';
-import 'package:Linchpin/features/growth/domain/repository/growth_repository.dart';
+import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/features/growth/domain/entity/user_self_entity.dart';
+import 'package:linchpin/features/growth/domain/repository/growth_repository.dart';
 
 abstract class GrowthUsecase {
   final GrowthRepository growthRepository;

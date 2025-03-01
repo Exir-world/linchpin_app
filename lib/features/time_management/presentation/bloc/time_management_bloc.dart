@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:Linchpin/core/resources/data_state.dart';
-import 'package:Linchpin/features/time_management/domain/entity/daily_entity.dart';
-import 'package:Linchpin/features/time_management/domain/use_case/time_management_usecase.dart';
+import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/features/time_management/domain/entity/daily_entity.dart';
+import 'package:linchpin/features/time_management/domain/use_case/time_management_usecase.dart';
 
 part 'time_management_event.dart';
 part 'time_management_state.dart';
@@ -19,7 +19,8 @@ class TimeManagementBloc
       DailyEvent event, Emitter<TimeManagementState> emit) async {
     emit(DailyLoadingState());
 
-    DataState dataState = await timeManagementUsecase.daily(event.actionType);
+    DataState dataState = await timeManagementUsecase.daily(
+        event.actionType, event.lat, event.lng);
 
     if (dataState is DataSuccess) {
       emit(DailyComplitedState(dataState.data));

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:Linchpin/core/resources/data_state.dart';
-import 'package:Linchpin/features/growth/domain/entity/user_self_entity.dart';
-import 'package:Linchpin/features/growth/domain/use_case/growth_usecase.dart';
+import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/features/growth/domain/entity/user_self_entity.dart';
+import 'package:linchpin/features/growth/domain/use_case/growth_usecase.dart';
 
 part 'growth_event.dart';
 part 'growth_state.dart';

@@ -18,3 +18,18 @@ final class NotificationListErrorState extends NotificationsState {
 
   NotificationListErrorState(this.errorText);
 }
+
+// علامت زدن اعلان
+final class MarkAsReadLoadingState extends NotificationsState {}
+
+final class MarkAsReadCompletedState extends NotificationsState {
+  final SuccessEntity successEntity;
+
+  MarkAsReadCompletedState(this.successEntity);
+}
+
+final class MarkAsReadErrorState extends NotificationsState {
+  final String errorText;
+
+  MarkAsReadErrorState(this.errorText);
+}

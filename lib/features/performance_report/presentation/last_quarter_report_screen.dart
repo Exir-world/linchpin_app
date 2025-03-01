@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:Linchpin/core/common/dimens.dart';
-import 'package:Linchpin/core/common/text_widgets.dart';
-import 'package:Linchpin/core/customui/loading_widget.dart';
-import 'package:Linchpin/core/extension/context_extension.dart';
-import 'package:Linchpin/core/locator/di/di.dart';
-import 'package:Linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
-import 'package:Linchpin/gen/assets.gen.dart';
+import 'package:linchpin/core/common/dimens.dart';
+import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/customui/error_ui_widget.dart';
+import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class LastQuarterReportScreen extends StatefulWidget {
@@ -49,14 +50,14 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
       create: (context) => _bloc,
       child: Scaffold(
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: padding_Horizantalx),
-              child: BlocBuilder<LastQuarterReportBloc, LastQuarterReportState>(
-                builder: (context, state) {
-                  if (state is MonthsCompletedState) {
-                    return Column(
+          child: BlocBuilder<LastQuarterReportBloc, LastQuarterReportState>(
+            builder: (context, state) {
+              if (state is MonthsCompletedState) {
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: padding_Horizantalx),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: VERTICAL_SPACING_6x),
@@ -223,13 +224,22 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                 },
                               ),
                       ],
-                    );
-                  } else {
-                    return LoadingWidget();
-                  }
-                },
-              ),
-            ),
+                    ),
+                  ),
+                );
+              } else if (state is MonthsLoadingState) {
+                return LoadingWidget();
+              } else if (state is MonthsErrorState) {
+                return ErrorUiWidget(
+                  title: state.errorText,
+                  onTap: () {
+                    _bloc.add(MonthsEvent());
+                  },
+                );
+              } else {
+                return Center(child: Text("data"));
+              }
+            },
           ),
         ),
       ),

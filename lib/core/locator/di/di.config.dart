@@ -12,75 +12,75 @@
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
-import 'package:Linchpin/core/common/http_client.dart' as _i113;
-import 'package:Linchpin/features/auth/data/data_source/api_auth.dart' as _i57;
-import 'package:Linchpin/features/auth/data/repository/auth_repository_impl.dart'
+import 'package:linchpin/core/common/http_client.dart' as _i113;
+import 'package:linchpin/features/auth/data/data_source/api_auth.dart' as _i57;
+import 'package:linchpin/features/auth/data/repository/auth_repository_impl.dart'
     as _i664;
-import 'package:Linchpin/features/auth/domain/repository/auth_repository.dart'
+import 'package:linchpin/features/auth/domain/repository/auth_repository.dart'
     as _i670;
-import 'package:Linchpin/features/auth/domain/use_case/auth_usecase.dart'
+import 'package:linchpin/features/auth/domain/use_case/auth_usecase.dart'
     as _i354;
-import 'package:Linchpin/features/auth/presentation/bloc/auth_bloc.dart'
+import 'package:linchpin/features/auth/presentation/bloc/auth_bloc.dart'
     as _i332;
-import 'package:Linchpin/features/duties/data/data_source/api_duties.dart'
+import 'package:linchpin/features/duties/data/data_source/api_duties.dart'
     as _i718;
-import 'package:Linchpin/features/duties/data/repository/duties_repository_impl.dart'
+import 'package:linchpin/features/duties/data/repository/duties_repository_impl.dart'
     as _i937;
-import 'package:Linchpin/features/duties/domain/repository/duties_repository.dart'
+import 'package:linchpin/features/duties/domain/repository/duties_repository.dart'
     as _i76;
-import 'package:Linchpin/features/duties/domain/use_case/duties_usecase.dart'
+import 'package:linchpin/features/duties/domain/use_case/duties_usecase.dart'
     as _i71;
-import 'package:Linchpin/features/duties/presentation/bloc/duties_bloc.dart'
+import 'package:linchpin/features/duties/presentation/bloc/duties_bloc.dart'
     as _i73;
-import 'package:Linchpin/features/growth/data/data_source/api_growth.dart'
+import 'package:linchpin/features/growth/data/data_source/api_growth.dart'
     as _i628;
-import 'package:Linchpin/features/growth/data/repository/growth_repository_impl.dart'
+import 'package:linchpin/features/growth/data/repository/growth_repository_impl.dart'
     as _i517;
-import 'package:Linchpin/features/growth/domain/repository/growth_repository.dart'
+import 'package:linchpin/features/growth/domain/repository/growth_repository.dart'
     as _i640;
-import 'package:Linchpin/features/growth/domain/use_case/growth_usecase.dart'
+import 'package:linchpin/features/growth/domain/use_case/growth_usecase.dart'
     as _i708;
-import 'package:Linchpin/features/growth/presentation/bloc/growth_bloc.dart'
+import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart'
     as _i66;
-import 'package:Linchpin/features/notifications/data/data_source/api_notifications.dart'
+import 'package:linchpin/features/notifications/data/data_source/api_notifications.dart'
     as _i27;
-import 'package:Linchpin/features/notifications/data/repository/notifications_repository_impl.dart'
+import 'package:linchpin/features/notifications/data/repository/notifications_repository_impl.dart'
     as _i680;
-import 'package:Linchpin/features/notifications/domain/repository/notifications_repository.dart'
+import 'package:linchpin/features/notifications/domain/repository/notifications_repository.dart'
     as _i643;
-import 'package:Linchpin/features/notifications/domain/use_case/notifications_usecase.dart'
+import 'package:linchpin/features/notifications/domain/use_case/notifications_usecase.dart'
     as _i856;
-import 'package:Linchpin/features/notifications/presentation/bloc/notifications_bloc.dart'
+import 'package:linchpin/features/notifications/presentation/bloc/notifications_bloc.dart'
     as _i560;
-import 'package:Linchpin/features/performance_report/data/data_source/api_last_quarter_report.dart'
+import 'package:linchpin/features/performance_report/data/data_source/api_last_quarter_report.dart'
     as _i799;
-import 'package:Linchpin/features/performance_report/data/repository/last_quarter_report_repository_impl.dart'
+import 'package:linchpin/features/performance_report/data/repository/last_quarter_report_repository_impl.dart'
     as _i99;
-import 'package:Linchpin/features/performance_report/domain/repository/last_quarter_report_repository.dart'
+import 'package:linchpin/features/performance_report/domain/repository/last_quarter_report_repository.dart'
     as _i514;
-import 'package:Linchpin/features/performance_report/domain/use_case/last_quarter_report_usecase.dart'
+import 'package:linchpin/features/performance_report/domain/use_case/last_quarter_report_usecase.dart'
     as _i644;
-import 'package:Linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart'
+import 'package:linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart'
     as _i873;
-import 'package:Linchpin/features/requests/data/data_source/api_request.dart'
+import 'package:linchpin/features/requests/data/data_source/api_request.dart'
     as _i1058;
-import 'package:Linchpin/features/requests/data/repository/request_repository_impl.dart'
+import 'package:linchpin/features/requests/data/repository/request_repository_impl.dart'
     as _i1037;
-import 'package:Linchpin/features/requests/domain/repository/request_repository.dart'
+import 'package:linchpin/features/requests/domain/repository/request_repository.dart'
     as _i163;
-import 'package:Linchpin/features/requests/domain/usecase/request_usecase.dart'
+import 'package:linchpin/features/requests/domain/usecase/request_usecase.dart'
     as _i116;
-import 'package:Linchpin/features/requests/presentation/bloc/requests_bloc.dart'
+import 'package:linchpin/features/requests/presentation/bloc/requests_bloc.dart'
     as _i15;
-import 'package:Linchpin/features/time_management/data/data_source/api_time_mamagement.dart'
+import 'package:linchpin/features/time_management/data/data_source/api_time_mamagement.dart'
     as _i105;
-import 'package:Linchpin/features/time_management/data/repository/time_management_repository_impl.dart'
+import 'package:linchpin/features/time_management/data/repository/time_management_repository_impl.dart'
     as _i469;
-import 'package:Linchpin/features/time_management/domain/repository/time_management_repository.dart'
+import 'package:linchpin/features/time_management/domain/repository/time_management_repository.dart'
     as _i150;
-import 'package:Linchpin/features/time_management/domain/use_case/time_management_usecase.dart'
+import 'package:linchpin/features/time_management/domain/use_case/time_management_usecase.dart'
     as _i893;
-import 'package:Linchpin/features/time_management/presentation/bloc/time_management_bloc.dart'
+import 'package:linchpin/features/time_management/presentation/bloc/time_management_bloc.dart'
     as _i519;
 
 const String _prod = 'prod';
@@ -101,13 +101,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i57.ApiAuth>(() => _i57.ApiAuth(gh<_i361.Dio>()));
     gh.singleton<_i718.ApiDuties>(() => _i718.ApiDuties(gh<_i361.Dio>()));
     gh.singleton<_i628.ApiGrowth>(() => _i628.ApiGrowth(gh<_i361.Dio>()));
+    gh.singleton<_i27.ApiNotifications>(
+        () => _i27.ApiNotifications(gh<_i361.Dio>()));
     gh.singleton<_i799.ApiLastQuarterReport>(
         () => _i799.ApiLastQuarterReport(gh<_i361.Dio>()));
     gh.singleton<_i1058.ApiRequest>(() => _i1058.ApiRequest(gh<_i361.Dio>()));
     gh.singleton<_i105.ApiTimeMamagement>(
         () => _i105.ApiTimeMamagement(gh<_i361.Dio>()));
-    gh.singleton<_i27.ApiNotifications>(
-        () => _i27.ApiNotifications(gh<_i361.Dio>()));
     gh.singleton<_i150.TimeManagementRepository>(
       () => _i469.TimeManagementRepositoryImpl(gh<_i105.ApiTimeMamagement>()),
       registerFor: {_prod},

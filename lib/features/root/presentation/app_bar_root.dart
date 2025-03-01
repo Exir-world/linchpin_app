@@ -1,13 +1,14 @@
-import 'package:Linchpin/features/notifications/presentation/notifications_screen.dart';
+import 'package:linchpin/features/notifications/presentation/notifications_screen.dart';
+import 'package:linchpin/features/time_management/presentation/time_management_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:Linchpin/core/common/colors.dart';
-import 'package:Linchpin/core/common/text_widgets.dart';
-import 'package:Linchpin/core/shared_preferences/shared_preferences_key.dart';
-import 'package:Linchpin/core/shared_preferences/shared_preferences_service.dart';
-import 'package:Linchpin/features/auth/presentation/auth_screen.dart';
-import 'package:Linchpin/features/requests/presentation/requests_screen.dart';
-import 'package:Linchpin/features/root/presentation/root_screen.dart';
-import 'package:Linchpin/gen/assets.gen.dart';
+import 'package:linchpin/core/common/colors.dart';
+import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
+import 'package:linchpin/features/auth/presentation/auth_screen.dart';
+import 'package:linchpin/features/requests/presentation/requests_screen.dart';
+import 'package:linchpin/features/root/presentation/root_screen.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 
 PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
   return PreferredSize(
@@ -113,10 +114,27 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                                       ),
                                       SizedBox(width: 16),
                                       Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          LargeDemiBold('فرهاد رضوانی'),
+                                          ValueListenableBuilder(
+                                            valueListenable:
+                                                TimeManagementScreen
+                                                    .nameNotifire,
+                                            builder: (context, value, child) {
+                                              return LargeDemiBold(value);
+                                            },
+                                          ),
                                           SizedBox(height: 8),
-                                          NormalMedium('۰۹۳۶۱۲۳۴۵۸۶'),
+                                          ValueListenableBuilder(
+                                            valueListenable:
+                                                TimeManagementScreen
+                                                    .phoneNotifire,
+                                            builder: (context, value, child) {
+                                              return NormalMedium(
+                                                  value.replaceAll("+98", ""));
+                                            },
+                                          ),
                                         ],
                                       ),
                                     ],

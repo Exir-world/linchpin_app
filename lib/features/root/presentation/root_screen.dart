@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:Linchpin/features/duties/presentation/duties_screen.dart';
-import 'package:Linchpin/features/growth/presentation/growth_screen.dart';
-import 'package:Linchpin/features/performance_report/presentation/last_quarter_report_screen.dart';
-import 'package:Linchpin/features/root/presentation/app_bar_root.dart';
-import 'package:Linchpin/features/time_management/presentation/time_management_screen.dart';
-import 'package:Linchpin/gen/assets.gen.dart';
+import 'package:linchpin/features/duties/presentation/duties_screen.dart';
+import 'package:linchpin/features/growth/presentation/growth_screen.dart';
+import 'package:linchpin/features/performance_report/presentation/last_quarter_report_screen.dart';
+import 'package:linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:linchpin/features/time_management/presentation/time_management_screen.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({super.key});

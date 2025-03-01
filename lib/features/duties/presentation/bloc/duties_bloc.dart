@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:Linchpin/core/resources/data_state.dart';
-import 'package:Linchpin/features/duties/domain/entity/task_detail_entity.dart';
-import 'package:Linchpin/features/duties/domain/entity/tasks_entity.dart';
-import 'package:Linchpin/features/duties/domain/use_case/duties_usecase.dart';
+import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/features/duties/domain/entity/task_detail_entity.dart';
+import 'package:linchpin/features/duties/domain/entity/tasks_entity.dart';
+import 'package:linchpin/features/duties/domain/use_case/duties_usecase.dart';
 
 part 'duties_event.dart';
 part 'duties_state.dart';

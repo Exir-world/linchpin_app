@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:Linchpin/core/resources/data_state.dart';
-import 'package:Linchpin/core/resources/entity/error_entity.dart';
-import 'package:Linchpin/core/resources/model/error_model.dart';
-import 'package:Linchpin/core/shared_preferences/shared_preferences_key.dart';
-import 'package:Linchpin/core/shared_preferences/shared_preferences_service.dart';
+import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/core/resources/entity/error_entity.dart';
+import 'package:linchpin/core/resources/model/error_model.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 
 Future<DataState<T>> handleError<T>(DioException e) async {
   if (e.response == null) {

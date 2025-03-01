@@ -1,10 +1,11 @@
-import 'package:Linchpin/core/common/text_widgets.dart';
-import 'package:Linchpin/core/customui/loading_widget.dart';
-import 'package:Linchpin/core/extension/context_extension.dart';
-import 'package:Linchpin/core/locator/di/di.dart';
-import 'package:Linchpin/features/notifications/domain/entity/notifications_entity.dart';
-import 'package:Linchpin/features/notifications/presentation/bloc/notifications_bloc.dart';
-import 'package:Linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/customui/error_ui_widget.dart';
+import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/features/notifications/domain/entity/notifications_entity.dart';
+import 'package:linchpin/features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'package:linchpin/features/root/presentation/app_bar_root.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,20 +37,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => _bloc,
-      child: BlocConsumer<NotificationsBloc, NotificationsState>(
-        listener: (context, state) {
-          if (state is NotificationListCompletedState) {
-            setState(() {
-              _localNotifications = state.notificationsEntity;
-            });
-          }
-        },
-        builder: (context, state) {
-          if (state is NotificationListCompletedState) {
-            return Scaffold(
-              appBar: appBarRoot(context, true),
-              body: Padding(
+        create: (context) => _bloc,
+        child: Scaffold(
+          appBar: appBarRoot(context, true),
+          body: BlocConsumer<NotificationsBloc, NotificationsState>(
+              listener: (context, state) {
+            if (state is NotificationListCompletedState) {
+              setState(() {
+                _localNotifications = state.notificationsEntity;
+              });
+            }
+          }, builder: (context, state) {
+            if (state is NotificationListCompletedState) {
+              return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: SingleChildScrollView(
                   child: Column(
@@ -124,18 +124,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     ],
                   ),
                 ),
-              ),
-            );
-          } else if (state is NotificationListLoadingState) {
-            return LoadingWidget();
-          } else if (state is NotificationListErrorState) {
-            return Center(child: Text(state.errorText));
-          } else {
-            return Center(child: Text("data"));
-          }
-        },
-      ),
-    );
+              );
+            } else if (state is NotificationListLoadingState) {
+              return LoadingWidget();
+            } else if (state is NotificationListErrorState) {
+              return ErrorUiWidget(
+                title: state.errorText,
+                onTap: () {
+                  _bloc.add(NotificationListEvent());
+                },
+              );
+            } else {
+              return Center(child: Text("data"));
+            }
+          }),
+        ));
   }
 }
 

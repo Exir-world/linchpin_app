@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:Linchpin/core/common/text_widgets.dart';
-import 'package:Linchpin/gen/fonts.gen.dart';
+import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/gen/fonts.gen.dart';
 
 class ExplanationWidget extends StatefulWidget {
   const ExplanationWidget({super.key});

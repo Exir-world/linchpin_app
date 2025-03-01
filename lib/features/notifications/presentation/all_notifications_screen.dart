@@ -1,8 +1,8 @@
-import 'package:Linchpin/core/common/text_widgets.dart';
-import 'package:Linchpin/core/extension/context_extension.dart';
-import 'package:Linchpin/features/notifications/presentation/notifications_screen.dart';
-import 'package:Linchpin/features/root/presentation/app_bar_root.dart';
-import 'package:Linchpin/gen/assets.gen.dart';
+import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/features/notifications/presentation/notifications_screen.dart';
+import 'package:linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 
 class AllNotificationsScreen extends StatelessWidget {

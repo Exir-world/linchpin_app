@@ -1,4 +1,4 @@
-import 'package:Linchpin/features/notifications/data/models/notifications_model/notification.dart';
+import 'package:linchpin/features/notifications/data/models/notifications_model/notification.dart';
 import 'package:equatable/equatable.dart';
 
 class NotificationsEntity extends Equatable {

@@ -3,15 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:Linchpin/core/common/text_widgets.dart';
-import 'package:Linchpin/core/customui/snackbar_verify.dart';
-import 'package:Linchpin/core/locator/di/di.dart';
-import 'package:Linchpin/core/shared_preferences/shared_preferences_key.dart';
-import 'package:Linchpin/core/shared_preferences/shared_preferences_service.dart';
-import 'package:Linchpin/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:Linchpin/features/root/presentation/root_screen.dart';
-import 'package:Linchpin/gen/assets.gen.dart';
-import 'package:Linchpin/gen/fonts.gen.dart';
+import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/customui/snackbar_verify.dart';
+import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
+import 'package:linchpin/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:linchpin/features/root/presentation/root_screen.dart';
+import 'package:linchpin/gen/assets.gen.dart';
+import 'package:linchpin/gen/fonts.gen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -199,7 +199,8 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
                           TextFormField(
                             controller: AuthScreen.passControllerNotifire.value,
                             obscureText: obscureText,
-                            textAlign: TextAlign.end,
+                            textAlign: TextAlign.left,
+                            textDirection: TextDirection.ltr,
                             style: TextStyle(
                               fontFamily: FontFamily.iRANSansXFAMedium,
                               fontSize: 14,

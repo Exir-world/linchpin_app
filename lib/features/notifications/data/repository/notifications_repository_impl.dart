@@ -1,10 +1,12 @@
-import 'package:Linchpin/core/locator/di/di.dart';
-import 'package:Linchpin/core/resources/data_state.dart';
-import 'package:Linchpin/core/utils/handle_error.dart';
-import 'package:Linchpin/features/notifications/data/data_source/api_notifications.dart';
-import 'package:Linchpin/features/notifications/data/models/notifications_model/notifications_model.dart';
-import 'package:Linchpin/features/notifications/domain/entity/notifications_entity.dart';
-import 'package:Linchpin/features/notifications/domain/repository/notifications_repository.dart';
+import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/core/resources/entity/success_entity.dart';
+import 'package:linchpin/core/resources/model/success_model.dart';
+import 'package:linchpin/core/utils/handle_error.dart';
+import 'package:linchpin/features/notifications/data/data_source/api_notifications.dart';
+import 'package:linchpin/features/notifications/data/models/notifications_model/notifications_model.dart';
+import 'package:linchpin/features/notifications/domain/entity/notifications_entity.dart';
+import 'package:linchpin/features/notifications/domain/repository/notifications_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
@@ -20,6 +22,17 @@ class NotificationsRepositoryImpl extends NotificationsRepository {
       NotificationsEntity notificationsEntity =
           NotificationsModel.fromJson(response.data);
       return DataSuccess(notificationsEntity);
+    } on DioException catch (e) {
+      return await handleError(e);
+    }
+  }
+
+  @override
+  Future<DataState<SuccessEntity>> markAsRead(int notifId) async {
+    try {
+      Response response = await apiNotifications.markAsRead(notifId);
+      SuccessEntity successEntity = SuccessModel.fromJson(response.data);
+      return DataSuccess(successEntity);
     } on DioException catch (e) {
       return await handleError(e);
     }

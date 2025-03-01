@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:Linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/extension/context_extension.dart';
 
 class LoadingWidget extends StatelessWidget {
   const LoadingWidget({

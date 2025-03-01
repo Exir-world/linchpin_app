@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:Linchpin/features/duties/data/models/tasks_model/user.dart';
-import 'package:Linchpin/features/duties/domain/entity/task_detail_entity.dart';
+import 'package:linchpin/features/duties/data/models/tasks_model/user.dart';
+import 'package:linchpin/features/duties/domain/entity/task_detail_entity.dart';
 
 import 'attachment.dart';
 import 'priority.dart';

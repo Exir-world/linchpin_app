@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Linchpin/features/time_management/domain/entity/daily_entity.dart';
+import 'package:linchpin/features/time_management/domain/entity/daily_entity.dart';
 import 'user.dart';
 
 @immutable

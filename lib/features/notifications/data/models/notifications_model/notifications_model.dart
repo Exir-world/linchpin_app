@@ -1,4 +1,4 @@
-import 'package:Linchpin/features/notifications/domain/entity/notifications_entity.dart';
+import 'package:linchpin/features/notifications/domain/entity/notifications_entity.dart';
 import 'package:flutter/foundation.dart';
 import 'notification.dart';
 

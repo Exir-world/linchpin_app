@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Linchpin/core/resources/entity/error_entity.dart';
+import 'package:linchpin/core/resources/entity/error_entity.dart';
 
 @immutable
 class ErrorModel extends ErrorEntity {

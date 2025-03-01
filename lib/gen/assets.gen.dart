@@ -118,6 +118,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/leaves_off.svg
   SvgGenImage get leavesOff => const SvgGenImage('assets/icons/leaves_off.svg');
 
+  /// File path: assets/icons/location.svg
+  SvgGenImage get location => const SvgGenImage('assets/icons/location.svg');
+
   /// File path: assets/icons/logout.svg
   SvgGenImage get logout => const SvgGenImage('assets/icons/logout.svg');
 
@@ -201,64 +204,65 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<dynamic> get values => [
-        activityA,
-        activity,
-        arrowUp,
-        attach,
-        autumn,
-        avatar,
-        boardTasksA,
-        boardTasks,
-        board,
-        calculate,
-        calendar,
-        calendar1,
-        checkOut,
-        check,
-        chevronUpDown,
-        cir,
-        circleClock,
-        clockAddPlusA,
-        clockAddPlus,
-        clockAdd,
-        clockClose,
-        clockDash,
-        code,
-        combined,
-        delete,
-        docs,
-        download,
-        filter,
-        flag,
-        info,
-        leaves,
-        leavesOff,
-        logout,
-        notificationS,
-        notification,
-        pause,
-        play,
-        plus,
-        question,
-        radio,
-        ringing,
-        scale,
-        setting,
-        spring,
-        star,
-        summer,
-        tag,
-        task,
-        timerOffSleep,
-        timerTick2,
-        timerTick3,
-        timerTick4,
-        timerTick,
-        user,
-        verify,
-        wallet,
-        winter,
-      ];
+    activityA,
+    activity,
+    arrowUp,
+    attach,
+    autumn,
+    avatar,
+    boardTasksA,
+    boardTasks,
+    board,
+    calculate,
+    calendar,
+    calendar1,
+    checkOut,
+    check,
+    chevronUpDown,
+    cir,
+    circleClock,
+    clockAddPlusA,
+    clockAddPlus,
+    clockAdd,
+    clockClose,
+    clockDash,
+    code,
+    combined,
+    delete,
+    docs,
+    download,
+    filter,
+    flag,
+    info,
+    leaves,
+    leavesOff,
+    location,
+    logout,
+    notificationS,
+    notification,
+    pause,
+    play,
+    plus,
+    question,
+    radio,
+    ringing,
+    scale,
+    setting,
+    spring,
+    star,
+    summer,
+    tag,
+    task,
+    timerOffSleep,
+    timerTick2,
+    timerTick3,
+    timerTick4,
+    timerTick,
+    user,
+    verify,
+    wallet,
+    winter,
+  ];
 }
 
 class $AssetsImagesGen {
@@ -376,10 +380,10 @@ class AssetGenImage {
 
 class SvgGenImage {
   const SvgGenImage(this._assetName, {this.size, this.flavors = const {}})
-      : _isVecFormat = false;
+    : _isVecFormat = false;
 
   const SvgGenImage.vec(this._assetName, {this.size, this.flavors = const {}})
-      : _isVecFormat = true;
+    : _isVecFormat = true;
 
   final String _assetName;
   final Size? size;
@@ -433,7 +437,8 @@ class SvgGenImage {
       placeholderBuilder: placeholderBuilder,
       semanticsLabel: semanticsLabel,
       excludeFromSemantics: excludeFromSemantics,
-      colorFilter: colorFilter ??
+      colorFilter:
+          colorFilter ??
           (color == null ? null : ColorFilter.mode(color, colorBlendMode)),
       clipBehavior: clipBehavior,
       cacheColorFilter: cacheColorFilter,

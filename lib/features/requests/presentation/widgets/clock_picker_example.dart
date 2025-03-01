@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:Linchpin/core/common/text_widgets.dart';
-import 'package:Linchpin/features/requests/presentation/widgets/box_request_type.dart';
-import 'package:Linchpin/features/requests/presentation/widgets/clock_picker.dart';
-import 'package:Linchpin/gen/assets.gen.dart';
+import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/features/requests/presentation/widgets/box_request_type.dart';
+import 'package:linchpin/features/requests/presentation/widgets/clock_picker.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 
 class ClockPickerExample extends StatefulWidget {
   final String title;

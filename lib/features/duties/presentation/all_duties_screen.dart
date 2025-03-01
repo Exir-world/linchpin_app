@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:Linchpin/core/common/text_widgets.dart';
-import 'package:Linchpin/core/customui/loading_widget.dart';
-import 'package:Linchpin/features/duties/presentation/bloc/duties_bloc.dart';
-import 'package:Linchpin/features/duties/presentation/duties_screen.dart';
-import 'package:Linchpin/features/root/presentation/app_bar_root.dart';
-import 'package:Linchpin/gen/assets.gen.dart';
+import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/customui/error_ui_widget.dart';
+import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/features/duties/presentation/bloc/duties_bloc.dart';
+import 'package:linchpin/features/duties/presentation/duties_screen.dart';
+import 'package:linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 
 class AllDutiesScreen extends StatefulWidget {
   const AllDutiesScreen({super.key});
@@ -227,8 +228,11 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
               ),
             );
           } else if (state is AllTasksError) {
-            return Scaffold(
-              body: Center(child: Text(state.textError)),
+            return ErrorUiWidget(
+              title: state.textError,
+              onTap: () {
+                BlocProvider.of<DutiesBloc>(context).add(AllTasksEvent());
+              },
             );
           } else if (state is AllTasksLoading) {
             return LoadingWidget();

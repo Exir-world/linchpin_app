@@ -1,15 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:Linchpin/core/common/text_widgets.dart';
-import 'package:Linchpin/core/customui/loading_widget.dart';
-import 'package:Linchpin/core/extension/context_extension.dart';
-import 'package:Linchpin/core/locator/di/di.dart';
-import 'package:Linchpin/features/duties/data/models/tasks_model/task_tag.dart';
-import 'package:Linchpin/features/duties/presentation/all_duties_screen.dart';
-import 'package:Linchpin/features/duties/presentation/bloc/duties_bloc.dart';
-import 'package:Linchpin/features/duties/presentation/my_task_screen.dart';
-import 'package:Linchpin/gen/assets.gen.dart';
+import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/customui/error_ui_widget.dart';
+import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/features/duties/data/models/tasks_model/task_tag.dart';
+import 'package:linchpin/features/duties/presentation/all_duties_screen.dart';
+import 'package:linchpin/features/duties/presentation/bloc/duties_bloc.dart';
+import 'package:linchpin/features/duties/presentation/my_task_screen.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 
 class DutiesScreen extends StatefulWidget {
   const DutiesScreen({super.key});
@@ -246,8 +247,16 @@ class _DutiesScreenState extends State<DutiesScreen>
                 ),
               );
             } else if (state is TasksError) {
-              return Scaffold(
-                body: Center(child: Text(state.textError)),
+              return ErrorUiWidget(
+                title: state.textError,
+                onTap: () {
+                  _bloc.add(TasksEvent(
+                    startDate:
+                        DateFormat('yyyy-MM-dd', 'en').format(DateTime.now()),
+                    endDate:
+                        DateFormat('yyyy-MM-dd', 'en').format(DateTime.now()),
+                  ));
+                },
               );
             } else if (state is TasksLoading) {
               return LoadingWidget();

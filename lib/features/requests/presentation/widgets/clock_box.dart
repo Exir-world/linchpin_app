@@ -1,8 +1,8 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
-// import 'package:Linchpin/core/common/text_widgets.dart';
-// import 'package:Linchpin/gen/assets.gen.dart';
-// import 'package:Linchpin/gen/fonts.gen.dart';
+// import 'package:linchpin/core/common/text_widgets.dart';
+// import 'package:linchpin/gen/assets.gen.dart';
+// import 'package:linchpin/gen/fonts.gen.dart';
 
 // class ClockBox extends StatefulWidget {
 //   final String title;

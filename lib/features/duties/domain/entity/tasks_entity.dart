@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:Linchpin/features/duties/data/models/tasks_model/my_task.dart';
-import 'package:Linchpin/features/duties/data/models/tasks_model/other_task.dart';
+import 'package:linchpin/features/duties/data/models/tasks_model/my_task.dart';
+import 'package:linchpin/features/duties/data/models/tasks_model/other_task.dart';
 
 class TasksEntity extends Equatable {
   final List<MyTask>? myTasks;

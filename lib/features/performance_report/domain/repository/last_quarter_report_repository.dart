@@ -1,5 +1,5 @@
-import 'package:Linchpin/core/resources/data_state.dart';
-import 'package:Linchpin/features/performance_report/domain/entity/months_entity.dart';
+import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/features/performance_report/domain/entity/months_entity.dart';
 
 abstract class LastQuarterReportRepository {
   // گزارش کارکرد 12 ماه گذشته

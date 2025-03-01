@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:Linchpin/core/common/colors.dart';
-import 'package:Linchpin/core/common/text_styles.dart';
-import 'package:Linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/common/colors.dart';
+import 'package:linchpin/core/common/text_styles.dart';
+import 'package:linchpin/core/extension/context_extension.dart';
 
 abstract class BaseTextWidget extends StatelessWidget {
   final String data;

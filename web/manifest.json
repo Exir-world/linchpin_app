@@ -1,6 +1,6 @@
 {
-  "name": "Linchpin",
-  "short_name": "Linchpin",
+  "name": "linchpin",
+  "short_name": "linchpin",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",
