@@ -1,4 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/notifications/presentation/notifications_screen.dart';
+import 'package:linchpin/features/setting/setting_screen.dart';
 import 'package:linchpin/features/time_management/presentation/time_management_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:linchpin/core/common/colors.dart';
@@ -41,331 +44,316 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                 },
               )
             : null,
-        title: ValueListenableBuilder(
-          valueListenable: RootScreen.timeServerNotofire,
-          builder: (context, timeServer, child) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                !isRequestScreen
-                    ? GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => RequestsScreen(),
-                              ));
-                        },
-                        child: Container(
-                            color: Colors.transparent,
-                            height: kToolbarHeight,
-                            padding: EdgeInsets.only(left: 12),
-                            child: Assets.icons.docs.svg(height: 26)),
-                      )
-                    : SizedBox.shrink(),
-                ValueListenableBuilder(
-                  valueListenable: RootScreen.timeServerNotofire,
-                  builder: (context, value, child) {
-                    return NormalMedium(value ?? '');
-                  },
-                ),
-                GestureDetector(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            !isRequestScreen
+                ? GestureDetector(
                     onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true, // to full height
-                        useSafeArea: true, // to show under status bar
-                        backgroundColor: Colors
-                            .transparent, // to show BorderRadius of Container
-                        sheetAnimationStyle: AnimationStyle(
-                          reverseCurve: Curves.easeIn,
-                          duration: Duration(milliseconds: 400),
-                        ),
-                        builder: (context) {
-                          return IOSModalStyle(
-                            childBody: Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Container(
-                                      width: 23,
-                                      height: 4,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(2),
-                                        color: Color(0xff000000)
-                                            .withValues(alpha: .15),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 32),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        height: 64,
-                                        width: 64,
-                                        decoration: BoxDecoration(
-                                          color: Colors.amber,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Assets.icons.avatar.svg(),
-                                      ),
-                                      SizedBox(width: 16),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          ValueListenableBuilder(
-                                            valueListenable:
-                                                TimeManagementScreen
-                                                    .nameNotifire,
-                                            builder: (context, value, child) {
-                                              return LargeDemiBold(value);
-                                            },
-                                          ),
-                                          SizedBox(height: 8),
-                                          ValueListenableBuilder(
-                                            valueListenable:
-                                                TimeManagementScreen
-                                                    .phoneNotifire,
-                                            builder: (context, value, child) {
-                                              return NormalMedium(
-                                                  value.replaceAll("+98", ""));
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 48),
-                                  _ItemProfile(
-                                    image: Assets.icons.notification
-                                        .svg(height: 24),
-                                    title: 'اعلانات',
-                                    onTap: () {
-                                      _navigateToScreen(
-                                        context,
-                                        NotificationsScreen(),
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: 24),
-                                  _ItemProfile(
-                                    image: Assets.icons.wallet.svg(height: 24),
-                                    title: 'گزارشات مالی',
-                                    onTap: () {
-                                      _navigateToScreen(
-                                        context,
-                                        RequestsScreen(),
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: 24),
-                                  _ItemProfile(
-                                    image:
-                                        Assets.icons.calendar.svg(height: 24),
-                                    title: 'محاسبه حقوق',
-                                    onTap: () {},
-                                  ),
-                                  SizedBox(height: 24),
-                                  _ItemProfile(
-                                    image: Assets.icons.star.svg(height: 24),
-                                    title: 'امتیازات',
-                                    onTap: () {},
-                                  ),
-                                  SizedBox(height: 24),
-                                  _ItemProfile(
-                                    image: Assets.icons.setting.svg(height: 24),
-                                    title: 'تنظیمات برنامه',
-                                    onTap: () {},
-                                  ),
-                                  SizedBox(height: 24),
-                                  Divider(color: Colors.grey.shade100),
-                                  SizedBox(height: 24),
-                                  _ItemProfile(
-                                    image:
-                                        Assets.icons.question.svg(height: 24),
-                                    title: 'سوالات متداول',
-                                    onTap: () {},
-                                  ),
-                                  SizedBox(height: 24),
-                                  _ItemProfile(
-                                    image: Assets.icons.scale.svg(height: 24),
-                                    title: 'قوانین',
-                                    onTap: () {},
-                                  ),
-                                  SizedBox(height: 24),
-                                  _ItemProfile(
-                                    image: Assets.icons.code.svg(height: 24),
-                                    title: 'تغییرات آپدیت ها',
-                                    onTap: () {},
-                                  ),
-                                  // SizedBox(height: 24),
-                                  SizedBox(height: 24),
-                                  Divider(color: Colors.grey.shade100),
-                                  SizedBox(height: 24),
-                                  GestureDetector(
-                                    onTap: () {
-                                      showDialog<TimeOfDay>(
-                                        context: context,
-                                        builder: (context) {
-                                          return Dialog(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8)),
-                                            backgroundColor: Colors.white,
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 24,
-                                                horizontal: 24,
-                                              ),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  NormalMedium(
-                                                    'می‌خواهید از حساب خود خارج شوید؟',
-                                                  ),
-                                                  SizedBox(height: 24),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            PrefService
-                                                                prefService =
-                                                                PrefService();
-                                                            prefService
-                                                                .readCacheString(
-                                                                    SharedKey
-                                                                        .jwtToken)
-                                                                .then(
-                                                              (value) {
-                                                                prefService
-                                                                    .removeCache(
-                                                                        SharedKey
-                                                                            .expires);
-                                                                prefService
-                                                                    .removeCache(
-                                                                        SharedKey
-                                                                            .refreshToken);
-                                                                prefService
-                                                                    .removeCache(
-                                                                        value);
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pushAndRemoveUntil(
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            AuthScreen(),
-                                                                  ),
-                                                                  (Route<dynamic>
-                                                                          route) =>
-                                                                      false,
-                                                                );
-                                                              },
-                                                            );
-                                                          },
-                                                          child: Container(
-                                                            height: 44,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: Color(
-                                                                  0xff861C8C),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12),
-                                                            ),
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: NormalMedium(
-                                                              'بله',
-                                                              textColorInLight:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 24),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: Container(
-                                                            height: 44,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: Color(
-                                                                  0xffCAC4CF),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12),
-                                                            ),
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: NormalMedium(
-                                                                'خیر',
-                                                                textColorInLight:
-                                                                    Colors
-                                                                        .white),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Assets.icons.logout.svg(height: 22),
-                                        SizedBox(width: 8),
-                                        NormalMedium(
-                                          'خروج از حساب',
-                                          textColorInLight: Color(0xffD80B0F),
-                                        ),
-                                        Spacer(),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 32),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: SmallMedium(
-                                      'Verson 2.00',
-                                      textColorInLight: Color(0xffCAC4CF),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RequestsScreen(),
+                          ));
                     },
                     child: Container(
                         color: Colors.transparent,
                         height: kToolbarHeight,
-                        padding: EdgeInsets.only(right: 12),
-                        child: Assets.icons.user.svg(height: 26))),
-              ],
-            );
-          },
+                        padding: EdgeInsets.only(left: 12),
+                        child: Assets.icons.docs.svg(height: 26)),
+                  )
+                : SizedBox.shrink(),
+            ValueListenableBuilder(
+              valueListenable: RootScreen.timeServerNotofire,
+              builder: (context, value, child) {
+                return NormalMedium(value ?? '');
+              },
+            ),
+            GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true, // to full height
+                    useSafeArea: true, // to show under status bar
+                    backgroundColor:
+                        Colors.transparent, // to show BorderRadius of Container
+                    sheetAnimationStyle: AnimationStyle(
+                      reverseCurve: Curves.easeIn,
+                      duration: Duration(milliseconds: 400),
+                    ),
+                    builder: (context) {
+                      return IOSModalStyle(
+                        childBody: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                  width: 23,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(2),
+                                    color: Color(0xff000000)
+                                        .withValues(alpha: .15),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 32),
+                              Row(
+                                children: [
+                                  Container(
+                                    height: 64,
+                                    width: 64,
+                                    decoration: BoxDecoration(
+                                      color: Colors.amber,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Assets.icons.avatar.svg(),
+                                  ),
+                                  SizedBox(width: 16),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ValueListenableBuilder(
+                                        valueListenable:
+                                            TimeManagementScreen.nameNotifire,
+                                        builder: (context, value, child) {
+                                          return LargeDemiBold(value);
+                                        },
+                                      ),
+                                      SizedBox(height: 8),
+                                      ValueListenableBuilder(
+                                        valueListenable:
+                                            TimeManagementScreen.phoneNotifire,
+                                        builder: (context, value, child) {
+                                          return NormalMedium(
+                                              value.replaceAll("+98", ""));
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 48),
+                              _ItemProfile(
+                                image:
+                                    Assets.icons.notification.svg(height: 24),
+                                title: LocaleKeys.notifications.tr(),
+                                onTap: () {
+                                  _navigateToScreen(
+                                    context,
+                                    NotificationsScreen(),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 24),
+                              _ItemProfile(
+                                image: Assets.icons.wallet.svg(height: 24),
+                                title: LocaleKeys.financialReports.tr(),
+                                onTap: () {},
+                              ),
+                              SizedBox(height: 24),
+                              _ItemProfile(
+                                image: Assets.icons.calendar.svg(height: 24),
+                                title: LocaleKeys.salaryCalculation.tr(),
+                                onTap: () {},
+                              ),
+                              SizedBox(height: 24),
+                              _ItemProfile(
+                                image: Assets.icons.star.svg(height: 24),
+                                title: LocaleKeys.privileges.tr(),
+                                onTap: () {},
+                              ),
+                              SizedBox(height: 24),
+                              _ItemProfile(
+                                image: Assets.icons.setting.svg(height: 24),
+                                title: LocaleKeys.appSettings.tr(),
+                                onTap: () {
+                                  _navigateToScreen(
+                                    context,
+                                    SettingScreen(),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 24),
+                              Divider(color: Colors.grey.shade100),
+                              SizedBox(height: 24),
+                              _ItemProfile(
+                                image: Assets.icons.question.svg(height: 24),
+                                title: LocaleKeys.fAQ.tr(),
+                                onTap: () {},
+                              ),
+                              SizedBox(height: 24),
+                              _ItemProfile(
+                                image: Assets.icons.scale.svg(height: 24),
+                                title: LocaleKeys.laws.tr(),
+                                onTap: () {},
+                              ),
+                              SizedBox(height: 24),
+                              _ItemProfile(
+                                image: Assets.icons.code.svg(height: 24),
+                                title: LocaleKeys.updateChanges.tr(),
+                                onTap: () {},
+                              ),
+                              SizedBox(height: 24),
+                              Divider(color: Colors.grey.shade100),
+                              SizedBox(height: 24),
+                              GestureDetector(
+                                onTap: () {
+                                  showDialog<TimeOfDay>(
+                                    context: context,
+                                    builder: (context) {
+                                      return Dialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8)),
+                                        backgroundColor: Colors.white,
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: 24,
+                                            horizontal: 24,
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              NormalMedium(
+                                                LocaleKeys.logOutAccount.tr(),
+                                              ),
+                                              SizedBox(height: 24),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        PrefService
+                                                            prefService =
+                                                            PrefService();
+                                                        prefService
+                                                            .readCacheString(
+                                                                SharedKey
+                                                                    .jwtToken)
+                                                            .then(
+                                                          (value) {
+                                                            prefService
+                                                                .removeCache(
+                                                                    SharedKey
+                                                                        .expires);
+                                                            prefService.removeCache(
+                                                                SharedKey
+                                                                    .refreshToken);
+                                                            prefService
+                                                                .removeCache(
+                                                                    value);
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pushAndRemoveUntil(
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        AuthScreen(),
+                                                              ),
+                                                              (Route<dynamic>
+                                                                      route) =>
+                                                                  false,
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                      child: Container(
+                                                        height: 44,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xff861C8C),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                        ),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: NormalMedium(
+                                                          LocaleKeys.yes.tr(),
+                                                          textColorInLight:
+                                                              Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 24),
+                                                  Expanded(
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Container(
+                                                        height: 44,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xffCAC4CF),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                        ),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: NormalMedium(
+                                                            LocaleKeys.no.tr(),
+                                                            textColorInLight:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    Assets.icons.logout.svg(height: 22),
+                                    SizedBox(width: 8),
+                                    NormalMedium(
+                                      LocaleKeys.logOut.tr(),
+                                      textColorInLight: Color(0xffD80B0F),
+                                    ),
+                                    Spacer(),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 32),
+                              Align(
+                                alignment: Alignment.center,
+                                child: SmallMedium(
+                                  'Verson 2.00',
+                                  textColorInLight: Color(0xffCAC4CF),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Container(
+                    color: Colors.transparent,
+                    height: kToolbarHeight,
+                    padding: EdgeInsets.only(right: 12),
+                    child: Assets.icons.user.svg(height: 26))),
+          ],
         ),
       ),
     ),

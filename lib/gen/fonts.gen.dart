@@ -21,4 +21,16 @@ class FontFamily {
 
   /// Font family: IRANSansXFA-Regular
   static const String iRANSansXFARegular = 'IRANSansXFA-Regular';
+
+  /// Font family: ProductSans-Bold
+  static const String productSansBold = 'ProductSans-Bold';
+
+  /// Font family: ProductSans-DemiBold
+  static const String productSansDemiBold = 'ProductSans-DemiBold';
+
+  /// Font family: ProductSans-Medium
+  static const String productSansMedium = 'ProductSans-Medium';
+
+  /// Font family: ProductSans-Regular
+  static const String productSansRegular = 'ProductSans-Regular';
 }

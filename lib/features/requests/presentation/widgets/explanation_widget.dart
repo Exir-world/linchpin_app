@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/gen/fonts.gen.dart';
 
 class ExplanationWidget extends StatefulWidget {
@@ -30,7 +32,7 @@ class _ExplanationWidgetState extends State<ExplanationWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        NormalMedium('توضیح'),
+        NormalMedium(LocaleKeys.explanation.tr()),
         SizedBox(height: 12),
         WillPopScope(
           onWillPop: () async {

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +8,9 @@ import 'package:linchpin/core/common/dimens.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
+import 'package:linchpin/features/auth/presentation/auth_screen.dart';
+import 'package:linchpin/features/duties/presentation/duties_screen.dart';
 import 'package:linchpin/features/growth/data/models/user_self_model/user_item.dart';
 import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
@@ -29,6 +33,11 @@ class _GrowthScreenState extends State<GrowthScreen>
     WidgetsBinding.instance.addObserver(this);
     BlocProvider.of<GrowthBloc>(context).add(UserSelfEvent());
     _controller.text = '';
+    AuthScreen.languageNotifire.addListener(
+      () {
+        BlocProvider.of<GrowthBloc>(context).add(UserSelfEvent());
+      },
+    );
     super.initState();
   }
 
@@ -62,7 +71,7 @@ class _GrowthScreenState extends State<GrowthScreen>
         },
         builder: (context, state) {
           if (state is UserSelfCompletedState) {
-            _userItems ??= state.userSelfEntity.userItems;
+            _userItems = state.userSelfEntity.userItems;
             return SingleChildScrollView(
               child: Padding(
                 padding:
@@ -87,11 +96,9 @@ class _GrowthScreenState extends State<GrowthScreen>
                                   _controller.text = '';
                                   showModalBottomSheet(
                                     context: context,
-                                    isScrollControlled: true, // to full height
-                                    useSafeArea:
-                                        true, // to show under status bar
-                                    backgroundColor: Colors
-                                        .transparent, // to show BorderRadius of Container
+                                    isScrollControlled: true,
+                                    useSafeArea: true,
+                                    backgroundColor: Colors.transparent,
                                     sheetAnimationStyle: AnimationStyle(
                                       reverseCurve: Curves.easeIn,
                                       duration: Duration(milliseconds: 400),
@@ -101,7 +108,7 @@ class _GrowthScreenState extends State<GrowthScreen>
                                         padding: EdgeInsets.only(
                                           bottom: MediaQuery.of(context)
                                               .viewInsets
-                                              .bottom, // فضای کیبورد
+                                              .bottom,
                                         ),
                                         child: IOSModalStyle(
                                           childBody: Padding(
@@ -126,7 +133,9 @@ class _GrowthScreenState extends State<GrowthScreen>
                                                   ),
                                                 ),
                                                 SizedBox(height: 16),
-                                                LargeBold('گزارش فعالیت'),
+                                                LargeBold(LocaleKeys
+                                                    .activityReport
+                                                    .tr()),
                                                 SizedBox(height: 24),
                                                 Container(
                                                   decoration: BoxDecoration(
@@ -220,29 +229,41 @@ class _GrowthScreenState extends State<GrowthScreen>
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
-                                Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          data.done!
-                                              ? Colors.black
-                                                  .withValues(alpha: 0.2)
-                                              : Color(color)
-                                                  .withValues(alpha: 0.2),
-                                          data.done!
-                                              ? Colors.black
-                                                  .withValues(alpha: 0.8)
-                                              : Color(color)
-                                                  .withValues(alpha: 0.8),
-                                        ],
-                                      ),
-                                    ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: data.image!,
-                                      fit: BoxFit.cover,
-                                    )),
+                                ValueListenableBuilder(
+                                  valueListenable: AuthScreen.languageNotifire,
+                                  builder: (context, value, child) {
+                                    return Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          gradient: LinearGradient(
+                                            begin: value == 'en'
+                                                ? Alignment.centerRight
+                                                : Alignment.centerLeft,
+                                            end: value == 'en'
+                                                ? Alignment.centerLeft
+                                                : Alignment.centerRight,
+                                            colors: [
+                                              data.done!
+                                                  ? Colors.black
+                                                      .withValues(alpha: 0.2)
+                                                  : Color(color)
+                                                      .withValues(alpha: 0.2),
+                                              data.done!
+                                                  ? Colors.black
+                                                      .withValues(alpha: 0.8)
+                                                  : Color(color)
+                                                      .withValues(alpha: 0.8),
+                                            ],
+                                          ),
+                                        ),
+                                        child: CachedNetworkImage(
+                                          imageUrl: data.image!,
+                                          fit: BoxFit.cover,
+                                        ));
+                                  },
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16),
@@ -280,7 +301,7 @@ class _GrowthScreenState extends State<GrowthScreen>
               },
             );
           } else {
-            return Center(child: Text("data"));
+            return Center(child: NormalMedium("data"));
           }
         },
       )),
@@ -347,7 +368,7 @@ class RequestGrowthWidget extends StatelessWidget {
             child: state is UserSelfAddLoadingState
                 ? CupertinoActivityIndicator(color: Colors.white)
                 : NormalDemiBold(
-                    'ثبت گزارش',
+                    LocaleKeys.activityReport.tr(),
                     textColorInLight: Colors.white,
                   ),
           ),
@@ -374,7 +395,7 @@ class _ConstGrowthWidgetState extends State<ConstGrowthWidget> {
         SizedBox(height: 16),
         Row(
           children: [
-            BigDemiBold('توسعه فردی'),
+            BigDemiBold(LocaleKeys.individualGrowth.tr()),
             Spacer(),
             SvgPicture.network(
               widget.state.userSelfEntity.scoreIcon!,
@@ -382,22 +403,13 @@ class _ConstGrowthWidgetState extends State<ConstGrowthWidget> {
                   SizedBox(height: 24, child: CupertinoActivityIndicator()),
             ),
             SizedBox(width: 4),
-            NormalMedium('${widget.state.userSelfEntity.score} امتیاز'),
+            NormalMedium(
+                '${widget.state.userSelfEntity.score} ${LocaleKeys.score.tr()}'),
           ],
         ),
         Align(
           alignment: Alignment.center,
-          child: Container(
-            width: 50,
-            margin: EdgeInsets.only(top: 24, bottom: 16),
-            decoration: BoxDecoration(
-              color: Color(0xffF5EEFC),
-              borderRadius: BorderRadius.circular(37),
-            ),
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: SmallRegular('امروز'),
-          ),
+          child: TodayTagWidget(),
         ),
         SizedBox(height: 4),
       ],

@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/requests/domain/entity/request_types_entity.dart';
 import 'package:linchpin/features/requests/presentation/request_detail_screen.dart';
 import 'package:linchpin/features/requests/presentation/widgets/explanation_widget.dart';
@@ -19,11 +21,11 @@ class BoxRequestType extends StatefulWidget {
 class _BoxRequestTypeState extends State<BoxRequestType> {
   String getTypeLabel(String type) {
     final typeLabels = {
-      'SICK_LEAVE': 'مرخصی استعلاجی',
-      'HOURLY_LEAVE': 'مرخصی ساعتی',
-      'DAILY_LEAVE': 'مرخصی روزانه',
-      'MANUAL_CHECK_OUT': 'تردد دستی (خروج)',
-      'MANUAL_CHECK_IN': 'تردد دستی (ورود)',
+      'SICK_LEAVE': LocaleKeys.sickLeave.tr(),
+      'HOURLY_LEAVE': LocaleKeys.hourlyLeave.tr(),
+      'DAILY_LEAVE': LocaleKeys.dailyLeave.tr(),
+      'MANUAL_CHECK_OUT': LocaleKeys.manualAttendanceExit.tr(),
+      'MANUAL_CHECK_IN': LocaleKeys.manualAttendanceEntry.tr(),
     };
 
     return typeLabels[type] ?? '';
@@ -152,7 +154,7 @@ class _BoxRequestTypeState extends State<BoxRequestType> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          NormalMedium('نوع درخواست'),
+          NormalMedium(LocaleKeys.typeOfRequest.tr()),
           SizedBox(height: 12),
           GestureDetector(
             onTap: () => _toggleDropdown(
@@ -175,7 +177,7 @@ class _BoxRequestTypeState extends State<BoxRequestType> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   NormalRegular(
-                    selecteditemName ?? 'انتخاب کنید',
+                    selecteditemName ?? LocaleKeys.select.tr(),
                     textColorInLight: selectedItem == null
                         ? Color(0xffCAC4CF)
                         : Color(0xff540E5C),

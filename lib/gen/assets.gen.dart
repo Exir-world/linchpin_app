@@ -290,6 +290,9 @@ class $AssetsImagesGen {
 class $AssetsTranslationsGen {
   const $AssetsTranslationsGen();
 
+  /// File path: assets/translations/ar.json
+  String get ar => 'assets/translations/ar.json';
+
   /// File path: assets/translations/en.json
   String get en => 'assets/translations/en.json';
 
@@ -297,7 +300,7 @@ class $AssetsTranslationsGen {
   String get fa => 'assets/translations/fa.json';
 
   /// List of all assets
-  List<String> get values => [en, fa];
+  List<String> get values => [ar, en, fa];
 }
 
 class Assets {

@@ -1,3 +1,6 @@
+import 'package:linchpin/core/common/text_styles.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin/core/utils/max_width_wrapper.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:linchpin/features/auth/presentation/auth_screen.dart';
@@ -17,15 +20,39 @@ void main() async {
   // ابتدا بررسی موقعیت مکانی قبل از اجرای اپلیکیشن
   LocationService locationService = LocationService();
   Widget homePage = await locationService.checkLocationPermission();
+
+  // مقدار زبان انتخاب‌شده را از SharedPreferences بخوانیم
+  PrefService prefService = PrefService();
+  String? savedLanguage =
+      await prefService.readCacheString(SharedKey.selectedLanguage);
+
+  // تعیین زبان پیش‌فرض بر اساس مقدار ذخیره‌شده
+  Locale initialLocale = _getLocaleFromLanguage(savedLanguage);
+  await FontHelper.loadLanguage(); // مقداردهی اولیه زبان
   runApp(
     EasyLocalization(
-      supportedLocales: [Locale('en'), Locale('fa')],
+      supportedLocales: [Locale('en'), Locale('fa'), Locale('ar')],
       path: 'assets/translations',
       fallbackLocale: Locale('en'),
-      startLocale: Locale('fa'),
+      startLocale: initialLocale,
       child: MyApp(homePage: homePage),
     ),
   );
+}
+
+// تابع برای تبدیل نام زبان به Locale
+Locale _getLocaleFromLanguage(String? language) {
+  AuthScreen.languageNotifire.value = language ?? 'fa';
+  switch (language) {
+    case 'fa':
+      return Locale('fa');
+    case 'en':
+      return Locale('en');
+    case 'ar':
+      return Locale('ar');
+    default:
+      return Locale('fa');
+  }
 }
 
 class MyApp extends StatelessWidget {

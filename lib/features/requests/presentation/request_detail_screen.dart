@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin/core/common/dimens.dart';
@@ -5,6 +6,7 @@ import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/requests/presentation/bloc/requests_bloc.dart';
 import 'package:linchpin/features/requests/presentation/widgets/box_request_type.dart';
 import 'package:linchpin/features/requests/presentation/widgets/clock_picker_example.dart';
@@ -308,7 +310,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                             ),
                             alignment: Alignment.center,
                             child: NormalMedium(
-                              'ثبت درخواست',
+                              LocaleKeys.submitARequest.tr(),
                               textColorInLight: Colors.white,
                             ),
                           ),
@@ -360,7 +362,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(height: 24),
-                              BigDemiBold('ثبت درخواست'),
+                              BigDemiBold(LocaleKeys.submitARequest.tr()),
                               SizedBox(height: 24),
                               // باکس نوع درخواست
                               BoxRequestType(state: state.requestTypesEntity),
@@ -376,8 +378,8 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                                       selectedItem == 'HOURLY_LEAVE') {
                                     return ClockPickerExample(
                                       title: selectedItem == 'MANUAL_CHECK_OUT'
-                                          ? 'ساعت پایان'
-                                          : 'ساعت شروع',
+                                          ? LocaleKeys.finishingTime.tr()
+                                          : LocaleKeys.startTime.tr(),
                                       onChange: (TimeOfDay time) {
                                         // ذخیره ساعت و دقیقه در نوتیفایرهای جدید
                                         RequestDetailScreen.startHourNotifire
@@ -410,7 +412,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                                       children: [
                                         SizedBox(height: 24),
                                         ClockPickerExample(
-                                          title: 'ساعت خروج',
+                                          title: LocaleKeys.endTime.tr(),
                                           onChange: (TimeOfDay time) {
                                             // ذخیره ساعت و دقیقه پایان در نوتیفایرهای جدید
                                             RequestDetailScreen.endHourNotifire
@@ -465,7 +467,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                                       },
                                       padding:
                                           EdgeInsets.only(bottom: 24, top: 24),
-                                      title: 'تاریخ',
+                                      title: LocaleKeys.date.tr(),
                                     );
                                   } else {
                                     return Container();
@@ -503,7 +505,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                                             }
                                           },
                                           padding: EdgeInsets.only(bottom: 24),
-                                          title: 'تاریخ شروع',
+                                          title: LocaleKeys.startDate.tr(),
                                         ),
                                         PersianDatePicker(
                                           initialDate: DateTime.now(),
@@ -528,7 +530,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                                             }
                                           },
                                           padding: EdgeInsets.only(bottom: 24),
-                                          title: 'تاریخ پایان',
+                                          title: LocaleKeys.endDate.tr(),
                                         ),
                                       ],
                                     );
@@ -566,7 +568,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                                             }
                                           },
                                           padding: EdgeInsets.only(bottom: 24),
-                                          title: 'تاریخ شروع',
+                                          title: LocaleKeys.startDate.tr(),
                                         ),
                                         PersianDatePicker(
                                           initialDate: DateTime.now(),
@@ -589,7 +591,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                                             }
                                           },
                                           padding: EdgeInsets.only(bottom: 24),
-                                          title: 'تاریخ پایان',
+                                          title: LocaleKeys.endDate.tr(),
                                         ),
                                       ],
                                     );

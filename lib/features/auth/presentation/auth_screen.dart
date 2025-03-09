@@ -1,4 +1,5 @@
 import 'package:calendar_pro_farhad/core/context_extension.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:linchpin/core/customui/snackbar_verify.dart';
 import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:linchpin/features/root/presentation/root_screen.dart';
 import 'package:linchpin/gen/assets.gen.dart';
@@ -18,8 +20,7 @@ class AuthScreen extends StatefulWidget {
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
-  static late ValueNotifier<TextEditingController> accountControllerNotifire;
-  static late ValueNotifier<TextEditingController> passControllerNotifire;
+  static ValueNotifier<String?> languageNotifire = ValueNotifier(null);
 }
 
 class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
@@ -28,15 +29,15 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
   final _formKey = GlobalKey<FormState>();
   DateTime? _lastPressedTime;
   final PrefService prefService = PrefService();
-
+  TextEditingController accountController = TextEditingController();
+  TextEditingController passController = TextEditingController();
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     _bloc = getIt<AuthBloc>();
     // مقداردهی مجدد در صورت نیاز
-    AuthScreen.accountControllerNotifire =
-        ValueNotifier(TextEditingController());
-    AuthScreen.passControllerNotifire = ValueNotifier(TextEditingController());
+    accountController = TextEditingController();
+    passController = TextEditingController();
     _checkAuthStatus();
     super.initState();
   }
@@ -70,13 +71,10 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    // ابتدا مقدار داخل ValueNotifier (TextEditingController) را آزاد کنید
-    AuthScreen.accountControllerNotifire.value.dispose();
-    AuthScreen.passControllerNotifire.value.dispose();
 
     // حالا خود ValueNotifier را dispose کنید
-    AuthScreen.accountControllerNotifire.dispose();
-    AuthScreen.passControllerNotifire.dispose();
+    accountController.dispose();
+    passController.dispose();
     _bloc.close();
 
     super.dispose();
@@ -97,7 +95,7 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarVerify(
           context: context,
-          title: 'برای خروج، دوبار دکمه خروج را کلیک کنید.',
+          title: LocaleKeys.exitText.tr(),
           desc: '',
           icon: Assets.icons.info.svg(),
         ),
@@ -125,7 +123,7 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
             ScaffoldMessenger.of(context).showSnackBar(
               snackBarVerify(
                 context: context,
-                title: 'خطا در ورود',
+                title: LocaleKeys.loginError.tr(),
                 desc: state.errorText,
                 icon: Assets.icons.activity.svg(),
               ),
@@ -151,11 +149,10 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
                               alignment: Alignment.center,
                               child: Assets.images.logo.image(height: 50)),
                           SizedBox(height: 80),
-                          NormalMedium('نام کاربری'),
+                          NormalMedium(LocaleKeys.userName.tr()),
                           SizedBox(height: 12),
                           TextFormField(
-                            controller:
-                                AuthScreen.accountControllerNotifire.value,
+                            controller: accountController,
                             textAlign: TextAlign.end,
                             keyboardType: TextInputType.phone,
                             style: TextStyle(
@@ -194,13 +191,12 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
                             ),
                           ),
                           SizedBox(height: 24),
-                          NormalMedium('رمز عبور'),
+                          NormalMedium(LocaleKeys.password.tr()),
                           SizedBox(height: 12),
                           TextFormField(
-                            controller: AuthScreen.passControllerNotifire.value,
+                            controller: passController,
                             obscureText: obscureText,
-                            textAlign: TextAlign.left,
-                            textDirection: TextDirection.ltr,
+                            textAlign: TextAlign.end,
                             style: TextStyle(
                               fontFamily: FontFamily.iRANSansXFAMedium,
                               fontSize: 14,
@@ -223,26 +219,18 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
                                   width: 1,
                                 ),
                               ),
-                              prefixIcon: ValueListenableBuilder(
-                                valueListenable:
-                                    AuthScreen.passControllerNotifire.value,
-                                builder: (context, value, child) {
-                                  return value.text.isNotEmpty
-                                      ? GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              obscureText = !obscureText;
-                                            });
-                                          },
-                                          child: Icon(
-                                            obscureText
-                                                ? Icons.visibility_off
-                                                : Icons.visibility,
-                                            color: Color(0xffCAC4CF),
-                                          ),
-                                        )
-                                      : Container();
+                              prefixIcon: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    obscureText = !obscureText;
+                                  });
                                 },
+                                child: Icon(
+                                  obscureText
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: Color(0xffCAC4CF),
+                                ),
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -252,23 +240,18 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
                           SizedBox(height: 48),
                           GestureDetector(
                             onTap: () {
-                              if (AuthScreen.accountControllerNotifire.value
-                                      .text.isNotEmpty &&
-                                  AuthScreen.passControllerNotifire.value.text
-                                      .isNotEmpty) {
+                              if (accountController.text.isNotEmpty &&
+                                  passController.value.text.isNotEmpty) {
                                 _bloc.add(LoginEvent(
-                                  phoneNumber: AuthScreen
-                                      .accountControllerNotifire.value.text,
-                                  password: AuthScreen
-                                      .passControllerNotifire.value.text,
+                                  phoneNumber: accountController.value.text,
+                                  password: passController.value.text,
                                 ));
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   snackBarVerify(
                                     context: context,
-                                    title: 'خطا',
-                                    desc:
-                                        'لطفاً نام کاربری و رمز عبور را وارد کنید',
+                                    title: LocaleKeys.error.tr(),
+                                    desc: LocaleKeys.pleasePassword.tr(),
                                     icon: Assets.icons.activity.svg(),
                                   ),
                                 );
@@ -289,7 +272,7 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
                                     );
                                   } else {
                                     return LargeMedium(
-                                      'ورود',
+                                      LocaleKeys.login.tr(),
                                       textColorInLight: Colors.white,
                                     );
                                   }

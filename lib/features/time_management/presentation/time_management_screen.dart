@@ -10,7 +10,6 @@ import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/common/dimens.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
-import 'package:linchpin/core/customui/snackbar_verify.dart';
 import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/root/presentation/root_screen.dart';
@@ -25,9 +24,10 @@ class TimeManagementScreen extends StatefulWidget {
 
   @override
   State<TimeManagementScreen> createState() => _TimeManagementScreenState();
-  static ValueNotifier<String> nameNotifire = ValueNotifier('کاربر مهمان');
+  static ValueNotifier<String> nameNotifire =
+      ValueNotifier(LocaleKeys.guestUser.tr());
   static ValueNotifier<String> phoneNotifire =
-      ValueNotifier('بدون شماره موبایل');
+      ValueNotifier(LocaleKeys.withoutNumber.tr());
   static ValueNotifier<double?> latitudeNotifire = ValueNotifier(null);
   static ValueNotifier<double?> longitudeNotifire = ValueNotifier(null);
 }
@@ -52,20 +52,21 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
 
     // فرمت کردن تاریخ شمسی به صورت "روز ماه" (مثلاً: ۲۲ دی)
     String formattedDate = '${shamsiDate.day} ${shamsiDate.formatter.mN}';
-
+    RootScreen.timeServerNotofire.value = formattedDate;
     // شروع تایمر برای به روزرسانی هر ثانیه
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      // به‌روز رسانی زمان هر ثانیه
-      dateTime = dateTime
-          .add(Duration(seconds: 1)); // افزایش یک ثانیه به تاریخ و زمان فعلی
+    // Timer.periodic(Duration(seconds: 1), (timer) {
+    //   // به‌روز رسانی زمان هر ثانیه
+    //   dateTime = dateTime
+    //       .add(Duration(seconds: 1)); // افزایش یک ثانیه به تاریخ و زمان فعلی
 
-      // فرمت کردن زمان (ساعت، دقیقه، ثانیه) از DateTime
-      String formattedTime =
-          '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}';
+    //   // // فرمت کردن زمان (ساعت، دقیقه، ثانیه) از DateTime
+    //   // String formattedTime =
+    //   //     '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}';
 
-      // ترکیب تاریخ شمسی و زمان
-      RootScreen.timeServerNotofire.value = '$formattedDate | $formattedTime';
-    });
+    //   // ترکیب تاریخ شمسی و زمان
+    //   // RootScreen.timeServerNotofire.value = '$formattedDate | $formattedTime';
+    //   RootScreen.timeServerNotofire.value = formattedDate;
+    // });
   }
 
   // تعداد کاراکتر های متن اگر بیش از حد مجاز باشه
@@ -87,6 +88,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+
     _bloc = getIt<TimeManagementBloc>();
     currentStatus = null;
     nameStatus = null;
@@ -102,11 +104,16 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
     super.dispose();
   }
 
+  AppLifecycleState? _lastLifecycleState;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      PaintingBinding.instance.reassembleApplication();
+    if (_lastLifecycleState == AppLifecycleState.paused &&
+        state == AppLifecycleState.hidden) {
+      // فقط وقتی که از "paused" به "resumed" تغییر کنیم، درخواست ارسال شود
+      _checkAndRequestLocation('daily'); // بررسی و درخواست موقعیت مکانی
     }
+    _lastLifecycleState = state;
   }
 
 // بررسی و درخواست موقعیت مکانی
@@ -160,10 +167,11 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
       // 🚨 نمایش پیام به کاربر برای فعال کردن GPS
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("لطفاً GPS را روشن کنید و مجوزهای لازم را بدهید."),
+          content:
+              NormalMedium("لطفاً GPS را روشن کنید و مجوزهای لازم را بدهید."),
           duration: Duration(seconds: 3),
           action: SnackBarAction(
-            label: 'تنظیمات',
+            label: LocaleKeys.settings.tr(),
             onPressed: () {
               Geolocator.openLocationSettings();
             },
@@ -186,42 +194,42 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                 state.dailyEntity.user!.name!;
             TimeManagementScreen.phoneNotifire.value =
                 state.dailyEntity.user!.phoneNumber!;
-            nameStatus == null
-                ? null
-                : nameStatus == 'check-in'
-                    ? ScaffoldMessenger.of(context).showSnackBar(
-                        snackBarVerify(
-                          context: context,
-                          title: 'ثبت ورود انجام شد.',
-                          desc: '',
-                          icon: Assets.icons.verify.image(),
-                        ),
-                      )
-                    : nameStatus == 'check-out'
-                        ? ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarVerify(
-                              context: context,
-                              title: 'خروج شما انجام شد.',
-                              desc: '',
-                              icon: Assets.icons.verify.image(),
-                            ),
-                          )
-                        : nameStatus == 'stop-start'
-                            ? ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarVerify(
-                                  context: context,
-                                  title: 'زمان متوقف شد.',
-                                  desc: '',
-                                  icon: Assets.icons.verify.image(),
-                                ),
-                              )
-                            : ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBarVerify(
-                                context: context,
-                                title: 'ادامه ساعت کاری فعال شد.',
-                                desc: '',
-                                icon: Assets.icons.verify.image(),
-                              ));
+            // nameStatus == null
+            //     ? null
+            //     : nameStatus == 'check-in'
+            //         ? ScaffoldMessenger.of(context).showSnackBar(
+            //             snackBarVerify(
+            //               context: context,
+            //               title: 'ثبت ورود انجام شد.',
+            //               desc: '',
+            //               icon: Assets.icons.verify.image(),
+            //             ),
+            //           )
+            //         : nameStatus == 'check-out'
+            //             ? ScaffoldMessenger.of(context).showSnackBar(
+            //                 snackBarVerify(
+            //                   context: context,
+            //                   title: 'خروج شما انجام شد.',
+            //                   desc: '',
+            //                   icon: Assets.icons.verify.image(),
+            //                 ),
+            //               )
+            //             : nameStatus == 'stop-start'
+            //                 ? ScaffoldMessenger.of(context).showSnackBar(
+            //                     snackBarVerify(
+            //                       context: context,
+            //                       title: 'زمان متوقف شد.',
+            //                       desc: '',
+            //                       icon: Assets.icons.verify.image(),
+            //                     ),
+            //                   )
+            //                 : ScaffoldMessenger.of(context)
+            //                     .showSnackBar(snackBarVerify(
+            //                     context: context,
+            //                     title: 'ادامه ساعت کاری فعال شد.',
+            //                     desc: '',
+            //                     icon: Assets.icons.verify.image(),
+            //                   ));
 
             isLoadingNotifire.value = false;
           } else {
@@ -281,7 +289,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                         currentStatus == 'CHECKED_OUT'
                             ? ButtonStatus(
                                 colorBackgerand: Color(0xff58EC89),
-                                title: 'ثبت ورود',
+                                title: LocaleKeys.entry.tr(),
                                 icon: Assets.icons.timerTick.svg(),
                                 onTap: () {
                                   if (TimeManagementScreen
@@ -310,7 +318,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                                     children: [
                                       ButtonStatus(
                                         colorBackgerand: Color(0xffEC5858),
-                                        title: 'ثبت خروج',
+                                        title: LocaleKeys.departure.tr(),
                                         icon: Assets.icons.timerTick.svg(),
                                         onTap: () {
                                           if (TimeManagementScreen
@@ -338,7 +346,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                                       SizedBox(width: 40),
                                       ButtonStatus(
                                         colorBackgerand: Color(0xffFFA656),
-                                        title: 'توقف',
+                                        title: LocaleKeys.halt.tr(),
                                         icon: Assets.icons.pause.svg(),
                                         onTap: () {
                                           if (TimeManagementScreen
@@ -369,7 +377,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                                     children: [
                                       ButtonStatus(
                                         colorBackgerand: Color(0xffEC5858),
-                                        title: 'ثبت خروج',
+                                        title: LocaleKeys.departure.tr(),
                                         icon: Assets.icons.timerTick.svg(),
                                         onTap: () {
                                           if (TimeManagementScreen
@@ -396,7 +404,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                                       SizedBox(width: 40),
                                       ButtonStatus(
                                         colorBackgerand: Color(0xff58EC89),
-                                        title: 'ادامه',
+                                        title: LocaleKeys.continuation.tr(),
                                         icon: Assets.icons.play.svg(height: 30),
                                         onTap: () {
                                           if (TimeManagementScreen
@@ -429,13 +437,13 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                           children: [
                             BoxEntryExit(
                               image: Assets.icons.timerTick2.svg(),
-                              title: 'زمان ورود',
+                              title: LocaleKeys.timeOfEntry.tr(),
                               time: state.dailyEntity.todayStartTime ?? '-',
                             ),
                             SizedBox(width: 12),
                             BoxEntryExit(
                               image: Assets.icons.timerTick3.svg(),
-                              title: 'ساعات کار',
+                              title: LocaleKeys.workingHours.tr(),
                               time: formattedTime == '00:00'
                                   ? '-'
                                   : formattedTime,
@@ -443,7 +451,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                             SizedBox(width: 12),
                             BoxEntryExit(
                               image: Assets.icons.timerTick4.svg(),
-                              title: 'زمان خروج',
+                              title: LocaleKeys.exitTime.tr(),
                               time: state.dailyEntity.lastEndTime ?? '-',
                             ),
                           ],
@@ -477,7 +485,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                 });
           } else {
             return Scaffold(
-              body: Center(child: Text('data')),
+              body: Center(child: NormalMedium('data')),
             );
           }
         },

@@ -23,8 +23,11 @@ abstract class DioProvider {
         onRequest: (options, handler) async {
           PrefService prefService = PrefService();
           String? token = await prefService.readCacheString(SharedKey.jwtToken);
+          String? language =
+              await prefService.readCacheString(SharedKey.selectedLanguageCode);
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
+            options.headers['Accept-Language'] = language ?? 'fa';
           }
           return handler.next(options);
         },

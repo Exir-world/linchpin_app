@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/duties/presentation/bloc/duties_bloc.dart';
 import 'package:linchpin/features/duties/presentation/duties_screen.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
@@ -112,14 +114,14 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
                   children: [
                     Row(
                       children: [
-                        BigDemiBold('لیست وظایف'),
+                        BigDemiBold(LocaleKeys.taskList.tr()),
                         Spacer(),
                         Row(
                           children: [
                             Assets.icons.filter.svg(),
                             SizedBox(width: 8),
                             NormalMedium(
-                              'فیلتر کردن',
+                              LocaleKeys.filtering.tr(),
                               textColorInLight: Color(0xff861C8C),
                             ),
                           ],
@@ -162,7 +164,7 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
                                           AllDutiesScreen.tabIndexNotifire,
                                       builder: (context, value, child) {
                                         return NormalMedium(
-                                          'وظایف من',
+                                          LocaleKeys.myTasks.tr(),
                                           textColorInLight: value == 0
                                               ? null
                                               : Color(0xff828282),
@@ -198,7 +200,7 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
                                             AllDutiesScreen.tabIndexNotifire,
                                         builder: (context, value, child) {
                                           return NormalMedium(
-                                            'وظایف دیگران',
+                                            LocaleKeys.othersTasks.tr(),
                                             textColorInLight: value == 1
                                                 ? null
                                                 : Color(0xff828282),
@@ -238,7 +240,7 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
             return LoadingWidget();
           } else {
             return Scaffold(
-              body: Center(child: Text('data')),
+              body: Center(child: NormalMedium('data')),
             );
           }
         },

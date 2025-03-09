@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin/core/common/dimens.dart';
@@ -6,6 +7,7 @@ import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/requests/presentation/bloc/requests_bloc.dart';
 import 'package:linchpin/features/requests/presentation/request_detail_screen.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
@@ -57,11 +59,11 @@ class _RequestsScreenState extends State<RequestsScreen>
 
   String getTypeLabel(String type) {
     final typeLabels = {
-      'SICK_LEAVE': 'مرخصی استعلاجی - ',
-      'HOURLY_LEAVE': 'مرخصی ساعتی - ',
-      'DAILY_LEAVE': 'مرخصی روزانه - ',
-      'MANUAL_CHECK_OUT': 'تردد دستی (خروج) - ',
-      'MANUAL_CHECK_IN': 'تردد دستی (ورود) - ',
+      'SICK_LEAVE': LocaleKeys.sickLeaveSpace.tr(),
+      'HOURLY_LEAVE': LocaleKeys.hourlyLeaveSpace.tr(),
+      'DAILY_LEAVE': LocaleKeys.dailyLeaveSpace.tr(),
+      'MANUAL_CHECK_OUT': LocaleKeys.manualCheckOutSpace.tr(),
+      'MANUAL_CHECK_IN': LocaleKeys.manualCheckInSpace.tr(),
     };
 
     return typeLabels[type] ?? '';
@@ -69,10 +71,10 @@ class _RequestsScreenState extends State<RequestsScreen>
 
   String getStatusLabel(String status) {
     final statusLabels = {
-      'PENDING': 'در حال انتظار',
-      'APPROVED': 'تایید شده',
-      'REJECTED': 'رد شده',
-      'CANCELLED': 'لغو شده',
+      'PENDING': LocaleKeys.pending.tr(),
+      'APPROVED': LocaleKeys.approved.tr(),
+      'REJECTED': LocaleKeys.rejected.tr(),
+      'CANCELLED': LocaleKeys.cancelled.tr(),
     };
 
     return statusLabels[status] ?? '';
@@ -98,11 +100,14 @@ class _RequestsScreenState extends State<RequestsScreen>
     required String endTimeH,
   }) {
     final detailsMap = {
-      'SICK_LEAVE': 'تاریخ $startDay الی $endDay',
-      'HOURLY_LEAVE': 'ساعت $startTimeH الی $endTimeH',
-      'DAILY_LEAVE': 'تاریخ $startDay الی $endDay',
-      'MANUAL_CHECK_OUT': 'خروج برای ساعت $endTimeH',
-      'MANUAL_CHECK_IN': 'ورود برای ساعت $startTimeH',
+      'SICK_LEAVE':
+          '${LocaleKeys.date.tr()} $startDay ${LocaleKeys.upTo.tr()} $endDay',
+      'HOURLY_LEAVE':
+          '${LocaleKeys.hour.tr()} $startTimeH ${LocaleKeys.upTo.tr()} $endTimeH',
+      'DAILY_LEAVE':
+          '${LocaleKeys.date.tr()} $startDay ${LocaleKeys.upTo.tr()} $endDay',
+      'MANUAL_CHECK_OUT': '${LocaleKeys.exitHour.tr()} $endTimeH',
+      'MANUAL_CHECK_IN': '${LocaleKeys.inHour.tr()} $startTimeH',
     };
 
     return detailsMap[type] ?? '';
@@ -176,12 +181,12 @@ class _RequestsScreenState extends State<RequestsScreen>
                         SizedBox(height: 24),
                         Row(
                           children: [
-                            BigDemiBold('درخواست ها'),
+                            BigDemiBold(LocaleKeys.requests.tr()),
                             Spacer(),
                             Assets.icons.filter.svg(),
                             SizedBox(width: 8),
                             NormalMedium(
-                              'فیلتر کردن',
+                              LocaleKeys.filtering.tr(),
                               textColorInLight: Color(0xff861C8C),
                             ),
                           ],
@@ -194,7 +199,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                                     height: context.screenHeight / 3.2,
                                   ),
                                   NormalRegular(
-                                    'درخواستی وجود ندارد',
+                                    LocaleKeys.noRequestExists.tr(),
                                     textColorInLight: Color(0xffCAC4CF),
                                   ),
                                 ],
@@ -309,7 +314,9 @@ class _RequestsScreenState extends State<RequestsScreen>
                                                                               .start,
                                                                       children: [
                                                                         NormalMedium(
-                                                                          'از لغو درخواست خود اطمینان دارید؟',
+                                                                          LocaleKeys
+                                                                              .cancelRequest
+                                                                              .tr(),
                                                                         ),
                                                                         SizedBox(
                                                                             height:
@@ -332,7 +339,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                                                                                   ),
                                                                                   alignment: Alignment.center,
                                                                                   child: NormalMedium(
-                                                                                    'بله',
+                                                                                    LocaleKeys.yes.tr(),
                                                                                     textColorInLight: Colors.white,
                                                                                   ),
                                                                                 ),
@@ -351,7 +358,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                                                                                     borderRadius: BorderRadius.circular(12),
                                                                                   ),
                                                                                   alignment: Alignment.center,
-                                                                                  child: NormalMedium('خیر', textColorInLight: Colors.white),
+                                                                                  child: NormalMedium(LocaleKeys.no.tr(), textColorInLight: Colors.white),
                                                                                 ),
                                                                               ),
                                                                             ),

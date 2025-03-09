@@ -1,7 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/common/text_styles.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/features/auth/presentation/auth_screen.dart';
 
 abstract class BaseTextWidget extends StatelessWidget {
   final String data;
@@ -33,7 +35,12 @@ abstract class BaseTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(data);
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(data.tr());
+      },
+    );
   }
 }
 
@@ -53,17 +60,22 @@ class VerySmallRegular extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.verySmallRegular.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.verySmallRegular.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -83,17 +95,22 @@ class VerySmallMedium extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.verySmallMedium.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.verySmallMedium.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -113,17 +130,22 @@ class VerySmallDemiBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.verySmallDemiBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.verySmallDemiBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -143,17 +165,22 @@ class VerySmallBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.verySmallBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.verySmallBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -174,17 +201,22 @@ class SmallRegular extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.smallRegular.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.smallRegular.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -204,17 +236,22 @@ class SmallMedium extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.smallMedium.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.smallMedium.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -234,17 +271,22 @@ class SmallDemiBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.smallDemiBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.smallDemiBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -264,17 +306,22 @@ class SmallBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.smallBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.smallBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -295,17 +342,22 @@ class NormalRegular extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.normalRegular.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.normalRegular.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -325,17 +377,22 @@ class NormalMedium extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.normalMedium.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.normalMedium.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -355,17 +412,22 @@ class NormalDemiBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.normalDemiBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.normalDemiBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -385,17 +447,22 @@ class NormalBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.normalBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.normalBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -416,17 +483,22 @@ class LargeRegular extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.largeRegular.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.largeRegular.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -446,17 +518,22 @@ class LargeMedium extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.largeMedium.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.largeMedium.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -476,17 +553,22 @@ class LargeDemiBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.largeDemiBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.largeDemiBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -506,17 +588,22 @@ class LargeBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.largeBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.largeBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -537,17 +624,22 @@ class BigRegular extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.bigRegular.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.bigRegular.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -567,17 +659,22 @@ class BigMedium extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.bigMedium.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.bigMedium.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -597,17 +694,22 @@ class BigDemiBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.bigDemiBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.bigDemiBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -627,17 +729,22 @@ class BigBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.bigBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.bigBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -658,17 +765,22 @@ class VeryBigRegular extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.veryBigRegular.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.veryBigRegular.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -688,17 +800,22 @@ class VeryBigMedium extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.veryBigMedium.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.veryBigMedium.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -718,17 +835,22 @@ class VeryBigDemiBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.veryBigDemiBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.veryBigDemiBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -748,17 +870,22 @@ class VeryBigBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.veryBigBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.veryBigBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -779,17 +906,22 @@ class HugeRegular extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.hugeRegular.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.hugeRegular.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -809,17 +941,22 @@ class HugeMedium extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.hugeMedium.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.hugeMedium.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -839,17 +976,22 @@ class HugeDemiBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.hugeDemiBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.hugeDemiBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -869,17 +1011,22 @@ class HugeBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.hugeBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.hugeBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -900,17 +1047,22 @@ class VeryHugeRegular extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.veryHugeRegular.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.veryHugeRegular.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -930,17 +1082,22 @@ class VeryHugeMedium extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.veryHugeMedium.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.veryHugeMedium.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -960,17 +1117,22 @@ class VeryHugeDemiBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.veryHugeDemiBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.veryHugeDemiBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -990,17 +1152,22 @@ class VeryHugeBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.veryHugeBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.veryHugeBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -1021,17 +1188,22 @@ class MegaRegular extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.megaRegular.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.megaRegular.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -1051,17 +1223,22 @@ class MegaMedium extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.megaMedium.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.megaMedium.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -1081,17 +1258,22 @@ class MegaDemiBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.megaDemiBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.megaDemiBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }
@@ -1111,17 +1293,22 @@ class MegaBold extends BaseTextWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      maxLines: maxLines,
-      overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: textAlign,
-      style: TextStyles.megaBold.copyWith(
-        color: getTextColor(context),
-        decoration: decoration,
-        overflow: overflow,
-        height: height,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AuthScreen.languageNotifire,
+      builder: (context, value, child) {
+        return Text(
+          data.tr(),
+          maxLines: maxLines,
+          overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
+          textAlign: textAlign,
+          style: TextStyles.megaBold.copyWith(
+            color: getTextColor(context),
+            decoration: decoration,
+            overflow: overflow,
+            height: height,
+          ),
+        );
+      },
     );
   }
 }

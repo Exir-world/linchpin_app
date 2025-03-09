@@ -6,6 +6,7 @@ import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/duties/data/models/tasks_model/task_tag.dart';
 import 'package:linchpin/features/duties/presentation/all_duties_screen.dart';
 import 'package:linchpin/features/duties/presentation/bloc/duties_bloc.dart';
@@ -119,7 +120,7 @@ class _DutiesScreenState extends State<DutiesScreen>
                       // عنوان لیست وظایف و مشاهده تمام وظایف
                       Row(
                         children: [
-                          BigDemiBold('لیست وظایف'),
+                          BigDemiBold(LocaleKeys.taskList.tr()),
                           Spacer(),
                           GestureDetector(
                             onTap: () {
@@ -134,7 +135,7 @@ class _DutiesScreenState extends State<DutiesScreen>
                                 Assets.icons.calendar1.svg(),
                                 SizedBox(width: 8),
                                 NormalMedium(
-                                  'همه وظایف',
+                                  LocaleKeys.allTasks.tr(),
                                   textColorInLight: Color(0xff861C8C),
                                 ),
                               ],
@@ -180,7 +181,7 @@ class _DutiesScreenState extends State<DutiesScreen>
                                             DutiesScreen.tabIndexNotifire,
                                         builder: (context, value, child) {
                                           return NormalMedium(
-                                            'وظایف من',
+                                            LocaleKeys.myTasks.tr(),
                                             textColorInLight: value == 0
                                                 ? null
                                                 : Color(0xff828282),
@@ -215,7 +216,7 @@ class _DutiesScreenState extends State<DutiesScreen>
                                             DutiesScreen.tabIndexNotifire,
                                         builder: (context, value, child) {
                                           return NormalMedium(
-                                            'وظایف دیگران',
+                                            LocaleKeys.othersTasks.tr(),
                                             textColorInLight: value == 1
                                                 ? null
                                                 : Color(0xff828282),
@@ -262,7 +263,7 @@ class _DutiesScreenState extends State<DutiesScreen>
               return LoadingWidget();
             } else {
               return Scaffold(
-                body: Center(child: Text('data')),
+                body: Center(child: NormalMedium('data')),
               );
             }
           },
@@ -286,19 +287,7 @@ class OtherListTask extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          isAllDuties
-              ? SizedBox(height: 24)
-              : Container(
-                  width: 50,
-                  margin: EdgeInsets.only(top: 24, bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Color(0xffF5EEFC),
-                    borderRadius: BorderRadius.circular(37),
-                  ),
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  child: SmallRegular('امروز'),
-                ),
+          isAllDuties ? SizedBox(height: 24) : TodayTagWidget(),
           state.tasksEntity.otherTasks!.isNotEmpty
               ? ListView.builder(
                   itemCount: state.tasksEntity.otherTasks?.length,
@@ -342,17 +331,49 @@ class OtherListTask extends StatelessWidget {
                     );
                   },
                 )
-              : SizedBox(
-                  height: context.screenHeight / 2,
-                  child: Center(
-                    child: NormalRegular(
-                      'وظیفه ای تعریف نشده.',
-                      textColorInLight: Color(0xffCAC4CF),
-                    ),
-                  ),
-                ),
+              : EmptyTaskWidget(),
         ],
       ),
+    );
+  }
+}
+
+class EmptyTaskWidget extends StatelessWidget {
+  const EmptyTaskWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: context.screenHeight / 2,
+      child: Center(
+        child: NormalRegular(
+          LocaleKeys.noTaskDefined.tr(),
+          textColorInLight: Color(0xffCAC4CF),
+        ),
+      ),
+    );
+  }
+}
+
+class TodayTagWidget extends StatelessWidget {
+  const TodayTagWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 50,
+      margin: EdgeInsets.only(top: 24, bottom: 16),
+      decoration: BoxDecoration(
+        color: Color(0xffF5EEFC),
+        borderRadius: BorderRadius.circular(37),
+      ),
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: SmallRegular(LocaleKeys.today.tr()),
     );
   }
 }
@@ -371,19 +392,7 @@ class MyListTask extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          isAllDuties
-              ? SizedBox(height: 24)
-              : Container(
-                  width: 50,
-                  margin: EdgeInsets.only(top: 24, bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Color(0xffF5EEFC),
-                    borderRadius: BorderRadius.circular(37),
-                  ),
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  child: SmallRegular('امروز'),
-                ),
+          isAllDuties ? SizedBox(height: 24) : TodayTagWidget(),
           state.tasksEntity.myTasks!.isNotEmpty
               ? ListView.builder(
                   itemCount: state.tasksEntity.myTasks?.length,
@@ -434,15 +443,7 @@ class MyListTask extends StatelessWidget {
                     );
                   },
                 )
-              : SizedBox(
-                  height: context.screenHeight / 2,
-                  child: Center(
-                    child: NormalRegular(
-                      'وظیفه ای تعریف نشده.',
-                      textColorInLight: Color(0xffCAC4CF),
-                    ),
-                  ),
-                ),
+              : EmptyTaskWidget(),
         ],
       ),
     );

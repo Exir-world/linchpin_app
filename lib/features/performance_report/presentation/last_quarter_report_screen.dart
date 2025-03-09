@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin/core/common/dimens.dart';
@@ -6,6 +7,7 @@ import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
 import 'package:linchpin/gen/assets.gen.dart';
 import 'package:shamsi_date/shamsi_date.dart';
@@ -30,11 +32,11 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
   String formatWorkMinutes(int workMinutes) {
     if (workMinutes < 60) {
       // اگر زیر یک ساعت باشد
-      return '$workMinutes دقیقه';
+      return '$workMinutes ${LocaleKeys.minute.tr()}';
     } else {
       // اگر بالای یک ساعت باشد
       int hours = workMinutes ~/ 60; // تقسیم صحیح (ساعت)
-      return '$hours ساعت';
+      return '$hours ${LocaleKeys.hour.tr()}';
     }
   }
 
@@ -61,7 +63,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: VERTICAL_SPACING_6x),
-                        LargeDemiBold("گزارش عملکرد"),
+                        LargeDemiBold(LocaleKeys.performanceReport.tr()),
                         SizedBox(height: VERTICAL_SPACING_6x),
                         state.monthsEntity.isEmpty
                             ? Column(
@@ -71,7 +73,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                   ),
                                   Center(
                                     child: NormalRegular(
-                                      'عملکردی ثبت نشده',
+                                      LocaleKeys.noRecorded.tr(),
                                       textColorInLight: Color(0xffCAC4CF),
                                     ),
                                   ),
@@ -103,7 +105,6 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                   // کل حضور
                                   final String sumTime = formatWorkMinutes(
                                       data.workMinutes! + data.overDuration!);
-
                                   return Container(
                                     height: 100,
                                     margin: EdgeInsets.only(bottom: 12),
@@ -149,7 +150,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                                         .spaceBetween,
                                                 children: [
                                                   NormalMedium(
-                                                      'ساعات کاری ${dateTitle.formatter.mN} ${dateTitle.formatter.y}'),
+                                                      '${LocaleKeys.workingHours.tr()} ${dateTitle.formatter.mN} ${dateTitle.formatter.y}'),
                                                   SmallMedium(sumTime),
                                                 ],
                                               ),
@@ -157,7 +158,8 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                               Row(
                                                 children: [
                                                   _BoxTime(
-                                                    time: 'مفید: $workTime',
+                                                    time:
+                                                        '${LocaleKeys.useful.tr()}: $workTime',
                                                     colorBox: Color(0xffF5EEFC),
                                                     colorTitle:
                                                         Color(0xff9B51E0),
@@ -179,7 +181,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                                       : data.lessDuration! > 0
                                                           ? _BoxTime(
                                                               time:
-                                                                  'کسری: $lessTime',
+                                                                  '${LocaleKeys.deficit.tr()}: $lessTime',
                                                               colorBox: Color(
                                                                   0xffFFEFF1),
                                                               colorTitle: Color(
@@ -190,7 +192,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                                                   0
                                                               ? _BoxTime(
                                                                   time:
-                                                                      'اضافه کار: $overTime',
+                                                                      '${LocaleKeys.overtime.tr()}: $overTime',
                                                                   colorBox: Color(
                                                                       0xffE6FCF4),
                                                                   colorTitle: Color(
@@ -202,7 +204,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                                                       0
                                                                   ? _BoxTime(
                                                                       time:
-                                                                          'مرخصی: $leaveTime',
+                                                                          '${LocaleKeys.timeOff.tr()}: $leaveTime',
                                                                       colorBox:
                                                                           Color(
                                                                               0xffFFA656),
@@ -237,7 +239,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                   },
                 );
               } else {
-                return Center(child: Text("data"));
+                return Center(child: NormalMedium("data"));
               }
             },
           ),

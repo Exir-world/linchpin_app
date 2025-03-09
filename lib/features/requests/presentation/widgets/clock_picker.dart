@@ -1,19 +1,23 @@
+import 'package:easy_localization/easy_localization.dart' as easy_localization;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/gen/fonts.gen.dart';
 
 class ClockPicker {
   static Future<TimeOfDay?> show(
     BuildContext context, {
     required TimeOfDay? initialTime,
-    void Function(TimeOfDay)? onCompleted, // تغییر به onCompleted
+    void Function(TimeOfDay)? onCompleted,
   }) async {
     return showDialog<TimeOfDay>(
       context: context,
       builder: (context) {
         return _ClockPickerDialog(
-            initialTime: initialTime, onCompleted: onCompleted);
+          initialTime: initialTime,
+          onCompleted: onCompleted,
+        );
       },
     );
   }
@@ -51,12 +55,14 @@ class _ClockPickerDialogState extends State<_ClockPickerDialog> {
     int? minute = int.tryParse(minuteController.text);
 
     if (hour == null || hour < 0 || hour > 23) {
-      setState(() => errorText = "ساعت باید بین 00 و 23 باشد");
+      setState(
+          () => errorText = "${LocaleKeys.hour.tr()} باید بین 00 و 23 باشد");
       return;
     }
 
     if (minute == null || minute < 0 || minute > 59) {
-      setState(() => errorText = "دقیقه باید بین 00 و 59 باشد");
+      setState(
+          () => errorText = "${LocaleKeys.minute.tr()} باید بین 00 و 59 باشد");
       return;
     }
 

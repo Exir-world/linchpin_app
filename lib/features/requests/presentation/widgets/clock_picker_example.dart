@@ -41,7 +41,7 @@ class _ClockPickerExampleState extends State<ClockPickerExample> {
             onTap: () async {
               TimeOfDay? time = await ClockPicker.show(
                 context,
-                initialTime: null,
+                initialTime: TimeOfDay(hour: 00, minute: 00),
                 onCompleted: (TimeOfDay time) {
                   // ارسال مقدار جدید به بیرون
                   widget.onChange.call(time);

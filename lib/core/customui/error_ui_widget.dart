@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 
 class ErrorUiWidget extends StatelessWidget {
   final String title;
@@ -33,7 +35,7 @@ class ErrorUiWidget extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: LargeMedium(
-                  'تلاش مجدد',
+                  LocaleKeys.tryAgain.tr(),
                   textColorInLight: Colors.white,
                 ),
               ),

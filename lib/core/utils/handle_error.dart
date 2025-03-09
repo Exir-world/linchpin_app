@@ -9,7 +9,8 @@ Future<DataState<T>> handleError<T>(DioException e) async {
   if (e.response == null) {
     if (e.type == DioExceptionType.receiveTimeout) {
       return DataFailed(
-          'It looks like your internet is connected, but the server took some time to respond.');
+        'It looks like your internet is connected, but the server took some time to respond.',
+      );
     } else {
       return DataFailed('Check your internet or vpn status.');
     }
@@ -24,7 +25,8 @@ Future<DataState<T>> handleError<T>(DioException e) async {
   } else if (e.response!.statusCode == 403) {
     return DataFailed('Access to this section is restricted for you');
   } else if (e.response!.statusCode! >= 500) {
-    return DataFailed('The server is being updated. Please be patient.');
+    return DataFailed(e.response?.statusMessage ??
+        'The server is being updated. Please be patient.');
   } else {
     ErrorEntity errorEntity = ErrorModel.fromJson(e.response!.data);
     return DataFailed(errorEntity.message!);

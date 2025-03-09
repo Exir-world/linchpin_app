@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/notifications/domain/entity/notifications_entity.dart';
 import 'package:linchpin/features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
@@ -69,7 +71,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       // ),
                       Align(
                           alignment: Alignment.centerRight,
-                          child: BigDemiBold('اعلانات')),
+                          child: BigDemiBold(LocaleKeys.notifications.tr())),
                       SizedBox(height: 8),
                       // Align(
                       //   alignment: Alignment.center,
@@ -116,7 +118,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               height: context.screenHeight / 2,
                               child: Center(
                                 child: NormalRegular(
-                                  'اعلان جدیدی ندارید.',
+                                  LocaleKeys.youNotifications.tr(),
                                   textColorInLight: Color(0xffCAC4CF),
                                 ),
                               ),
@@ -135,7 +137,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 },
               );
             } else {
-              return Center(child: Text("data"));
+              return Center(child: NormalMedium("data"));
             }
           }),
         ));
@@ -271,7 +273,7 @@ class ItemNotifList extends StatelessWidget {
               children: [
                 !isread
                     ? SmallRegular(
-                        'جدید',
+                        LocaleKeys.newText.tr(),
                         textColorInLight: Color(0xff00AA1F),
                       )
                     : SizedBox(),

@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/duties/data/models/task_detail_model/attachment.dart';
 import 'package:linchpin/features/duties/data/models/task_detail_model/priority.dart';
 import 'package:linchpin/features/duties/data/models/task_detail_model/task_tag.dart';
@@ -123,7 +125,7 @@ class _MyTaskScreenState extends State<MyTaskScreen>
                     },
                   );
                 } else {
-                  return Center(child: Text('data'));
+                  return Center(child: NormalMedium('data'));
                 }
               },
             ),
@@ -149,16 +151,16 @@ class AttachTaskWidget extends StatefulWidget {
 class _AttachTaskWidgetState extends State<AttachTaskWidget> {
   String formatFileSize(int bytes) {
     if (bytes < 1024) {
-      return '$bytes بایت'; // کمتر از 1KB
+      return '$bytes ${LocaleKeys.byte.tr()}'; // کمتر از 1KB
     } else if (bytes < 1024 * 1024) {
       double kb = bytes / 1024;
-      return '${kb.toStringAsFixed(2)} کیلوبایت';
+      return '${kb.toStringAsFixed(2)} ${LocaleKeys.kByte.tr()}';
     } else if (bytes < 1024 * 1024 * 1024) {
       double mb = bytes / (1024 * 1024);
-      return '${mb.toStringAsFixed(2)} مگابایت';
+      return '${mb.toStringAsFixed(2)} ${LocaleKeys.mByte.tr()}';
     } else {
       double gb = bytes / (1024 * 1024 * 1024);
-      return '${gb.toStringAsFixed(2)} گیگابایت';
+      return '${gb.toStringAsFixed(2)} ${LocaleKeys.gByte.tr()}';
     }
   }
 
@@ -479,12 +481,8 @@ class _DownloadButtonState extends State<DownloadButton> {
                   width: 32,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
-                Text(
+                SmallMedium(
                   '$downloadProgress%',
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
               ],
             )

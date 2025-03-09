@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/notifications/presentation/notifications_screen.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
 import 'package:linchpin/gen/assets.gen.dart';
@@ -20,9 +22,9 @@ class AllNotificationsScreen extends StatelessWidget {
             children: [
               SizedBox(height: 24),
               TitleScreen(
-                title: 'اعلانات',
+                title: LocaleKeys.notifications.tr(),
                 icon: Assets.icons.delete.svg(),
-                desc: 'پاک کردن اعلان ها',
+                desc: LocaleKeys.clearNotifications.tr(),
                 onTap: () {},
               ),
               SizedBox(height: 40),
@@ -47,7 +49,7 @@ class AllNotificationsScreen extends StatelessWidget {
                       height: context.screenHeight / 2,
                       child: Center(
                         child: NormalRegular(
-                          'اعلان جدیدی ندارید.',
+                          LocaleKeys.youNotifications.tr(),
                           textColorInLight: Color(0xffCAC4CF),
                         ),
                       ),
