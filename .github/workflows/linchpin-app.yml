@@ -12,13 +12,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-        with:
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Set up SSH agent
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.6
@@ -26,11 +19,9 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /var/www/html/pwa || git clone git@github.com:Exir-world/linchpin_app.git /var/www/html/pwa
-            git pull origin v2
-            flutter build web
-            cp -r build/web/* /var/www/html/pwa
-      - name: Debug SSH key
-        run: |
-            ssh -T git@github.com
+        script: |
+          cd /var/www/html/flutter  
+          git pull origin v2
+          flutter build web
+          rm -rf /var/www/html/pwa/*
+          cp -r build/web/* /var/www/html/pwa
