@@ -20,8 +20,10 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/html/flutter  
+            cd /var/www/html/flutter
+            export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
             git pull origin v2
             flutter build web
             rm -rf /var/www/html/pwa/*
             cp -r build/web/* /var/www/html/pwa
+
