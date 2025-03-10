@@ -10,17 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the latest code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Set up Flutter SDK
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.0'  # Adjust the version according to your project needs
+          flutter-version: '3.29.0'  # Specify your version
 
-      # Deploy to Server
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.6
         with:
