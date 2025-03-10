@@ -53,6 +53,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/calendar1.svg
   SvgGenImage get calendar1 => const SvgGenImage('assets/icons/calendar1.svg');
 
+  /// File path: assets/icons/check-in.svg
+  SvgGenImage get checkIn => const SvgGenImage('assets/icons/check-in.svg');
+
   /// File path: assets/icons/check-out.svg
   SvgGenImage get checkOut => const SvgGenImage('assets/icons/check-out.svg');
 
@@ -99,6 +102,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/docs.svg
   SvgGenImage get docs => const SvgGenImage('assets/icons/docs.svg');
+
+  /// File path: assets/icons/document_pdf.svg
+  SvgGenImage get documentPdf =>
+      const SvgGenImage('assets/icons/document_pdf.svg');
 
   /// File path: assets/icons/download.svg
   SvgGenImage get download => const SvgGenImage('assets/icons/download.svg');
@@ -216,6 +223,7 @@ class $AssetsIconsGen {
     calculate,
     calendar,
     calendar1,
+    checkIn,
     checkOut,
     check,
     chevronUpDown,
@@ -230,6 +238,7 @@ class $AssetsIconsGen {
     combined,
     delete,
     docs,
+    documentPdf,
     download,
     filter,
     flag,

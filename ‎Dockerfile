@@ -1,0 +1,26 @@
+# استفاده از تصویر رسمی فلاتر
+ FROM cirrusci/flutter:3.29.0  # نسخه فلاتر شما
+ 
+ # تنظیم مسیر کاری
+ WORKDIR /app
+ 
+ # کپی کردن فایل‌های پروژه داخل کانتینر
+ COPY . .
+ 
+ # نصب پکیج‌ها
+ RUN flutter pub get
+ 
+ # بیلد پروژه برای وب
+ RUN flutter build web
+ 
+ # استفاده از nginx برای سرو کردن خروجی وب
+ FROM nginx:alpine
+ 
+ # کپی کردن خروجی بیلد شده به nginx
+ COPY --from=0 /app/build/web /usr/share/nginx/html
+ 
+ # پورت پیش‌فرض
+ EXPOSE 80
+ 
+ # اجرای Nginx
+ CMD ["nginx", "-g", "daemon off;"]

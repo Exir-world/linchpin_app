@@ -116,9 +116,11 @@ class LocationService {
           return AccessLocationScreen();
         } else {
           // اگر موقعیت مکانی روشن است، صفحه AuthScreen رو برگردون
-          await Geolocator.getCurrentPosition(
+          Position position = await Geolocator.getCurrentPosition(
             locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
           );
+          AccessLocationScreen.latitudeNotifire.value = position.latitude;
+          AccessLocationScreen.longitudeNotifire.value = position.longitude;
           return AuthScreen();
         }
       }

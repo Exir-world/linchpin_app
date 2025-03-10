@@ -9,6 +9,7 @@ import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
+import 'package:linchpin/features/performance_report/presentation/monthly_report_screen.dart';
 import 'package:linchpin/gen/assets.gen.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
@@ -27,17 +28,6 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
     _bloc = getIt<LastQuarterReportBloc>();
     _bloc.add(MonthsEvent());
     super.initState();
-  }
-
-  String formatWorkMinutes(int workMinutes) {
-    if (workMinutes < 60) {
-      // اگر زیر یک ساعت باشد
-      return '$workMinutes ${LocaleKeys.minute.tr()}';
-    } else {
-      // اگر بالای یک ساعت باشد
-      int hours = workMinutes ~/ 60; // تقسیم صحیح (ساعت)
-      return '$hours ${LocaleKeys.hour.tr()}';
-    }
   }
 
   @override
@@ -87,140 +77,60 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                   final data = state.monthsEntity[index];
                                   final dateTitle =
                                       Jalali.fromDateTime(data.date!);
-                                  final String workTime =
-                                      formatWorkMinutes(data.workMinutes!);
-
-                                  // کسری
-                                  final String lessTime =
-                                      formatWorkMinutes(data.lessDuration!);
-
-                                  // اضافه کار
-                                  final String overTime =
-                                      formatWorkMinutes(data.overDuration!);
-
-                                  // مرخصی
-                                  final String leaveTime =
-                                      formatWorkMinutes(data.leaveDuration!);
-
-                                  // کل حضور
-                                  final String sumTime = formatWorkMinutes(
-                                      data.workMinutes! + data.overDuration!);
-                                  return Container(
-                                    height: 100,
-                                    margin: EdgeInsets.only(bottom: 12),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          offset: Offset(0, 3),
-                                          blurRadius: 30,
-                                          color: Color(0xff828282)
-                                              .withValues(alpha: 0.04),
-                                        ),
-                                      ],
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 16),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        if (data.month! >= 1 &&
-                                            data.month! <= 3)
-                                          Assets.icons.spring.svg(),
-                                        if (data.month! >= 4 &&
-                                            data.month! <= 6)
-                                          Assets.icons.summer.svg(),
-                                        if (data.month! >= 7 &&
-                                            data.month! <= 9)
-                                          Assets.icons.autumn.svg(),
-                                        if (data.month! >= 10 &&
-                                            data.month! <= 12)
-                                          Assets.icons.winter.svg(),
-                                        SizedBox(width: 8),
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  NormalMedium(
-                                                      '${LocaleKeys.workingHours.tr()} ${dateTitle.formatter.mN} ${dateTitle.formatter.y}'),
-                                                  SmallMedium(sumTime),
-                                                ],
-                                              ),
-                                              SizedBox(height: 12),
-                                              Row(
-                                                children: [
-                                                  _BoxTime(
-                                                    time:
-                                                        '${LocaleKeys.useful.tr()}: $workTime',
-                                                    colorBox: Color(0xffF5EEFC),
-                                                    colorTitle:
-                                                        Color(0xff9B51E0),
-                                                    isWidth: true,
-                                                  ),
-                                                  data.lessDuration! == 0 &&
-                                                          data.overDuration! ==
-                                                              0 &&
-                                                          data.leaveDuration! ==
-                                                              0
-                                                      ? Container()
-                                                      : SizedBox(width: 8),
-                                                  data.lessDuration! == 0 &&
-                                                          data.overDuration! ==
-                                                              0 &&
-                                                          data.leaveDuration! ==
-                                                              0
-                                                      ? Container()
-                                                      : data.lessDuration! > 0
-                                                          ? _BoxTime(
-                                                              time:
-                                                                  '${LocaleKeys.deficit.tr()}: $lessTime',
-                                                              colorBox: Color(
-                                                                  0xffFFEFF1),
-                                                              colorTitle: Color(
-                                                                  0xffFD5B71),
-                                                              isWidth: false,
-                                                            )
-                                                          : data.overDuration! >
-                                                                  0
-                                                              ? _BoxTime(
-                                                                  time:
-                                                                      '${LocaleKeys.overtime.tr()}: $overTime',
-                                                                  colorBox: Color(
-                                                                      0xffE6FCF4),
-                                                                  colorTitle: Color(
-                                                                      0xff07E092),
-                                                                  isWidth:
-                                                                      false,
-                                                                )
-                                                              : data.leaveDuration! >
-                                                                      0
-                                                                  ? _BoxTime(
-                                                                      time:
-                                                                          '${LocaleKeys.timeOff.tr()}: $leaveTime',
-                                                                      colorBox:
-                                                                          Color(
-                                                                              0xffFFA656),
-                                                                      colorTitle:
-                                                                          Color(
-                                                                              0xffFEF5ED),
-                                                                      isWidth:
-                                                                          false,
-                                                                    )
-                                                                  : Container(),
-                                                ],
-                                              ),
-                                            ],
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                MonthlyReportScreen(
+                                                    title:
+                                                        'گزارش عملکرد ${dateTitle.formatter.mN} ${dateTitle.formatter.y}'),
+                                          ));
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(bottom: 12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            offset: Offset(0, 3),
+                                            blurRadius: 30,
+                                            color: Color(0xff828282)
+                                                .withValues(alpha: 0.04),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 16),
+                                      alignment: Alignment.center,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          if (data.month! >= 1 &&
+                                              data.month! <= 3)
+                                            Assets.icons.spring.svg(),
+                                          if (data.month! >= 4 &&
+                                              data.month! <= 6)
+                                            Assets.icons.summer.svg(),
+                                          if (data.month! >= 7 &&
+                                              data.month! <= 9)
+                                            Assets.icons.autumn.svg(),
+                                          if (data.month! >= 10 &&
+                                              data.month! <= 12)
+                                            Assets.icons.winter.svg(),
+                                          SizedBox(width: 8),
+                                          NormalMedium(
+                                              '${LocaleKeys.workingHours.tr()} ${dateTitle.formatter.mN} ${dateTitle.formatter.y}'),
+                                          Spacer(),
+                                          Icon(
+                                            Icons.arrow_forward_ios_rounded,
+                                            color: Color(0xffDADADA),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
@@ -244,36 +154,6 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
             },
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _BoxTime extends StatelessWidget {
-  final String time;
-  final Color colorBox;
-  final Color colorTitle;
-  final bool isWidth;
-  const _BoxTime({
-    required this.time,
-    required this.colorBox,
-    required this.colorTitle,
-    required this.isWidth,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 120,
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        color: colorBox,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      alignment: Alignment.center,
-      child: SmallRegular(
-        time,
-        textColorInLight: colorTitle,
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:linchpin/features/time_management/presentation/widget/box_entry_exit.dart';
@@ -16,7 +15,6 @@ import 'package:linchpin/features/root/presentation/root_screen.dart';
 import 'package:linchpin/features/time_management/presentation/bloc/time_management_bloc.dart';
 import 'package:linchpin/features/time_management/presentation/widget/circular_timer.dart';
 import 'package:linchpin/gen/assets.gen.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class TimeManagementScreen extends StatefulWidget {
@@ -40,12 +38,6 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
   String? currentStatus;
   String? nameStatus;
 
-  // این موارد فقط برای نمایش در فضای لودینگ دارند استفاده میشن و کاربرد دیگری ندارند
-  String? lv;
-  String? ls;
-  String? lkh;
-  String? lN;
-
   void formatDateTime(DateTime dateTime) {
     // تبدیل تاریخ میلادی به تاریخ شمسی
     Jalali shamsiDate = Jalali.fromDateTime(dateTime);
@@ -53,20 +45,6 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
     // فرمت کردن تاریخ شمسی به صورت "روز ماه" (مثلاً: ۲۲ دی)
     String formattedDate = '${shamsiDate.day} ${shamsiDate.formatter.mN}';
     RootScreen.timeServerNotofire.value = formattedDate;
-    // شروع تایمر برای به روزرسانی هر ثانیه
-    // Timer.periodic(Duration(seconds: 1), (timer) {
-    //   // به‌روز رسانی زمان هر ثانیه
-    //   dateTime = dateTime
-    //       .add(Duration(seconds: 1)); // افزایش یک ثانیه به تاریخ و زمان فعلی
-
-    //   // // فرمت کردن زمان (ساعت، دقیقه، ثانیه) از DateTime
-    //   // String formattedTime =
-    //   //     '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}';
-
-    //   // ترکیب تاریخ شمسی و زمان
-    //   // RootScreen.timeServerNotofire.value = '$formattedDate | $formattedTime';
-    //   RootScreen.timeServerNotofire.value = formattedDate;
-    // });
   }
 
   // تعداد کاراکتر های متن اگر بیش از حد مجاز باشه
@@ -92,7 +70,13 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
     _bloc = getIt<TimeManagementBloc>();
     currentStatus = null;
     nameStatus = null;
-    _checkAndRequestLocation('daily'); // بررسی و درخواست موقعیت مکانی
+    _bloc.add(DailyEvent(
+      actionType: 'daily',
+      lat: 0,
+      lng: 0,
+    ));
+    TimeManagementScreen.latitudeNotifire.value = null;
+    TimeManagementScreen.longitudeNotifire.value = null;
     formatDateTime(DateTime.now()); // نمایش تاریخ و زمان فرمت‌شده
     super.initState();
   }
@@ -110,75 +94,15 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (_lastLifecycleState == AppLifecycleState.paused &&
         state == AppLifecycleState.hidden) {
-      // فقط وقتی که از "paused" به "resumed" تغییر کنیم، درخواست ارسال شود
-      _checkAndRequestLocation('daily'); // بررسی و درخواست موقعیت مکانی
-    }
-    _lastLifecycleState = state;
-  }
-
-// بررسی و درخواست موقعیت مکانی
-  Future<void> _checkAndRequestLocation(String actionType) async {
-    try {
-      // بررسی روشن بودن GPS فقط اگر actionType "daily" نباشد
-      if (actionType != 'daily') {
-        bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-        if (!serviceEnabled) {
-          _navigateToDScreen();
-          return;
-        }
-      }
-
-      // دریافت موقعیت مکانی
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      // ارسال اطلاعات لوکیشن به بلاک
       _bloc.add(DailyEvent(
-        actionType: actionType,
-        lat: actionType == 'daily' ? 0 : position.latitude,
-        lng: actionType == 'daily' ? 0 : position.longitude,
+        actionType: 'daily',
+        lat: 0,
+        lng: 0,
       ));
-
       TimeManagementScreen.latitudeNotifire.value = null;
       TimeManagementScreen.longitudeNotifire.value = null;
-    } catch (e) {
-      _navigateToDScreen();
     }
-  }
-
-// تابعی برای هدایت کاربر به DScreen
-  void _navigateToDScreen() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => AccessLocationScreen()),
-      (Route<dynamic> route) => false,
-    );
-  }
-
-// دریافت موقعیت و بازنشانی صفحه
-  Future<void> _requestLocationAndReload(String actionType) async {
-    try {
-      _checkAndRequestLocation(actionType);
-      // بعد از دریافت لوکیشن، صفحه را ریلود می‌کنیم
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => AuthScreen()),
-      // );
-    } catch (e) {
-      // 🚨 نمایش پیام به کاربر برای فعال کردن GPS
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content:
-              NormalMedium("لطفاً GPS را روشن کنید و مجوزهای لازم را بدهید."),
-          duration: Duration(seconds: 3),
-          action: SnackBarAction(
-            label: LocaleKeys.settings.tr(),
-            onPressed: () {
-              Geolocator.openLocationSettings();
-            },
-          ),
-        ),
-      );
-    }
+    _lastLifecycleState = state;
   }
 
   @override
@@ -194,43 +118,6 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                 state.dailyEntity.user!.name!;
             TimeManagementScreen.phoneNotifire.value =
                 state.dailyEntity.user!.phoneNumber!;
-            // nameStatus == null
-            //     ? null
-            //     : nameStatus == 'check-in'
-            //         ? ScaffoldMessenger.of(context).showSnackBar(
-            //             snackBarVerify(
-            //               context: context,
-            //               title: 'ثبت ورود انجام شد.',
-            //               desc: '',
-            //               icon: Assets.icons.verify.image(),
-            //             ),
-            //           )
-            //         : nameStatus == 'check-out'
-            //             ? ScaffoldMessenger.of(context).showSnackBar(
-            //                 snackBarVerify(
-            //                   context: context,
-            //                   title: 'خروج شما انجام شد.',
-            //                   desc: '',
-            //                   icon: Assets.icons.verify.image(),
-            //                 ),
-            //               )
-            //             : nameStatus == 'stop-start'
-            //                 ? ScaffoldMessenger.of(context).showSnackBar(
-            //                     snackBarVerify(
-            //                       context: context,
-            //                       title: 'زمان متوقف شد.',
-            //                       desc: '',
-            //                       icon: Assets.icons.verify.image(),
-            //                     ),
-            //                   )
-            //                 : ScaffoldMessenger.of(context)
-            //                     .showSnackBar(snackBarVerify(
-            //                     context: context,
-            //                     title: 'ادامه ساعت کاری فعال شد.',
-            //                     desc: '',
-            //                     icon: Assets.icons.verify.image(),
-            //                   ));
-
             isLoadingNotifire.value = false;
           } else {
             isLoadingNotifire.value = false;
@@ -241,14 +128,9 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
             // فرض میکنیم که workDuration از state به دست میاد
             int workDuration = state.dailyEntity.workDuration ??
                 0; // دریافت مدت زمان کاری به ثانیه
-
             // تبدیل workDuration به فرمت ساعت و دقیقه
             String formattedTime = convertSecondsToTime(workDuration);
             currentStatus = state.dailyEntity.currentStatus;
-            lN = state.dailyEntity.user?.name ?? '';
-            lkh = state.dailyEntity.lastEndTime;
-            ls = formattedTime;
-            lv = state.dailyEntity.todayStartTime;
             return Scaffold(
               backgroundColor: BACKGROUND_LIGHT_COLOR,
               body: Stack(
@@ -299,7 +181,15 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                                               .longitudeNotifire.value ==
                                           null) {
                                     isLoadingNotifire.value = true;
-                                    _requestLocationAndReload('check-in');
+                                    _bloc.add(DailyEvent(
+                                      actionType: 'check-in',
+                                      lat: AccessLocationScreen
+                                              .latitudeNotifire.value ??
+                                          0,
+                                      lng: AccessLocationScreen
+                                              .longitudeNotifire.value ??
+                                          0,
+                                    ));
                                   } else {
                                     nameStatus = 'check-in';
                                     _bloc.add(DailyEvent(
@@ -329,8 +219,16 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                                                       .value ==
                                                   null) {
                                             isLoadingNotifire.value = true;
-                                            _requestLocationAndReload(
-                                                'check-out');
+                                            _bloc.add(DailyEvent(
+                                              actionType: 'check-out',
+                                              lat: AccessLocationScreen
+                                                      .latitudeNotifire.value ??
+                                                  0,
+                                              lng: AccessLocationScreen
+                                                      .longitudeNotifire
+                                                      .value ??
+                                                  0,
+                                            ));
                                           } else {
                                             nameStatus = 'check-out';
                                             _bloc.add(DailyEvent(
@@ -357,8 +255,16 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                                                       .value ==
                                                   null) {
                                             isLoadingNotifire.value = true;
-                                            _requestLocationAndReload(
-                                                'stop-start');
+                                            _bloc.add(DailyEvent(
+                                              actionType: 'stop-start',
+                                              lat: AccessLocationScreen
+                                                      .latitudeNotifire.value ??
+                                                  0,
+                                              lng: AccessLocationScreen
+                                                      .longitudeNotifire
+                                                      .value ??
+                                                  0,
+                                            ));
                                           } else {
                                             nameStatus = 'stop-start';
                                             _bloc.add(DailyEvent(
@@ -388,8 +294,16 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                                                       .value ==
                                                   null) {
                                             isLoadingNotifire.value = true;
-                                            _requestLocationAndReload(
-                                                'check-out');
+                                            _bloc.add(DailyEvent(
+                                              actionType: 'check-out',
+                                              lat: AccessLocationScreen
+                                                      .latitudeNotifire.value ??
+                                                  0,
+                                              lng: AccessLocationScreen
+                                                      .longitudeNotifire
+                                                      .value ??
+                                                  0,
+                                            ));
                                           } else {
                                             nameStatus = 'check-out';
                                             _bloc.add(DailyEvent(
@@ -415,8 +329,16 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                                                       .value ==
                                                   null) {
                                             isLoadingNotifire.value = true;
-                                            _requestLocationAndReload(
-                                                'stop-end');
+                                            _bloc.add(DailyEvent(
+                                              actionType: 'stop-end',
+                                              lat: AccessLocationScreen
+                                                      .latitudeNotifire.value ??
+                                                  0,
+                                              lng: AccessLocationScreen
+                                                      .longitudeNotifire
+                                                      .value ??
+                                                  0,
+                                            ));
                                           } else {
                                             nameStatus = 'stop-end';
                                             _bloc.add(DailyEvent(

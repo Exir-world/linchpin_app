@@ -13,6 +13,8 @@ class AccessLocationScreen extends StatefulWidget {
 
   @override
   State<AccessLocationScreen> createState() => _AccessLocationScreenState();
+  static ValueNotifier<double?> latitudeNotifire = ValueNotifier(null);
+  static ValueNotifier<double?> longitudeNotifire = ValueNotifier(null);
 }
 
 class _AccessLocationScreenState extends State<AccessLocationScreen> {
@@ -26,6 +28,8 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
       try {
         Position position = await Geolocator.getCurrentPosition();
         print("Location: ${position.latitude}, ${position.longitude}");
+        AccessLocationScreen.latitudeNotifire.value = position.latitude;
+        AccessLocationScreen.longitudeNotifire.value = position.longitude;
         isLoadingNotifire.value = false;
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => AuthScreen()),
@@ -76,6 +80,8 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
       Position position = await Geolocator.getCurrentPosition();
       print(
           "${LocaleKeys.locationReceivedText.tr()}: ${position.latitude}, ${position.longitude}");
+      AccessLocationScreen.latitudeNotifire.value = position.latitude;
+      AccessLocationScreen.longitudeNotifire.value = position.longitude;
       isLoadingNotifire.value = false;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => AuthScreen()),
