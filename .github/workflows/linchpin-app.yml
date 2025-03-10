@@ -12,16 +12,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Use SSH key for authentication
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.29.0'
-
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.6
@@ -30,11 +27,15 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Ensure we're in the right directory
-            cd /var/www/html/pwa
-
-            # Pull the latest code from the v2 branch
+            # Ensure we're in the right directory, or clone if not
+            cd /var/www/html/pwa || git clone git@github.com:Exir-world/linchpin_app.git /var/www/html/pwa
             git pull origin v2
+
+            # Set up flutter if it's not installed
+            if ! command -v flutter &> /dev/null; then
+              echo "Flutter not found, installing..."
+              # Add your install script here
+            fi
 
             # Build the Flutter web app
             flutter build web
