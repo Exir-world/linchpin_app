@@ -20,9 +20,18 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/html/flutter
+            export PATH="$PATH:/opt/flutter/bin"  # Ensure Flutter is available
+            cd /var/www/html
+            
+            if [ ! -d "flutter/.git" ]; then
+              rm -rf flutter
+              git clone https://github.com/Exir-world/linchpin_app.git flutter
+            fi
+            
+            cd flutter
+            git checkout v2
             git pull origin v2
+            
             flutter build web
             rm -rf /var/www/html/pwa/*
             cp -r build/web/* /var/www/html/pwa
-
