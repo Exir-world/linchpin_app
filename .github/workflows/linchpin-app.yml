@@ -13,12 +13,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
         with:
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Use SSH key for authentication
+          token: ${{ secrets.GH_TOKEN }}  # Use the GitHub Personal Access Token for authentication
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.29.0'
+        run: |
+          if ! command -v flutter &> /dev/null; then
+            echo "Flutter not found, installing..."
+            git clone https://github.com/flutter/flutter.git /opt/flutter
+            export PATH="$PATH:/opt/flutter/bin"
+            echo 'export PATH="$PATH:/opt/flutter/bin"' >> ~/.bashrc
+            source ~/.bashrc
+          fi
 
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.6
@@ -28,17 +33,30 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             # Ensure we're in the right directory, or clone if not
-            cd /var/www/html/pwa || git clone git@github.com:Exir-world/linchpin_app.git /var/www/html/pwa
-            git pull origin v2
+            if [ ! -d "/var/www/html/pwa/.git" ]; then
+              echo "Cloning repository..."
+              git clone git@github.com:Exir-world/linchpin_app.git /var/www/html/pwa
+            else
+              cd /var/www/html/pwa && git pull origin v2
+            fi
 
-            # Set up flutter if it's not installed
+            # Install flutter if not present
             if ! command -v flutter &> /dev/null; then
               echo "Flutter not found, installing..."
-              # Add your install script here
+              git clone https://github.com/flutter/flutter.git /opt/flutter
+              export PATH="$PATH:/opt/flutter/bin"
+              echo 'export PATH="$PATH:/opt/flutter/bin"' >> ~/.bashrc
+              source ~/.bashrc
             fi
 
             # Build the Flutter web app
             flutter build web
 
-            # Copy the build output to the target directory
-            cp -r build/web/* /var/www/html/pwa
+            # Check if the build directory exists
+            if [ -d "build/web" ]; then
+              # Copy the build output to the target directory
+              cp -r build/web/* /var/www/html/pwa
+            else
+              echo "Flutter build failed. No build/web directory found."
+              exit 1
+            fi
