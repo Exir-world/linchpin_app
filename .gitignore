@@ -31,8 +31,20 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
-!build/web/  # Allow only Flutter web build to be committed
+
+# نادیده گرفتن پوشه‌های غیر از build/web
+/build/app/
+build/geolocator_android/
+build/location/
+build/native_assets/
+build/open_file_android/
+build/path_provider_android/
+build/shared_preferences_android/
+build/sqflite_android/
+
+# اجازه دادن فقط به build/web
+!build/web/
+!build/web/**
 
 # Symbolication related
 app.*.symbols
@@ -44,3 +56,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/app/.cxx/
