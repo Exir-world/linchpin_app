@@ -10,9 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the latest code
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # Set up Flutter SDK
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.0'  # Adjust the version according to your project needs
+
+      # Deploy to Server
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -20,7 +28,14 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # Ensure we're in the right directory
             cd /var/www/html/pwa
+
+            # Pull the latest code from the v2 branch
             git pull origin v2
+
+            # Build the Flutter web app
             flutter build web
+
+            # Copy the build output to the target directory
             cp -r build/web/* /var/www/html/pwa
