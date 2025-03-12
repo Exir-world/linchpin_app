@@ -74,11 +74,13 @@ class _DetailMonthlyScreenState extends State<DetailMonthlyScreen>
                               final data =
                                   state.dailyReportEntity.attendances![index];
                               final dateCheckIn =
-                                  DateTime.parse(data.checkIn.toString());
+                                  DateTime.parse(data.checkIn.toString())
+                                      .toLocal();
                               DateTime? dateCheckOut;
                               if (data.checkOut != null) {
                                 dateCheckOut =
-                                    DateTime.parse(data.checkOut.toString());
+                                    DateTime.parse(data.checkOut.toString())
+                                        .toLocal();
                               }
 
                               return Padding(

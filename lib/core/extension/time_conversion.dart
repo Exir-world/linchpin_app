@@ -5,7 +5,10 @@ extension TimeConversion on int {
   String toHoursAndMinutes() {
     int hours = this ~/ 60; // تقسیم صحیح برای گرفتن ساعت
     int remainingMinutes = this % 60; // باقی‌مانده برای گرفتن دقیقه‌ها
-
-    return '$hours ${LocaleKeys.hour.tr()} ${LocaleKeys.and.tr()} $remainingMinutes ${LocaleKeys.minute.tr()}';
+    if (hours == 0 && remainingMinutes == 0) {
+      return '-';
+    } else {
+      return '$hours ${LocaleKeys.hour.tr()} ${LocaleKeys.and.tr()} $remainingMinutes ${LocaleKeys.minute.tr()}';
+    }
   }
 }

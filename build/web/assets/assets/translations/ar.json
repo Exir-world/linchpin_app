@@ -100,5 +100,16 @@
     "exitHour":"الخروج لساعات",
     "inHour":"دخول لمدة ساعة",
     "withoutNumber":"بدون رقم هاتف محمول",
-    "guestUser":"مستخدم ضيف"
+    "guestUser":"مستخدم ضيف",
+    "reportPerformance":"تقرير الأداء",
+    "totalPresence":"حضور",
+    "unpaidLeave":"اجازة بدون أجر",
+    "paidLeave":"إجازة مدفوعة الأجر",
+    "and":"و",
+    "arrival":"وصول",
+    "exit":"مخرج",
+    "lastExit":"الخروج الأخير",
+    "firstEntry":"الإدخال الأول",
+    "attendanceHours":"ساعات الحضور",
+    "usefulHours":"ساعات عمل مفيدة"
 }

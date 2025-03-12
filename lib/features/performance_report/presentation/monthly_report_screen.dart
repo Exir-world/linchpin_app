@@ -148,11 +148,13 @@ class _MonthlyReportScreenState extends State<MonthlyReportScreen>
                         final data = state.reportEntity.attendances![index];
                         final DateTime date = DateTime.parse(data.date!);
                         final DateTime firstCheck =
-                            DateTime.parse(data.firstCheckIn!.toString());
+                            DateTime.parse(data.firstCheckIn!.toString())
+                                .toLocal();
                         DateTime? lastCheck;
                         if (data.lastCheckOut != null) {
                           lastCheck =
-                              DateTime.parse(data.lastCheckOut.toString());
+                              DateTime.parse(data.lastCheckOut.toString())
+                                  .toLocal();
                         }
 
                         return GestureDetector(
