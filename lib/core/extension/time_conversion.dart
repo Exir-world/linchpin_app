@@ -8,7 +8,13 @@ extension TimeConversion on int {
     if (hours == 0 && remainingMinutes == 0) {
       return '-';
     } else {
-      return '$hours ${LocaleKeys.hour.tr()} ${LocaleKeys.and.tr()} $remainingMinutes ${LocaleKeys.minute.tr()}';
+      if (hours == 0 && remainingMinutes != 0) {
+        return '$remainingMinutes ${LocaleKeys.minute.tr()}';
+      } else if (remainingMinutes == 0 && hours != 0) {
+        return '$hours ${LocaleKeys.hour.tr()}';
+      } else {
+        return '$hours ${LocaleKeys.hour.tr()} ${LocaleKeys.and.tr()} $remainingMinutes ${LocaleKeys.minute.tr()}';
+      }
     }
   }
 }
