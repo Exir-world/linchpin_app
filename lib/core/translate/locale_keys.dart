@@ -101,4 +101,15 @@ abstract class LocaleKeys {
   static const inHour = 'inHour';
   static const withoutNumber = 'withoutNumber';
   static const guestUser = 'guestUser';
+  static const reportPerformance = 'reportPerformance';
+  static const totalPresence = 'totalPresence';
+  static const unpaidLeave = 'unpaidLeave';
+  static const paidLeave = 'paidLeave';
+  static const and = 'and';
+  static const arrival = 'arrival';
+  static const exit = 'exit';
+  static const lastExit = 'lastExit';
+  static const firstEntry = 'firstEntry';
+  static const attendanceHours = 'attendanceHours';
+  static const usefulHours = 'usefulHours';
 }

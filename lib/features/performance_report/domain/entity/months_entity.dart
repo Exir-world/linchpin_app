@@ -1,23 +1,16 @@
 import 'package:equatable/equatable.dart';
 
 class MonthsEntity extends Equatable {
-  final DateTime? date;
+  final DateTime? startOfMonth;
+  final DateTime? endOfMonth;
   final int? month;
-  final int? workMinutes;
-  final int? overDuration;
-  final int? lessDuration;
-  final int? leaveDuration;
 
   const MonthsEntity({
-    this.date,
+    this.startOfMonth,
+    this.endOfMonth,
     this.month,
-    this.workMinutes,
-    this.overDuration,
-    this.lessDuration,
-    this.leaveDuration,
   });
 
   @override
-  List<Object?> get props =>
-      [date, month, workMinutes, overDuration, lessDuration, leaveDuration];
+  List<Object?> get props => [startOfMonth, endOfMonth, month];
 }

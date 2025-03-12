@@ -100,5 +100,16 @@
     "exitHour":"Exit for an hour",
     "inHour":"Check-in for an hour",
     "withoutNumber":"Without a mobile number",
-    "guestUser":"Guest user"
+    "guestUser":"Guest user",
+    "reportPerformance":"Performance report",
+    "totalPresence":"total",
+    "unpaidLeave":"Unpaid leave",
+    "paidLeave":"Paid leave",
+    "and":"and",
+    "arrival":"arrival",
+    "exit":"exit",
+    "lastExit":"last exit",
+    "firstEntry":"first entry",
+    "attendanceHours":"attendance hours",
+    "usefulHours":"Useful working hours"
 }

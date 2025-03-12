@@ -4,31 +4,24 @@ import 'package:linchpin/features/performance_report/domain/entity/months_entity
 @immutable
 class MonthsModel extends MonthsEntity {
   const MonthsModel({
-    super.date,
+    super.startOfMonth,
+    super.endOfMonth,
     super.month,
-    super.workMinutes,
-    super.overDuration,
-    super.lessDuration,
-    super.leaveDuration,
   });
 
   factory MonthsModel.fromJson(Map<String, dynamic> json) => MonthsModel(
-        date: json['date'] == null
+        startOfMonth: json['startOfMonth'] == null
             ? null
-            : DateTime.parse(json['date'] as String),
+            : DateTime.parse(json['startOfMonth'] as String),
+        endOfMonth: json['endOfMonth'] == null
+            ? null
+            : DateTime.parse(json['endOfMonth'] as String),
         month: json['month'] as int?,
-        workMinutes: json['workMinutes'] as int?,
-        overDuration: json['overDuration'] as int?,
-        lessDuration: json['lessDuration'] as int?,
-        leaveDuration: json['leaveDuration'] as int?,
       );
 
   Map<String, dynamic> toJson() => {
-        'date': date?.toIso8601String(),
+        'startOfMonth': startOfMonth,
+        'endOfMonth': endOfMonth,
         'month': month,
-        'workMinutes': workMinutes,
-        'overDuration': overDuration,
-        'lessDuration': lessDuration,
-        'leaveDuration': leaveDuration,
       };
 }

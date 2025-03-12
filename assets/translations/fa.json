@@ -100,5 +100,16 @@
     "exitHour":"خروج برای ساعت",
     "inHour":"ورود برای ساعت",
     "withoutNumber":"بدون شماره موبایل",
-    "guestUser":"کاربر مهمان"
+    "guestUser":"کاربر مهمان",
+    "reportPerformance":"گزارش عملکرد",
+    "totalPresence":"حضور کل",
+    "unpaidLeave":"مرخصی بی‌حقوق",
+    "paidLeave":"مرخصی با حقوق",
+    "and":"و",
+    "arrival":"ورود",
+    "exit":"خروج",
+    "lastExit":"آخرین خروج",
+    "firstEntry":"اولین ورود",
+    "attendanceHours":"ساعات حضور",
+    "usefulHours":"ساعات کار مفید"
 }
