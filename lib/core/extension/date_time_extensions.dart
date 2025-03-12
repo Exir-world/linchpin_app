@@ -15,13 +15,13 @@ extension DateTimeExtensions on DateTime {
 
     // دریافت نام روز هفته
     List<String> weekDays = [
-      'شنبه',
       'یکشنبه',
       'دوشنبه',
       'سه‌شنبه',
       'چهارشنبه',
       'پنجشنبه',
-      'جمعه'
+      'جمعه',
+      'شنبه',
     ];
     String weekDayName = weekDays[weekday % 7];
 
