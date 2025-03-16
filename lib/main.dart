@@ -1,4 +1,5 @@
 import 'package:linchpin/core/common/text_styles.dart';
+import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin/core/utils/max_width_wrapper.dart';
@@ -19,9 +20,9 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   // locator مربوط به گت ایت و
   await configureDependencies(environment: Env.prod);
-  // ابتدا بررسی موقعیت مکانی قبل از اجرای اپلیکیشن
-  LocationService locationService = LocationService();
-  Widget homePage = await locationService.checkLocationPermission();
+  // // ابتدا بررسی موقعیت مکانی قبل از اجرای اپلیکیشن
+  // LocationService locationService = LocationService();
+  // Widget homePage = await locationService.checkLocationPermission();
 
   // مقدار زبان انتخاب‌شده را از SharedPreferences بخوانیم
   PrefService prefService = PrefService();
@@ -37,7 +38,7 @@ void main() async {
       path: 'assets/translations',
       fallbackLocale: Locale('en'),
       startLocale: initialLocale,
-      child: MyApp(homePage: homePage),
+      child: MyApp(),
     ),
   );
 }
@@ -57,9 +58,27 @@ Locale _getLocaleFromLanguage(String? language) {
   }
 }
 
-class MyApp extends StatelessWidget {
-  final Widget homePage;
-  const MyApp({super.key, required this.homePage});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Future<Widget> _homePageFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _homePageFuture = _getHomePage();
+  }
+
+  // این متد بررسی موقعیت مکانی و تعیین صفحه خانگی را انجام می دهد
+  Future<Widget> _getHomePage() async {
+    LocationService locationService = LocationService();
+    return await locationService.checkLocationPermission();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,8 +112,29 @@ class MyApp extends StatelessWidget {
             child: child ?? const SizedBox.shrink(),
           );
         },
-        home: MaxWidthWrapper(
-          child: homePage,
+        home: FutureBuilder<Widget>(
+          future: _homePageFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // در حال بارگذاری
+              return MaxWidthWrapper(
+                child: Scaffold(
+                  body: SafeArea(child: LoadingWidget()),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return MaxWidthWrapper(
+                child: Scaffold(
+                  body: Center(child: Text('Error: ${snapshot.error}')),
+                ),
+              );
+            } else if (snapshot.hasData) {
+              // پس از بررسی و تعیین صفحه خانگی
+              return MaxWidthWrapper(child: snapshot.data!);
+            } else {
+              return Center(child: Text('No data available'));
+            }
+          },
         ),
       ),
     );
