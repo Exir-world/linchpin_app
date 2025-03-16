@@ -1,2 +1,0 @@
-D:/linchpin_app/android/app/.cxx/Debug/z2s4a4y3/x86_64/CMakeFiles/edit_cache.dir
-D:/linchpin_app/android/app/.cxx/Debug/z2s4a4y3/x86_64/CMakeFiles/rebuild_cache.dir

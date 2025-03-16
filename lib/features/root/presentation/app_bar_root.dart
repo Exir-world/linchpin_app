@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';
+import 'package:linchpin/features/laws/laws_screen.dart';
 import 'package:linchpin/features/notifications/presentation/notifications_screen.dart';
+import 'package:linchpin/features/pay_slip/presentation/pay_slip_screen.dart';
 import 'package:linchpin/features/setting/setting_screen.dart';
 import 'package:linchpin/features/time_management/presentation/time_management_screen.dart';
 import 'package:flutter/material.dart';
@@ -143,7 +145,7 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                                     Assets.icons.notification.svg(height: 24),
                                 title: LocaleKeys.notifications.tr(),
                                 onTap: () {
-                                  _navigateToScreen(
+                                  navigateToScreen(
                                     context,
                                     NotificationsScreen(),
                                   );
@@ -153,13 +155,12 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                               _ItemProfile(
                                 image: Assets.icons.wallet.svg(height: 24),
                                 title: LocaleKeys.financialReports.tr(),
-                                onTap: () {},
-                              ),
-                              SizedBox(height: 24),
-                              _ItemProfile(
-                                image: Assets.icons.calendar.svg(height: 24),
-                                title: LocaleKeys.salaryCalculation.tr(),
-                                onTap: () {},
+                                onTap: () {
+                                  navigateToScreen(
+                                    context,
+                                    PaySlipScreen(),
+                                  );
+                                },
                               ),
                               SizedBox(height: 24),
                               _ItemProfile(
@@ -172,7 +173,7 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                                 image: Assets.icons.setting.svg(height: 24),
                                 title: LocaleKeys.appSettings.tr(),
                                 onTap: () {
-                                  _navigateToScreen(
+                                  navigateToScreen(
                                     context,
                                     SettingScreen(),
                                   );
@@ -190,7 +191,12 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                               _ItemProfile(
                                 image: Assets.icons.scale.svg(height: 24),
                                 title: LocaleKeys.laws.tr(),
-                                onTap: () {},
+                                onTap: () {
+                                  navigateToScreen(
+                                    context,
+                                    LawsScreen(),
+                                  );
+                                },
                               ),
                               SizedBox(height: 24),
                               _ItemProfile(
@@ -426,7 +432,7 @@ class IOSModalStyle extends StatelessWidget {
   }
 }
 
-void _navigateToScreen(BuildContext context, Widget screen) {
+void navigateToScreen(BuildContext context, Widget screen) {
   String screenName = screen.runtimeType.toString();
 
   if (NavigationManager.activeScreen.value == screenName) {

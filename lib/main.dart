@@ -11,6 +11,7 @@ import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/features/duties/presentation/bloc/duties_bloc.dart';
 import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:linchpin/features/pay_slip/presentation/bloc/pay_slip_bloc.dart';
 import 'package:linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
 
 void main() async {
@@ -72,6 +73,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<LastQuarterReportBloc>(
           create: (context) => getIt<LastQuarterReportBloc>(),
+        ),
+        BlocProvider<PaySlipBloc>(
+          create: (context) => getIt<PaySlipBloc>(),
         ),
       ],
       child: MaterialApp(

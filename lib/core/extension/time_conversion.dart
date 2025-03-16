@@ -17,4 +17,21 @@ extension TimeConversion on int {
       }
     }
   }
+
+  // مقدار ورودی: 25
+  // مقدار خروجی 25 دقیقه
+  // مقدار ورودی: 65
+  // مقدار خروجی: 1 ساعت و 5 دقیقه
+  String get formattedTime {
+    if (this >= 60) {
+      int hours = this ~/ 60;
+      int minutes = this % 60;
+      if (minutes == 0) {
+        return "$hours ساعت";
+      }
+      return "$hours ساعت و $minutes دقیقه";
+    } else {
+      return "$this دقیقه";
+    }
+  }
 }

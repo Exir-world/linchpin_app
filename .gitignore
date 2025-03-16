@@ -32,15 +32,9 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 
-# نادیده گرفتن پوشه‌های غیر از build/web
-/build/app/
-build/geolocator_android/
-build/location/
-build/native_assets/
-build/open_file_android/
-build/path_provider_android/
-build/shared_preferences_android/
-build/sqflite_android/
+android/app/.cxx/
+# نادیده گرفتن تمام پوشه‌ها و فایل‌های داخل build
+/build/
 
 # اجازه دادن فقط به build/web
 !build/web/
@@ -51,9 +45,3 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
-
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-/android/app/.cxx/

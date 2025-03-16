@@ -52,6 +52,16 @@ import 'package:linchpin/features/notifications/domain/use_case/notifications_us
     as _i106;
 import 'package:linchpin/features/notifications/presentation/bloc/notifications_bloc.dart'
     as _i377;
+import 'package:linchpin/features/pay_slip/data/data_source/api_pay_slip.dart'
+    as _i765;
+import 'package:linchpin/features/pay_slip/data/repository/pay_slip_repository_impl.dart'
+    as _i967;
+import 'package:linchpin/features/pay_slip/domain/repository/pay_slip_repository.dart'
+    as _i703;
+import 'package:linchpin/features/pay_slip/domain/use_case/pay_slip_usecase.dart'
+    as _i375;
+import 'package:linchpin/features/pay_slip/presentation/bloc/pay_slip_bloc.dart'
+    as _i12;
 import 'package:linchpin/features/performance_report/data/data_source/api_last_quarter_report.dart'
     as _i1071;
 import 'package:linchpin/features/performance_report/data/repository/last_quarter_report_repository_impl.dart'
@@ -103,6 +113,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i302.ApiGrowth>(() => _i302.ApiGrowth(gh<_i361.Dio>()));
     gh.singleton<_i534.ApiNotifications>(
         () => _i534.ApiNotifications(gh<_i361.Dio>()));
+    gh.singleton<_i765.ApiPaySlip>(() => _i765.ApiPaySlip(gh<_i361.Dio>()));
     gh.singleton<_i1071.ApiLastQuarterReport>(
         () => _i1071.ApiLastQuarterReport(gh<_i361.Dio>()));
     gh.singleton<_i554.ApiRequest>(() => _i554.ApiRequest(gh<_i361.Dio>()));
@@ -121,8 +132,16 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i496.NotificationsRepositoryImpl(gh<_i534.ApiNotifications>()),
       registerFor: {_prod},
     );
+    gh.singleton<_i703.PaySlipRepository>(
+      () => _i967.PaySlipRepositoryImpl(gh<_i765.ApiPaySlip>()),
+      registerFor: {_prod},
+    );
     gh.singleton<_i1038.RequestRepository>(
       () => _i629.RequestRepositoryImpl(gh<_i554.ApiRequest>()),
+      registerFor: {_prod},
+    );
+    gh.singleton<_i375.PaySlipUsecase>(
+      () => _i375.AuthUsecaseImpl(gh<_i703.PaySlipRepository>()),
       registerFor: {_prod},
     );
     gh.singleton<_i436.TimeManagementUsecase>(
@@ -146,6 +165,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => dioProvider.refresh(gh<String>()));
     gh.factory<_i658.TimeManagementBloc>(
         () => _i658.TimeManagementBloc(gh<_i436.TimeManagementUsecase>()));
+    gh.factory<_i12.PaySlipBloc>(
+        () => _i12.PaySlipBloc(gh<_i375.PaySlipUsecase>()));
     gh.singleton<_i817.AuthUsecase>(
       () => _i817.AuthUsecaseImpl(gh<_i278.AuthRepository>()),
       registerFor: {_prod},
