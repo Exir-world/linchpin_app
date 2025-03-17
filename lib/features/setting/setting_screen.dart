@@ -85,8 +85,6 @@ class _SettingScreenState extends State<SettingScreen> {
                                     onTap: () async {
                                       AuthScreen.languageNotifire.value =
                                           data.code;
-                                      print(
-                                          'Language changed to: ${AuthScreen.languageNotifire.value}');
                                       String languageCode;
                                       switch (data.name) {
                                         case 'فارسی (Persian)':

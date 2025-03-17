@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin/core/common/dimens.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/core/customui/snackbar_verify.dart';
 import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/requests/presentation/bloc/requests_bloc.dart';
@@ -13,6 +13,7 @@ import 'package:linchpin/features/requests/presentation/widgets/clock_picker_exa
 import 'package:linchpin/features/requests/presentation/widgets/explanation_widget.dart';
 import 'package:linchpin/features/requests/presentation/widgets/persian_date_picker.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 
 class RequestDetailScreen extends StatefulWidget {
   const RequestDetailScreen({super.key});
@@ -330,6 +331,14 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
               child: BlocConsumer<RequestsBloc, RequestsState>(
                 listener: (context, state) {
                   if (state is RequestCreateCompleted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarVerify(
+                        context: context,
+                        title: 'ثبت موفق آمیز بود',
+                        desc: '',
+                        icon: Assets.icons.check.svg(),
+                      ),
+                    );
                     Navigator.pop(context, true);
                   } else if (state is RequestCreateLoading) {
                     setState(() {
@@ -337,6 +346,14 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                     });
                   } else if (state is RequestCreateError) {
                     setState(() {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        snackBarVerify(
+                          context: context,
+                          title: state.textError,
+                          desc: '',
+                          icon: Assets.icons.close.svg(),
+                        ),
+                      );
                       isLoading = false;
                     });
                   }
@@ -356,8 +373,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                     return Stack(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: padding_Horizantalx),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -378,8 +394,10 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                                       selectedItem == 'HOURLY_LEAVE') {
                                     return ClockPickerExample(
                                       title: selectedItem == 'MANUAL_CHECK_OUT'
-                                          ? LocaleKeys.finishingTime.tr()
-                                          : LocaleKeys.startTime.tr(),
+                                          ? 'ساعت خروج'
+                                          : selectedItem == 'HOURLY_LEAVE'
+                                              ? LocaleKeys.startTime.tr()
+                                              : 'ساعت ورود',
                                       onChange: (TimeOfDay time) {
                                         // ذخیره ساعت و دقیقه در نوتیفایرهای جدید
                                         RequestDetailScreen.startHourNotifire
@@ -412,7 +430,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
                                       children: [
                                         SizedBox(height: 24),
                                         ClockPickerExample(
-                                          title: LocaleKeys.endTime.tr(),
+                                          title: 'ساعت پایان',
                                           onChange: (TimeOfDay time) {
                                             // ذخیره ساعت و دقیقه پایان در نوتیفایرهای جدید
                                             RequestDetailScreen.endHourNotifire

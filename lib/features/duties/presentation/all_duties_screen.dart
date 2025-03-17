@@ -109,7 +109,7 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
                   ? _tabControllerTwo.length
                   : _tabControllerOne.length,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                 child: Column(
                   children: [
                     Row(

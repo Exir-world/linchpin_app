@@ -109,7 +109,7 @@ class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
                     BottomNavigationBarItem(
                       icon: value == 2
                           ? Assets.icons.activityA.svg()
-                          : Assets.icons.activity.svg(),
+                          : Assets.icons.activityNoRad.svg(),
                       label: "",
                     ),
                     BottomNavigationBarItem(

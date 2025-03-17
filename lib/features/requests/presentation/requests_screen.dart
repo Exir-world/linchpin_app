@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin/core/common/dimens.dart';
 import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
@@ -82,11 +81,11 @@ class _RequestsScreenState extends State<RequestsScreen>
 
   Widget _getIconForType(String type) {
     final iconsMap = {
-      'SICK_LEAVE': Assets.icons.timerOffSleep.svg(),
-      'HOURLY_LEAVE': Assets.icons.clockDash.svg(),
-      'DAILY_LEAVE': Assets.icons.checkOut.svg(),
-      'MANUAL_CHECK_OUT': Assets.icons.clockClose.svg(),
-      'MANUAL_CHECK_IN': Assets.icons.clockAdd.svg(),
+      'SICK_LEAVE': Assets.icons.timerOffSleep.svg(height: 20),
+      'HOURLY_LEAVE': Assets.icons.clockDash.svg(height: 20),
+      'DAILY_LEAVE': Assets.icons.checkOut.svg(height: 20),
+      'MANUAL_CHECK_OUT': Assets.icons.clockClose.svg(height: 20),
+      'MANUAL_CHECK_IN': Assets.icons.clockAdd.svg(height: 20),
     };
 
     return iconsMap[type] ?? Assets.icons.clockAdd.svg();
@@ -174,8 +173,7 @@ class _RequestsScreenState extends State<RequestsScreen>
               builder: (context, state) {
                 if (state is RequestsCompleted) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: padding_Horizantalx),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       children: [
                         SizedBox(height: 24),
@@ -223,7 +221,6 @@ class _RequestsScreenState extends State<RequestsScreen>
                                       ? _formatDate(endTime)
                                       : _formatTime(startTime);
                                   return Container(
-                                    height: 92,
                                     margin: EdgeInsets.only(bottom: 12),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -237,147 +234,159 @@ class _RequestsScreenState extends State<RequestsScreen>
                                         ),
                                       ],
                                     ),
-                                    padding: EdgeInsets.all(16),
-                                    child: Row(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 16, horizontal: 16),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  NormalRegular(
-                                                      getTypeLabel(data.type!)),
-                                                  NormalRegular(createdAt),
-                                                  Spacer(),
-                                                  SmallRegular(
-                                                    getStatusLabel(
-                                                        data.status!),
-                                                    textColorInLight:
-                                                        Color(0xff828282),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  _getIconForType(data.type!),
-                                                  SizedBox(width: 8),
-                                                  SmallRegular(
-                                                    _getDetailsForType(
-                                                      type: data.type!,
-                                                      startDay: startDay,
-                                                      endDay: endDay,
-                                                      startTimeH: startTimeH,
-                                                      endTimeH: endTimeH,
-                                                    ),
-                                                    textColorInLight:
-                                                        const Color(0xff861C8C),
-                                                  ),
-                                                  Spacer(),
-                                                  data.status == 'CANCELLED' ||
-                                                          data.status ==
+                                        Row(
+                                          children: [
+                                            NormalRegular(
+                                                getTypeLabel(data.type!)),
+                                            NormalRegular(createdAt),
+                                            Spacer(),
+                                            SmallMedium(
+                                              getStatusLabel(data.status!),
+                                              textColorInLight: data.status ==
+                                                      'CANCELLED'
+                                                  ? Color.fromARGB(
+                                                      255, 155, 155, 155)
+                                                  : data.status == 'PENDING'
+                                                      ? Color.fromARGB(
+                                                          255, 241, 151, 72)
+                                                      : data.status ==
                                                               'REJECTED'
-                                                      ? Container()
-                                                      : GestureDetector(
-                                                          onTap: () {
-                                                            showDialog<
-                                                                TimeOfDay>(
-                                                              context: context,
-                                                              builder:
-                                                                  (context) {
-                                                                return Dialog(
-                                                                  shape: RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8)),
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  child:
-                                                                      Container(
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .symmetric(
-                                                                      vertical:
-                                                                          24,
-                                                                      horizontal:
-                                                                          24,
-                                                                    ),
-                                                                    child:
-                                                                        Column(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .min,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        NormalMedium(
-                                                                          LocaleKeys
-                                                                              .cancelRequest
-                                                                              .tr(),
-                                                                        ),
-                                                                        SizedBox(
-                                                                            height:
-                                                                                24),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            Expanded(
-                                                                              child: GestureDetector(
-                                                                                onTap: () {
-                                                                                  _bloc.add(RequestCancelEvent(data.id.toString()));
-                                                                                  Navigator.pop(context);
-                                                                                },
-                                                                                child: Container(
-                                                                                  height: 44,
-                                                                                  decoration: BoxDecoration(
-                                                                                    color: Color(0xff861C8C),
-                                                                                    borderRadius: BorderRadius.circular(12),
-                                                                                  ),
-                                                                                  alignment: Alignment.center,
-                                                                                  child: NormalMedium(
-                                                                                    LocaleKeys.yes.tr(),
-                                                                                    textColorInLight: Colors.white,
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(width: 24),
-                                                                            Expanded(
-                                                                              child: GestureDetector(
-                                                                                onTap: () {
-                                                                                  Navigator.pop(context);
-                                                                                },
-                                                                                child: Container(
-                                                                                  height: 44,
-                                                                                  decoration: BoxDecoration(
-                                                                                    color: Color(0xffCAC4CF),
-                                                                                    borderRadius: BorderRadius.circular(12),
-                                                                                  ),
-                                                                                  alignment: Alignment.center,
-                                                                                  child: NormalMedium(LocaleKeys.no.tr(), textColorInLight: Colors.white),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            );
-                                                          },
-                                                          child: Assets
-                                                              .icons.tag
-                                                              .svg()),
-                                                ],
+                                                          ? Color(0xfffd5b71)
+                                                          : Color(0xff07e092),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 12),
+                                        Row(
+                                          children: [
+                                            _getIconForType(data.type!),
+                                            SizedBox(width: 8),
+                                            SmallMedium(
+                                              _getDetailsForType(
+                                                type: data.type!,
+                                                startDay: startDay,
+                                                endDay: endDay,
+                                                startTimeH: startTimeH,
+                                                endTimeH: endTimeH,
                                               ),
-                                            ],
-                                          ),
+                                              textColorInLight:
+                                                  const Color(0xff861C8C),
+                                            ),
+                                            Spacer(),
+                                            data.status == 'CANCELLED' ||
+                                                    data.status == 'REJECTED'
+                                                ? Container()
+                                                : GestureDetector(
+                                                    onTap: () {
+                                                      showDialog<TimeOfDay>(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return Dialog(
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8)),
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            child: Container(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                vertical: 24,
+                                                                horizontal: 24,
+                                                              ),
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  NormalMedium(
+                                                                    LocaleKeys
+                                                                        .cancelRequest
+                                                                        .tr(),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      height:
+                                                                          24),
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Expanded(
+                                                                        child:
+                                                                            GestureDetector(
+                                                                          onTap:
+                                                                              () {
+                                                                            _bloc.add(RequestCancelEvent(data.id.toString()));
+                                                                            Navigator.pop(context);
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            height:
+                                                                                44,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              color: Color(0xff861C8C),
+                                                                              borderRadius: BorderRadius.circular(12),
+                                                                            ),
+                                                                            alignment:
+                                                                                Alignment.center,
+                                                                            child:
+                                                                                NormalMedium(
+                                                                              LocaleKeys.yes.tr(),
+                                                                              textColorInLight: Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          width:
+                                                                              24),
+                                                                      Expanded(
+                                                                        child:
+                                                                            GestureDetector(
+                                                                          onTap:
+                                                                              () {
+                                                                            Navigator.pop(context);
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            height:
+                                                                                44,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              color: Color(0xffCAC4CF),
+                                                                              borderRadius: BorderRadius.circular(12),
+                                                                            ),
+                                                                            alignment:
+                                                                                Alignment.center,
+                                                                            child:
+                                                                                NormalMedium(LocaleKeys.no.tr(), textColorInLight: Colors.white),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    child:
+                                                        Assets.icons.tag.svg()),
+                                          ],
                                         ),
                                       ],
                                     ),

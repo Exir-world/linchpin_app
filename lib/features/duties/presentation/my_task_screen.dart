@@ -60,7 +60,7 @@ class _MyTaskScreenState extends State<MyTaskScreen>
       child: Scaffold(
         appBar: appBarRoot(context, true),
         body: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           child: SingleChildScrollView(
             child: BlocBuilder<DutiesBloc, DutiesState>(
               buildWhen: (previous, current) {
@@ -213,8 +213,8 @@ class _AttachTaskWidgetState extends State<AttachTaskWidget> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        SmallMedium(data.fileName!),
-                        VerySmallRegular(
+                        NormalMedium(data.fileName!),
+                        SmallRegular(
                           formatFileSize(data.fileSize!),
                           textColorInLight: Color(0xff88719B),
                         ),
@@ -307,7 +307,7 @@ class TaskDescWidget extends StatelessWidget {
             ],
           ),
           SizedBox(height: 24),
-          SmallRegular(
+          NormalRegular(
             desc,
             textColorInLight: Color(0xff828282),
           ),
@@ -451,7 +451,6 @@ class _DownloadButtonState extends State<DownloadButton> {
 
       _openFile();
     } catch (e) {
-      print('Download failed: $e');
       setState(() {
         isDownloading = false;
         downloadProgress = 0;
@@ -460,8 +459,7 @@ class _DownloadButtonState extends State<DownloadButton> {
   }
 
   Future<void> _openFile() async {
-    final result = await OpenFile.open(filePath!);
-    print('OpenFile result: ${result.message}');
+    await OpenFile.open(filePath!);
   }
 
   @override

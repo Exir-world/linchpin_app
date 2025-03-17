@@ -82,7 +82,7 @@ class _SubtaskWidgetState extends State<SubtaskWidget> {
                           ? Assets.icons.check.svg()
                           : Assets.icons.cir.svg(),
                       SizedBox(width: 12),
-                      SmallRegular(
+                      NormalRegular(
                         data.title!,
                         decoration:
                             data.done! ? TextDecoration.lineThrough : null,

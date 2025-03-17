@@ -72,7 +72,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       Align(
                           alignment: Alignment.centerRight,
                           child: BigDemiBold(LocaleKeys.notifications.tr())),
-                      SizedBox(height: 8),
+                      SizedBox(height: 16),
                       // Align(
                       //   alignment: Alignment.center,
                       //   child: Container(

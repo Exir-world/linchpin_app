@@ -380,18 +380,21 @@ class _ItemProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Row(
-        children: [
-          image,
-          SizedBox(width: 8),
-          NormalMedium(title),
-          Spacer(),
-          Icon(
-            Icons.arrow_forward_ios_rounded,
-            color: Color(0xffDADADA),
-            size: 16,
-          ),
-        ],
+      child: Container(
+        color: Colors.transparent,
+        child: Row(
+          children: [
+            image,
+            SizedBox(width: 8),
+            NormalMedium(title),
+            Spacer(),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Color(0xffDADADA),
+              size: 16,
+            ),
+          ],
+        ),
       ),
     );
   }

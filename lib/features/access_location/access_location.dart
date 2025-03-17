@@ -27,7 +27,6 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
     if (kIsWeb) {
       try {
         Position position = await Geolocator.getCurrentPosition();
-        print("Location: ${position.latitude}, ${position.longitude}");
         AccessLocationScreen.latitudeNotifire.value = position.latitude;
         AccessLocationScreen.longitudeNotifire.value = position.longitude;
         isLoadingNotifire.value = false;
@@ -78,8 +77,6 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
     try {
       // دریافت موقعیت مکانی با دقت بالا
       Position position = await Geolocator.getCurrentPosition();
-      print(
-          "${LocaleKeys.locationReceivedText.tr()}: ${position.latitude}, ${position.longitude}");
       AccessLocationScreen.latitudeNotifire.value = position.latitude;
       AccessLocationScreen.longitudeNotifire.value = position.longitude;
       isLoadingNotifire.value = false;

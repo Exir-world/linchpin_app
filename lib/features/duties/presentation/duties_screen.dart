@@ -114,7 +114,7 @@ class _DutiesScreenState extends State<DutiesScreen>
               return DefaultTabController(
                 length: _tabController.length,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: Column(
                     children: [
                       // عنوان لیست وظایف و مشاهده تمام وظایف
@@ -152,7 +152,7 @@ class _DutiesScreenState extends State<DutiesScreen>
                               indicatorColor: Color(0xff861C8C),
                               indicatorSize: TabBarIndicatorSize.tab,
                               indicatorPadding:
-                                  EdgeInsets.symmetric(horizontal: 12),
+                                  EdgeInsets.symmetric(horizontal: 0),
                               overlayColor:
                                   WidgetStatePropertyAll(Colors.transparent),
                               tabs: [

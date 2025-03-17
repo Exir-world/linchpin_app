@@ -353,7 +353,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                                       ),
                                     ],
                                   ),
-                        SizedBox(height: VERTICAL_SPACING_8x),
+                        SizedBox(height: VERTICAL_SPACING_11x),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -386,12 +386,6 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
                         ),
                       ],
                     ),
-                  ),
-                  ValueListenableBuilder(
-                    valueListenable: isLoadingNotifire,
-                    builder: (context, value, child) {
-                      return value ? LoadingWidget() : SizedBox.shrink();
-                    },
                   ),
                 ],
               ),

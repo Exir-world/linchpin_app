@@ -132,7 +132,11 @@ class _MyAppState extends State<MyApp> {
               // پس از بررسی و تعیین صفحه خانگی
               return MaxWidthWrapper(child: snapshot.data!);
             } else {
-              return Center(child: Text('No data available'));
+              return MaxWidthWrapper(
+                child: Scaffold(
+                  body: Center(child: Text('No data available')),
+                ),
+              );
             }
           },
         ),

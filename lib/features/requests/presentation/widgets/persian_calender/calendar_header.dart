@@ -84,7 +84,7 @@ class _CalendarHeaderState extends State<CalendarHeader> {
               children: [
                 BoxIncreaseDecrease(
                   onTap: () => _changeMonth(1), // افزایش ماه.
-                  icon: Icons.add, // آیکون افزودن.
+                  icon: Icons.arrow_back_ios_new_rounded, // آیکون افزودن.
                 ),
                 // نمایش تاریخ شمسی جاری.
                 ValueListenableBuilder<String>(
@@ -109,7 +109,7 @@ class _CalendarHeaderState extends State<CalendarHeader> {
                 ),
                 BoxIncreaseDecrease(
                   onTap: () => _changeMonth(-1), // کاهش ماه.
-                  icon: Icons.remove, // آیکون حذف.
+                  icon: Icons.arrow_forward_ios_rounded, // آیکون حذف.
                 ),
               ],
             )
@@ -146,7 +146,7 @@ class _CalendarHeaderState extends State<CalendarHeader> {
                   children: [
                     BoxIncreaseDecrease(
                       onTap: () => _changeYear(1), // افزایش سال.
-                      icon: Icons.add, // آیکون افزودن.
+                      icon: Icons.arrow_back_ios_new_rounded, // آیکون افزودن.
                     ),
                     // نمایش سال جاری.
                     ValueListenableBuilder<String>(
@@ -163,9 +163,9 @@ class _CalendarHeaderState extends State<CalendarHeader> {
                       },
                     ),
                     BoxIncreaseDecrease(
-                      onTap: () => _changeYear(-1), // کاهش سال.
-                      icon: Icons.remove, // آیکون حذف.
-                    ),
+                        onTap: () => _changeYear(-1), // کاهش سال.
+                        icon: Icons.arrow_forward_ios_rounded // آیکون حذف.
+                        ),
                   ],
                 ),
     );

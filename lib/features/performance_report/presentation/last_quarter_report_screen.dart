@@ -51,13 +51,12 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
             if (state is MonthsCompletedState) {
               return SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: padding_Horizantalx),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: VERTICAL_SPACING_6x),
-                      LargeDemiBold(LocaleKeys.performanceReport.tr()),
+                      SizedBox(height: VERTICAL_SPACING_4x),
+                      BigDemiBold(LocaleKeys.performanceReport.tr()),
                       SizedBox(height: VERTICAL_SPACING_6x),
                       state.monthsEntity.isEmpty
                           ? Column(
