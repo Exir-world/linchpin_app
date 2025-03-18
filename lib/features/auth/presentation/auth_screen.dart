@@ -28,9 +28,9 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
   bool obscureText = true;
   final _formKey = GlobalKey<FormState>();
   DateTime? _lastPressedTime;
-  final PrefService prefService = PrefService();
   TextEditingController accountController = TextEditingController();
   TextEditingController passController = TextEditingController();
+  final PrefService prefService = PrefService();
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -38,34 +38,7 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
     // مقداردهی مجدد در صورت نیاز
     accountController = TextEditingController();
     passController = TextEditingController();
-    _checkAuthStatus();
     super.initState();
-  }
-
-  // بررسی توکن و وضعیت ورود
-  Future<void> _checkAuthStatus() async {
-    String? token = await prefService.readCacheString(SharedKey.jwtToken);
-    if (token == null) {
-      // اگر توکن وجود نداشت، صفحه لاگین را نمایش می‌دهیم
-      return;
-    }
-
-    int? expires = await prefService.readCacheInt(SharedKey.expires);
-    if (expires == null ||
-        expires * 1000 < DateTime.now().millisecondsSinceEpoch) {
-      // اگر توکن منقضی شده بود، صفحه لاگین را نمایش می‌دهیم
-      return;
-    }
-
-    // اگر توکن معتبر بود، کاربر به صفحه اصلی هدایت می‌شود
-    _navigateToRoot();
-  }
-
-  void _navigateToRoot() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => RootScreen()),
-    );
   }
 
   @override
@@ -118,7 +91,10 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
                 SharedKey.refreshToken, state.loginEntity.refreshToken ?? '');
             prefService.createCacheInt(
                 SharedKey.expires, state.loginEntity.expires ?? 0);
-            _navigateToRoot();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => RootScreen()),
+            );
           } else if (state is LoginErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
               snackBarVerify(

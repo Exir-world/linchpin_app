@@ -1,5 +1,6 @@
 import 'package:linchpin/core/common/text_styles.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin/core/utils/max_width_wrapper.dart';
@@ -14,6 +15,7 @@ import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:linchpin/features/pay_slip/presentation/bloc/pay_slip_bloc.dart';
 import 'package:linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
+import 'package:linchpin/features/root/presentation/root_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -119,7 +121,10 @@ class _MyAppState extends State<MyApp> {
               // در حال بارگذاری
               return MaxWidthWrapper(
                 child: Scaffold(
-                  body: SafeArea(child: LoadingWidget()),
+                  body: SafeArea(
+                      child: SizedBox(
+                          height: context.screenHeight,
+                          child: LoadingWidget())),
                 ),
               );
             } else if (snapshot.hasError) {
@@ -172,7 +177,20 @@ class LocationService {
           );
           AccessLocationScreen.latitudeNotifire.value = position.latitude;
           AccessLocationScreen.longitudeNotifire.value = position.longitude;
-          return AuthScreen();
+          final PrefService prefService = PrefService();
+          String? token = await prefService.readCacheString(SharedKey.jwtToken);
+          if (token == null) {
+            // اگر توکن وجود نداشت، صفحه لاگین را نمایش می‌دهیم
+            return AuthScreen();
+          }
+          int? expires = await prefService.readCacheInt(SharedKey.expires);
+          if (expires == null ||
+              expires * 1000 < DateTime.now().millisecondsSinceEpoch) {
+            // اگر توکن منقضی شده بود، صفحه لاگین را نمایش می‌دهیم
+            return AuthScreen();
+          }
+          // اگر توکن معتبر بود، کاربر به صفحه اصلی هدایت می‌شود
+          return RootScreen();
         }
       }
     } catch (e) {
