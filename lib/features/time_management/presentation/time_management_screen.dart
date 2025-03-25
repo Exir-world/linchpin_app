@@ -1,3 +1,4 @@
+import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:linchpin/features/time_management/presentation/widget/box_entry_exit.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/common/dimens.dart';
-import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';

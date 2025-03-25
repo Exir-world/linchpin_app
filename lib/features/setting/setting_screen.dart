@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';

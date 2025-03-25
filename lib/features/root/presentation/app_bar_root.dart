@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/laws/laws_screen.dart';
 import 'package:linchpin/features/notifications/presentation/notifications_screen.dart';
@@ -7,7 +8,6 @@ import 'package:linchpin/features/setting/setting_screen.dart';
 import 'package:linchpin/features/time_management/presentation/time_management_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:linchpin/core/common/colors.dart';
-import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin/features/auth/presentation/auth_screen.dart';

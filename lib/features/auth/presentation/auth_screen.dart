@@ -1,10 +1,10 @@
 import 'package:calendar_pro_farhad/core/context_extension.dart';
+import 'package:calendar_pro_farhad/core/text_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/customui/snackbar_verify.dart';
 import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';

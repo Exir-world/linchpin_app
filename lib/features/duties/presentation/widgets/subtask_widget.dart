@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/features/duties/data/models/task_detail_model/sub_task.dart';
 import 'package:linchpin/features/duties/presentation/bloc/duties_bloc.dart';
 import 'package:linchpin/gen/assets.gen.dart';

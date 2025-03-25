@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/extension/currency_formatter_extension.dart';

@@ -1,4 +1,4 @@
-import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/common/custom_text.dart';
 import 'package:flutter/material.dart';
 
 class BoxEntryExit extends StatelessWidget {

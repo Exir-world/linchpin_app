@@ -1,4 +1,3 @@
-import 'package:linchpin/core/common/text_styles.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
@@ -33,7 +32,7 @@ void main() async {
 
   // تعیین زبان پیش‌فرض بر اساس مقدار ذخیره‌شده
   Locale initialLocale = _getLocaleFromLanguage(savedLanguage);
-  await FontHelper.loadLanguage(); // مقداردهی اولیه زبان
+  // await FontHelper.loadLanguage(); // مقداردهی اولیه زبان
   runApp(
     EasyLocalization(
       supportedLocales: [Locale('en'), Locale('fa'), Locale('ar')],

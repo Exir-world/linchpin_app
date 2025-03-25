@@ -1,7 +1,7 @@
+import 'package:calendar_pro_farhad/core/text_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin/core/common/text_widgets.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';

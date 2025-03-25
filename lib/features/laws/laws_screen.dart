@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
 
 class LawsScreen extends StatelessWidget {

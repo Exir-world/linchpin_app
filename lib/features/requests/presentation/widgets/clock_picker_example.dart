@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin/core/common/text_widgets.dart';
+import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/features/requests/presentation/widgets/box_request_type.dart';
 import 'package:linchpin/features/requests/presentation/widgets/clock_picker.dart';
 import 'package:linchpin/gen/assets.gen.dart';
