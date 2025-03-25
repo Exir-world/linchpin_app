@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:linchpin/core/common/dimens.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin/gen/fonts.gen.dart';
 
 class CustomText extends StatelessWidget {
@@ -36,7 +38,11 @@ class CustomText extends StatelessWidget {
   }
 
   String getFontFamily(BuildContext context) {
+    PrefService prefService = PrefService();
     bool isEnglish = EasyLocalization.of(context)?.locale.languageCode == 'en';
+    String? languageCode = EasyLocalization.of(context)?.locale.languageCode;
+    prefService.createCacheString(
+        SharedKey.selectedLanguageCode, languageCode ?? '');
     if (weight == FontWeight.w400) {
       return isEnglish
           ? FontFamily.productSansRegular
