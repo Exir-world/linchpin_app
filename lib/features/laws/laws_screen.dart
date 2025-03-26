@@ -40,7 +40,7 @@ class LawsScreen extends StatelessWidget {
                     NormalMedium('۱. اهداف و ارزش‌ها'),
                     SizedBox(height: 12),
                     NormalMedium(
-                      'رعایت اخلاق حرفه‌ای، صداقت و احترام متقابل در تمامی تعاملات.',
+                      'رعایت اخلاق حرفه‌ای، صداقت و احترام متقابل در تمامی تعاملات',
                       textColorInLight: Color(0xff828282),
                     ),
                     SizedBox(height: 12),
