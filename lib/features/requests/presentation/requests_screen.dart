@@ -117,7 +117,11 @@ class _RequestsScreenState extends State<RequestsScreen>
     return BlocProvider(
       create: (context) => _bloc,
       child: Scaffold(
-        appBar: appBarRoot(context, true),
+        appBar: appBarRoot(
+          context,
+          true,
+          () => Navigator.pop(context),
+        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
         floatingActionButton: SizedBox(
           height: 56,

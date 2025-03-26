@@ -15,7 +15,8 @@ import 'package:linchpin/features/requests/presentation/requests_screen.dart';
 import 'package:linchpin/features/root/presentation/root_screen.dart';
 import 'package:linchpin/gen/assets.gen.dart';
 
-PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
+PreferredSize appBarRoot(
+    BuildContext context, bool isRequestScreen, Function()? onPressed) {
   return PreferredSize(
     preferredSize: Size.fromHeight(kToolbarHeight),
     child: Container(
@@ -41,9 +42,7 @@ PreferredSize appBarRoot(BuildContext context, bool isRequestScreen) {
                   color: Color(0xff861C8C),
                   size: 26,
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: onPressed,
               )
             : null,
         title: Row(

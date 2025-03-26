@@ -14,7 +14,11 @@ class AllNotificationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     List<int> listTest = [0];
     return Scaffold(
-      appBar: appBarRoot(context, true),
+      appBar: appBarRoot(
+        context,
+        true,
+        () => Navigator.pop(context),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SingleChildScrollView(

@@ -20,7 +20,6 @@ class AuthScreen extends StatefulWidget {
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
-  static ValueNotifier<String?> languageNotifire = ValueNotifier(null);
 }
 
 class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {

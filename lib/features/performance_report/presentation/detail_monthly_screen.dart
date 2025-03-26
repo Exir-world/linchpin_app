@@ -43,7 +43,11 @@ class _DetailMonthlyScreenState extends State<DetailMonthlyScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarRoot(context, true),
+      appBar: appBarRoot(
+        context,
+        true,
+        () => Navigator.pop(context),
+      ),
       body: BlocBuilder<LastQuarterReportBloc, LastQuarterReportState>(
         builder: (context, state) {
           if (state is DailyReportCompletedState) {

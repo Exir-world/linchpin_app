@@ -46,7 +46,6 @@ void main() async {
 
 // تابع برای تبدیل نام زبان به Locale
 Locale _getLocaleFromLanguage(String? language) {
-  AuthScreen.languageNotifire.value = language ?? 'fa';
   switch (language) {
     case 'fa':
       return Locale('fa');

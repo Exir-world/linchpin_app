@@ -38,13 +38,63 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
   String? currentStatus;
   String? nameStatus;
 
-  void formatDateTime(DateTime dateTime) {
-    // تبدیل تاریخ میلادی به تاریخ شمسی
-    Jalali shamsiDate = Jalali.fromDateTime(dateTime);
+  void formatDateTime(BuildContext context, DateTime dateTime) {
+    String? language = EasyLocalization.of(context)?.locale.languageCode;
 
-    // فرمت کردن تاریخ شمسی به صورت "روز ماه" (مثلاً: ۲۲ دی)
-    String formattedDate = '${shamsiDate.day} ${shamsiDate.formatter.mN}';
-    RootScreen.timeServerNotofire.value = formattedDate;
+    if (language == 'en') {
+      // لیست نام ماه‌های میلادی به انگلیسی
+      List<String> englishMonths = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ];
+
+      // دریافت نام ماه از لیست
+      String monthName = englishMonths[dateTime.month - 1];
+
+      // ایجاد فرمت تاریخ مانند "15 March"
+      String formattedDate = '${dateTime.day} $monthName';
+      RootScreen.timeServerNotofire.value = formattedDate;
+    } else if (language == 'ar') {
+      // لیست نام ماه‌های میلادی به عربی
+      List<String> arabicMonths = [
+        "يناير",
+        "فبراير",
+        "مارس",
+        "أبريل",
+        "مايو",
+        "يونيو",
+        "يوليو",
+        "أغسطس",
+        "سبتمبر",
+        "أكتوبر",
+        "نوفمبر",
+        "ديسمبر"
+      ];
+
+      // دریافت نام ماه از لیست
+      String monthName = arabicMonths[dateTime.month - 1];
+
+      // ایجاد فرمت تاریخ مانند "25 مارس"
+      String formattedDate = '${dateTime.day} $monthName';
+      RootScreen.timeServerNotofire.value = formattedDate;
+    } else {
+      // تبدیل تاریخ میلادی به تاریخ شمسی
+      Jalali shamsiDate = Jalali.fromDateTime(dateTime);
+
+      // فرمت تاریخ شمسی به صورت "روز نام ماه" (مثلاً: ۲۲ دی)
+      String formattedDate = '${shamsiDate.day} ${shamsiDate.formatter.mN}';
+      RootScreen.timeServerNotofire.value = formattedDate;
+    }
   }
 
   // تعداد کاراکتر های متن اگر بیش از حد مجاز باشه
@@ -77,7 +127,9 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
     ));
     TimeManagementScreen.latitudeNotifire.value = null;
     TimeManagementScreen.longitudeNotifire.value = null;
-    formatDateTime(DateTime.now()); // نمایش تاریخ و زمان فرمت‌شده
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      formatDateTime(context, DateTime.now());
+    });
     super.initState();
   }
 

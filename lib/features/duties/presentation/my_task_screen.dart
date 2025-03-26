@@ -58,7 +58,11 @@ class _MyTaskScreenState extends State<MyTaskScreen>
     return BlocProvider(
       create: (context) => _bloc,
       child: Scaffold(
-        appBar: appBarRoot(context, true),
+        appBar: appBarRoot(
+          context,
+          true,
+          () => Navigator.pop(context),
+        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           child: SingleChildScrollView(

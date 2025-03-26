@@ -8,7 +8,11 @@ class LawsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarRoot(context, true),
+      appBar: appBarRoot(
+        context,
+        true,
+        () => Navigator.pop(context),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),

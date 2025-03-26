@@ -1,11 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';
-import 'package:linchpin/features/auth/presentation/auth_screen.dart';
+import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:linchpin/features/root/presentation/root_screen.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -15,240 +18,297 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  @override
-  void initState() {
-    super.initState();
+  String? languageApp;
+  void formatDateTime(BuildContext context, DateTime dateTime) {
+    if (languageApp == 'en') {
+      // لیست نام ماه‌های میلادی به انگلیسی
+      List<String> englishMonths = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ];
+
+      // دریافت نام ماه از لیست
+      String monthName = englishMonths[dateTime.month - 1];
+
+      // ایجاد فرمت تاریخ مانند "15 March"
+      String formattedDate = '${dateTime.day} $monthName';
+      RootScreen.timeServerNotofire.value = formattedDate;
+    } else if (languageApp == 'ar') {
+      // لیست نام ماه‌های میلادی به عربی
+      List<String> arabicMonths = [
+        "يناير",
+        "فبراير",
+        "مارس",
+        "أبريل",
+        "مايو",
+        "يونيو",
+        "يوليو",
+        "أغسطس",
+        "سبتمبر",
+        "أكتوبر",
+        "نوفمبر",
+        "ديسمبر"
+      ];
+
+      // دریافت نام ماه از لیست
+      String monthName = arabicMonths[dateTime.month - 1];
+
+      // ایجاد فرمت تاریخ مانند "25 مارس"
+      String formattedDate = '${dateTime.day} $monthName';
+      RootScreen.timeServerNotofire.value = formattedDate;
+    } else {
+      // تبدیل تاریخ میلادی به تاریخ شمسی
+      Jalali shamsiDate = Jalali.fromDateTime(dateTime);
+
+      // فرمت تاریخ شمسی به صورت "روز نام ماه" (مثلاً: ۲۲ دی)
+      String formattedDate = '${shamsiDate.day} ${shamsiDate.formatter.mN}';
+      RootScreen.timeServerNotofire.value = formattedDate;
+    }
   }
 
-  Future<void> _saveSelectedLanguage(String language) async {
+  Future<void> _saveSelectedLanguage(
+      BuildContext context, String language) async {
     PrefService prefService = PrefService();
     await prefService.createCacheString(SharedKey.selectedLanguage, language);
+    formatDateTime(context, DateTime.now());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBarRoot(context, true),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 24),
-            BigDemiBold(LocaleKeys.settings.tr()),
-            SizedBox(height: 24),
-            GestureDetector(
-              onTap: () {
-                List<Language> listLanguege = [
-                  Language(name: 'فارسی (Persian)', code: 'fa'),
-                  Language(name: 'انگلیسی (English)', code: 'en'),
-                  Language(name: 'عربی (Arabic)', code: 'ar'),
-                ];
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  useSafeArea: true,
-                  backgroundColor: Colors.transparent,
-                  sheetAnimationStyle: AnimationStyle(
-                    reverseCurve: Curves.easeIn,
-                    duration: Duration(milliseconds: 400),
-                  ),
-                  builder: (context) {
-                    return IOSModalStyle(
-                        childBody: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              width: 23,
-                              height: 4,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(2),
-                                color: Color(0xff000000).withValues(alpha: .15),
+    languageApp = EasyLocalization.of(context)?.locale.languageCode;
+    return WillPopScope(
+      onWillPop: () async {
+        BlocProvider.of<GrowthBloc>(context).add(UserSelfEvent());
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBarRoot(
+          context,
+          true,
+          () {
+            Navigator.pop(context);
+            BlocProvider.of<GrowthBloc>(context).add(UserSelfEvent());
+          },
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 24),
+              BigDemiBold(LocaleKeys.settings.tr()),
+              SizedBox(height: 24),
+              GestureDetector(
+                onTap: () {
+                  List<Language> listLanguege = [
+                    Language(name: 'فارسی (Persian)', code: 'fa'),
+                    Language(name: 'انگلیسی (English)', code: 'en'),
+                    Language(name: 'عربی (Arabic)', code: 'ar'),
+                  ];
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    useSafeArea: true,
+                    backgroundColor: Colors.transparent,
+                    sheetAnimationStyle: AnimationStyle(
+                      reverseCurve: Curves.easeIn,
+                      duration: Duration(milliseconds: 400),
+                    ),
+                    builder: (context) {
+                      return IOSModalStyle(
+                          childBody: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                width: 23,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  color:
+                                      Color(0xff000000).withValues(alpha: .15),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 16),
-                          ListView.builder(
-                            itemCount: listLanguege.length,
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              final data = listLanguege[index];
-                              return ValueListenableBuilder(
-                                valueListenable: AuthScreen.languageNotifire,
-                                builder: (context, valueL, child) {
-                                  return GestureDetector(
-                                    onTap: () async {
-                                      AuthScreen.languageNotifire.value =
-                                          data.code;
-                                      String languageCode;
-                                      switch (data.name) {
-                                        case 'فارسی (Persian)':
-                                          languageCode = data.code;
-                                          break;
-                                        case 'انگلیسی (English)':
-                                          languageCode = data.code;
-                                          break;
-                                        case 'عربی (Arabic)':
-                                          languageCode = data.code;
-                                          break;
-                                        default:
-                                          languageCode = data.code;
-                                      }
-                                      if (data.name == 'فارسی (Persian)') {
-                                        await _saveSelectedLanguage(data.code);
-                                      } else if (data.name ==
-                                          'انگلیسی (English)') {
-                                        await _saveSelectedLanguage(data.code);
-                                      } else if (data.name == 'عربی (Arabic)') {
-                                        await _saveSelectedLanguage(data.code);
-                                      }
-                                      if (data.name == 'انگلیسی (English)') {
-                                        AuthScreen.languageNotifire.value =
-                                            data.code;
-                                      } else if (data.name == 'عربی (Arabic)') {
-                                        AuthScreen.languageNotifire.value =
-                                            data.code;
-                                      } else if (data.name ==
-                                          'فارسی (Persian)') {
-                                        AuthScreen.languageNotifire.value =
-                                            data.code;
-                                      }
+                            SizedBox(height: 16),
+                            ListView.builder(
+                              itemCount: listLanguege.length,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                final data = listLanguege[index];
+                                return GestureDetector(
+                                  onTap: () async {
+                                    switch (data.name) {
+                                      case 'فارسی (Persian)':
+                                        setState(() {
+                                          languageApp = data.code;
+                                        });
+                                        break;
+                                      case 'انگلیسی (English)':
+                                        setState(() {
+                                          languageApp = data.code;
+                                        });
+                                        break;
+                                      case 'عربی (Arabic)':
+                                        setState(() {
+                                          languageApp = data.code;
+                                        });
+                                        break;
+                                      default:
+                                        setState(() {
+                                          languageApp = data.code;
+                                        });
+                                    }
+                                    if (data.name == 'فارسی (Persian)') {
+                                      await _saveSelectedLanguage(
+                                          context, data.code);
+                                    } else if (data.name ==
+                                        'انگلیسی (English)') {
+                                      await _saveSelectedLanguage(
+                                          context, data.code);
+                                    } else if (data.name == 'عربی (Arabic)') {
+                                      await _saveSelectedLanguage(
+                                          context, data.code);
+                                    }
 
-                                      if (mounted) {
-                                        context.setLocale(Locale(languageCode));
-                                      }
-                                      Navigator.pop(context);
-                                    },
-                                    child: Container(
-                                      height: 56,
-                                      margin: EdgeInsets.only(bottom: 12),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: data.code == valueL
-                                                ? Color(0xff861C8C)
-                                                : Color(0xffE0E0F9)),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 16),
-                                      child: Row(
-                                        children: [
-                                          NormalDemiBold(
-                                            data.name,
-                                            textColorInLight:
-                                                data.code == valueL
-                                                    ? Color(0xff861C8C)
-                                                    : Color(0xff4F4F4F),
-                                          ),
-                                          Spacer(),
-                                          data.code == valueL
-                                              ? Stack(
-                                                  alignment: Alignment.center,
-                                                  children: [
-                                                    Container(
-                                                      height: 18,
-                                                      width: 18,
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            Color(0xffB12EB9),
-                                                        shape: BoxShape.circle,
-                                                      ),
+                                    if (mounted) {
+                                      context.setLocale(Locale(languageApp!));
+                                    }
+
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    height: 56,
+                                    margin: EdgeInsets.only(bottom: 12),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: data.code == languageApp
+                                              ? Color(0xff861C8C)
+                                              : Color(0xffE0E0F9)),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 16),
+                                    child: Row(
+                                      children: [
+                                        NormalDemiBold(
+                                          data.name,
+                                          textColorInLight:
+                                              data.code == languageApp
+                                                  ? Color(0xff861C8C)
+                                                  : Color(0xff4F4F4F),
+                                        ),
+                                        Spacer(),
+                                        data.code == languageApp
+                                            ? Stack(
+                                                alignment: Alignment.center,
+                                                children: [
+                                                  Container(
+                                                    height: 18,
+                                                    width: 18,
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xffB12EB9),
+                                                      shape: BoxShape.circle,
                                                     ),
-                                                    Container(
-                                                      height: 8,
-                                                      width: 8,
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        shape: BoxShape.circle,
-                                                      ),
+                                                  ),
+                                                  Container(
+                                                    height: 8,
+                                                    width: 8,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : Container(
+                                                height: 16,
+                                                width: 16,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      offset: Offset(0, 0),
+                                                      color: Color(0xff030712)
+                                                          .withValues(
+                                                              alpha: 0.8),
+                                                      spreadRadius: 0.1,
+                                                    ),
+                                                    BoxShadow(
+                                                      offset: Offset(0, 1),
+                                                      blurRadius: 2,
+                                                      color: Color(0xff030712)
+                                                          .withValues(
+                                                              alpha: 0.12),
+                                                      spreadRadius: 0,
                                                     ),
                                                   ],
-                                                )
-                                              : Container(
-                                                  height: 16,
-                                                  width: 16,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        offset: Offset(0, 0),
-                                                        color: Color(0xff030712)
-                                                            .withValues(
-                                                                alpha: 0.8),
-                                                        spreadRadius: 0.1,
-                                                      ),
-                                                      BoxShadow(
-                                                        offset: Offset(0, 1),
-                                                        blurRadius: 2,
-                                                        color: Color(0xff030712)
-                                                            .withValues(
-                                                                alpha: 0.12),
-                                                        spreadRadius: 0,
-                                                      ),
-                                                    ],
-                                                    shape: BoxShape.circle,
-                                                  ),
+                                                  shape: BoxShape.circle,
                                                 ),
-                                        ],
-                                      ),
+                                              ),
+                                      ],
                                     ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ));
-                  },
-                );
-              },
-              child: ValueListenableBuilder(
-                valueListenable: AuthScreen.languageNotifire,
-                builder: (context, language, child) {
-                  return Container(
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        NormalMedium(LocaleKeys.language.tr()),
-                        Spacer(),
-                        Row(
-                          children: [
-                            NormalRegular(
-                              language == 'fa'
-                                  ? 'فارسی'
-                                  : language == 'en'
-                                      ? 'English'
-                                      : language == 'ar'
-                                          ? 'عربي'
-                                          : 'فارسی',
-                              textColorInLight: Color(0xff88719B),
-                            ),
-                            SizedBox(width: 8),
-                            Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: Color(0xffDADADA),
-                              size: 18,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ));
+                    },
                   );
                 },
+                child: Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      NormalMedium(LocaleKeys.language.tr()),
+                      Spacer(),
+                      Row(
+                        children: [
+                          NormalRegular(
+                            languageApp == 'fa'
+                                ? 'فارسی'
+                                : languageApp == 'en'
+                                    ? 'English'
+                                    : languageApp == 'ar'
+                                        ? 'عربي'
+                                        : 'فارسی',
+                            textColorInLight: Color(0xff88719B),
+                          ),
+                          SizedBox(width: 8),
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: Color(0xffDADADA),
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -156,7 +156,11 @@ class _RequestDetailScreenState extends State<RequestDetailScreen>
     return BlocProvider(
       create: (context) => _bloc,
       child: Scaffold(
-        appBar: appBarRoot(context, true),
+        appBar: appBarRoot(
+          context,
+          true,
+          () => Navigator.pop(context),
+        ),
         resizeToAvoidBottomInset: true,
         floatingActionButtonLocation:
             FloatingActionButtonLocation.miniCenterFloat,

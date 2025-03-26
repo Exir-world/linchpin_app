@@ -27,7 +27,11 @@ class _PaySlipScreenState extends State<PaySlipScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarRoot(context, true),
+      appBar: appBarRoot(
+        context,
+        true,
+        () => Navigator.pop(context),
+      ),
       body: BlocBuilder<PaySlipBloc, PaySlipState>(
         buildWhen: (previous, current) {
           if (current is PayslipListCompletedState ||

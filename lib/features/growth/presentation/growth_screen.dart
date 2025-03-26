@@ -8,7 +8,6 @@ import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';
-import 'package:linchpin/features/auth/presentation/auth_screen.dart';
 import 'package:linchpin/features/duties/presentation/duties_screen.dart';
 import 'package:linchpin/features/growth/data/models/user_self_model/user_item.dart';
 import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart';
@@ -32,11 +31,7 @@ class _GrowthScreenState extends State<GrowthScreen>
     WidgetsBinding.instance.addObserver(this);
     BlocProvider.of<GrowthBloc>(context).add(UserSelfEvent());
     _controller.text = '';
-    AuthScreen.languageNotifire.addListener(
-      () {
-        BlocProvider.of<GrowthBloc>(context).add(UserSelfEvent());
-      },
-    );
+
     super.initState();
   }
 
@@ -71,6 +66,8 @@ class _GrowthScreenState extends State<GrowthScreen>
         builder: (context, state) {
           if (state is UserSelfCompletedState) {
             _userItems = state.userSelfEntity.userItems;
+            bool isEnglish =
+                EasyLocalization.of(context)?.locale.languageCode == 'en';
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -227,41 +224,35 @@ class _GrowthScreenState extends State<GrowthScreen>
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
-                                ValueListenableBuilder(
-                                  valueListenable: AuthScreen.languageNotifire,
-                                  builder: (context, value, child) {
-                                    return Container(
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          gradient: LinearGradient(
-                                            begin: value == 'en'
-                                                ? Alignment.centerRight
-                                                : Alignment.centerLeft,
-                                            end: value == 'en'
-                                                ? Alignment.centerLeft
-                                                : Alignment.centerRight,
-                                            colors: [
-                                              data.done!
-                                                  ? Colors.black
-                                                      .withValues(alpha: 0.2)
-                                                  : Color(color)
-                                                      .withValues(alpha: 0.2),
-                                              data.done!
-                                                  ? Colors.black
-                                                      .withValues(alpha: 0.8)
-                                                  : Color(color)
-                                                      .withValues(alpha: 0.8),
-                                            ],
-                                          ),
-                                        ),
-                                        child: CachedNetworkImage(
-                                          imageUrl: data.image!,
-                                          fit: BoxFit.cover,
-                                        ));
-                                  },
-                                ),
+                                Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      gradient: LinearGradient(
+                                        begin: isEnglish
+                                            ? Alignment.centerRight
+                                            : Alignment.centerLeft,
+                                        end: isEnglish
+                                            ? Alignment.centerLeft
+                                            : Alignment.centerRight,
+                                        colors: [
+                                          data.done!
+                                              ? Colors.black
+                                                  .withValues(alpha: 0.2)
+                                              : Color(color)
+                                                  .withValues(alpha: 0.2),
+                                          data.done!
+                                              ? Colors.black
+                                                  .withValues(alpha: 0.8)
+                                              : Color(color)
+                                                  .withValues(alpha: 0.8),
+                                        ],
+                                      ),
+                                    ),
+                                    child: CachedNetworkImage(
+                                      imageUrl: data.image!,
+                                      fit: BoxFit.cover,
+                                    )),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16),

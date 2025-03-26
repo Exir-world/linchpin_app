@@ -62,7 +62,11 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarRoot(context, true),
+      appBar: appBarRoot(
+        context,
+        true,
+        () => Navigator.pop(context),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: SizedBox(
         height: 56,

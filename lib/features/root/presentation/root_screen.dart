@@ -42,7 +42,11 @@ class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarRoot(context, false),
+      appBar: appBarRoot(
+        context,
+        false,
+        () => Navigator.pop(context),
+      ),
       body: ValueListenableBuilder<int>(
         valueListenable: RootScreen.itemSelectedNotifire,
         builder: (context, value, child) {
@@ -109,7 +113,7 @@ class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
                     BottomNavigationBarItem(
                       icon: value == 2
                           ? Assets.icons.activityA.svg()
-                          : Assets.icons.activityNoRad.svg(),
+                          : Assets.icons.activity.svg(),
                       label: "",
                     ),
                     BottomNavigationBarItem(
