@@ -35,9 +35,11 @@ jobs:
             flutter build web
             rm -rf /var/www/html/pwa/*
             cp -r build/web/* /var/www/html/pwa
-
+            
       - name: Purge ArvanCloud Cache
         run: |
-          curl -X DELETE "https://napi.arvancloud.ir/cdn/4.0/domains/exirtu.be/caches" \
+          curl --location 'https://napi.arvancloud.ir/cdn/4.0/domains/420dccd6-fe45-4fee-8e94-4b48e2177c30/caching/purge' \
             -H "Authorization: Apikey ${{ secrets.ARVAN_API_KEY }}" \
-            -H "Content-Type: application/json"
+            -H "Content-Type: application/json" \
+            --data '{"purge":"all"}'
+            
