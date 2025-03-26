@@ -157,17 +157,17 @@ class LocationService {
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         // اگر کاربر دسترسی نداده بود ولی می تونست دسترسی بده
-        return AccessLocationScreen();
+        return AccessLocationScreen(isFirstApp: true);
       } else if (permission == LocationPermission.deniedForever) {
         // اگر دسترسی برای همیشه رد شده، صفحه دسترسی رو باز کن
-        return AccessLocationScreen();
+        return AccessLocationScreen(isFirstApp: true);
       } else if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
         // لوکیشن کاربر روشن هست یا نه؟
         bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
         if (!serviceEnabled) {
           // اگر خاموش بود
-          return AccessLocationScreen();
+          return AccessLocationScreen(isFirstApp: true);
         } else {
           // اگر موقعیت مکانی روشن است، صفحه AuthScreen رو برگردون
           Position position = await Geolocator.getCurrentPosition(
@@ -193,9 +193,11 @@ class LocationService {
       }
     } catch (e) {
       // در صورت خطا، صفحه دسترسی رو باز کن
-      return AccessLocationScreen();
+      return AccessLocationScreen(isFirstApp: true);
     }
     // در صورتی که هیچکدام از شرایط بالا برقرار نبود (برای مثال برای خطای احتمالی دیگر)
-    return AccessLocationScreen(); // مقدار پیش‌فرض در صورتی که هیچکدام از شرایط اجرا نشد
+    return AccessLocationScreen(
+        isFirstApp:
+            true); // مقدار پیش‌فرض در صورتی که هیچکدام از شرایط اجرا نشد
   }
 }

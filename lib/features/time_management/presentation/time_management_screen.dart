@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
@@ -448,6 +449,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
             return ErrorUiWidget(
                 title: state.errorText,
                 onTap: () {
+                  getLocation();
                   _bloc
                       .add(DailyEvent(actionType: "daily", lat: 0.0, lng: 0.0));
                 });
@@ -459,5 +461,23 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
         },
       ),
     );
+  }
+
+  Future<void> getLocation() async {
+    // لوکیشن کاربر روشن هست یا نه؟
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AccessLocationScreen(isFirstApp: false),
+          ));
+    } else {
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
+      );
+      AccessLocationScreen.latitudeNotifire.value = position.latitude;
+      AccessLocationScreen.longitudeNotifire.value = position.longitude;
+    }
   }
 }

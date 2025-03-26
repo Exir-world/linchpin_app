@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 class AccessLocationScreen extends StatefulWidget {
-  const AccessLocationScreen({super.key});
+  final bool isFirstApp;
+  const AccessLocationScreen({super.key, required this.isFirstApp});
 
   @override
   State<AccessLocationScreen> createState() => _AccessLocationScreenState();
@@ -30,9 +31,11 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
         AccessLocationScreen.latitudeNotifire.value = position.latitude;
         AccessLocationScreen.longitudeNotifire.value = position.longitude;
         isLoadingNotifire.value = false;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => AuthScreen()),
-        );
+        widget.isFirstApp
+            ? Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => AuthScreen()),
+              )
+            : Navigator.pop(context);
       } catch (e) {
         isLoadingNotifire.value = false;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -80,9 +83,11 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
       AccessLocationScreen.latitudeNotifire.value = position.latitude;
       AccessLocationScreen.longitudeNotifire.value = position.longitude;
       isLoadingNotifire.value = false;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => AuthScreen()),
-      );
+      widget.isFirstApp
+          ? Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => AuthScreen()),
+            )
+          : Navigator.pop(context);
     } catch (e) {
       isLoadingNotifire.value = false;
       ScaffoldMessenger.of(context).showSnackBar(
