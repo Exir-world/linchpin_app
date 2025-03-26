@@ -33,6 +33,41 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
     super.dispose();
   }
 
+  String getFormattedDate(Jalali dateTitle) {
+    // بررسی زبان جاری
+    String currentLocale = EasyLocalization.of(context)!.locale.languageCode;
+    // تبدیل فقط ماه و سال به میلادی
+    Gregorian gregorianDate =
+        Jalali(dateTitle.year, dateTitle.month, 1).toGregorian();
+    // لیست ماه‌های میلادی به عربی
+    List<String> arabicMonths = [
+      "يناير",
+      "فبراير",
+      "مارس",
+      "أبريل",
+      "مايو",
+      "يونيو",
+      "يوليو",
+      "أغسطس",
+      "سبتمبر",
+      "أكتوبر",
+      "نوفمبر",
+      "ديسمبر"
+    ];
+
+    if (currentLocale == 'fa') {
+      // نمایش تاریخ به شمسی
+      return '${dateTitle.formatter.mN} ${dateTitle.formatter.y}';
+    } else if (currentLocale == 'ar') {
+      // نمایش تاریخ میلادی در زبان عربی
+      return '${arabicMonths[gregorianDate.month - 1]} ${gregorianDate.year}';
+    } else {
+      // تبدیل تاریخ شمسی به میلادی
+      Gregorian gregorianDate = dateTitle.toGregorian();
+      return '${DateFormat.MMMM('en_US').format(gregorianDate.toDateTime())} ${gregorianDate.year}';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,7 +165,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                           Assets.icons.winter.svg(),
                                         SizedBox(width: 8),
                                         NormalMedium(
-                                            '${LocaleKeys.workingHours.tr()} ${dateTitle.formatter.mN} ${dateTitle.formatter.y}'),
+                                            '${LocaleKeys.workingHours.tr()} ${getFormattedDate(dateTitle)}'),
                                         Spacer(),
                                         Icon(
                                           Icons.arrow_forward_ios_rounded,
