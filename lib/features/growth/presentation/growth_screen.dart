@@ -84,195 +84,229 @@ class _GrowthScreenState extends State<GrowthScreen>
                         final data = state.userSelfEntity.userItems![index];
                         final color =
                             int.parse(data.color!.replaceAll("#", "0xff"));
-                        return GestureDetector(
-                          onTap: data.done!
-                              ? null
-                              : () {
-                                  _controller.text = '';
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    useSafeArea: true,
-                                    backgroundColor: Colors.transparent,
-                                    sheetAnimationStyle: AnimationStyle(
-                                      reverseCurve: Curves.easeIn,
-                                      duration: Duration(milliseconds: 400),
-                                    ),
-                                    builder: (context) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom: MediaQuery.of(context)
-                                              .viewInsets
-                                              .bottom,
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: data.type == 'FORBIDDEN' && data.done!
+                                  ? null
+                                  : () {
+                                      _controller.text = '';
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        useSafeArea: true,
+                                        backgroundColor: Colors.transparent,
+                                        sheetAnimationStyle: AnimationStyle(
+                                          reverseCurve: Curves.easeIn,
+                                          duration: Duration(milliseconds: 400),
                                         ),
-                                        child: IOSModalStyle(
-                                          childBody: Padding(
-                                            padding: const EdgeInsets.all(24.0),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Align(
-                                                  alignment: Alignment.center,
-                                                  child: Container(
-                                                    width: 23,
-                                                    height: 4,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              2),
-                                                      color: Color(0xff000000)
-                                                          .withValues(
-                                                              alpha: .15),
+                                        builder: (context) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                  .viewInsets
+                                                  .bottom,
+                                            ),
+                                            child: IOSModalStyle(
+                                              childBody: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(24.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Container(
+                                                        width: 23,
+                                                        height: 4,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(2),
+                                                          color:
+                                                              Color(0xff000000)
+                                                                  .withOpacity(
+                                                                      0.15),
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                                SizedBox(height: 16),
-                                                LargeBold(LocaleKeys
-                                                    .activityReport
-                                                    .tr()),
-                                                SizedBox(height: 24),
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12),
-                                                    border: Border.all(
-                                                      color: Color(0xffE0E0F9),
-                                                    ),
-                                                  ),
-                                                  child: TextField(
-                                                    controller: _controller,
-                                                    maxLines: 5,
-                                                    minLines:
-                                                        5, // حداقل یک خط ارتفاع
-                                                    style: TextStyle(
-                                                      fontFamily: FontFamily
-                                                          .iRANSansXFARegular,
-                                                      fontSize: 12,
-                                                    ),
-                                                    decoration: InputDecoration(
-                                                      contentPadding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 12),
-                                                      enabledBorder:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12),
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0xffE0E0F9),
-                                                                width: 1,
-                                                              )),
-                                                      focusedBorder:
-                                                          OutlineInputBorder(
+                                                    SizedBox(height: 16),
+                                                    LargeBold(LocaleKeys
+                                                        .activityReport
+                                                        .tr()),
+                                                    SizedBox(height: 24),
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(12),
-                                                        borderSide: BorderSide(
+                                                        border: Border.all(
                                                           color:
-                                                              Color(0xff861C8C),
-                                                          width: 1,
+                                                              Color(0xffE0E0F9),
                                                         ),
                                                       ),
-                                                      isCollapsed: true,
-                                                      border: InputBorder.none,
-                                                      fillColor: Colors.white,
-                                                      filled: true,
+                                                      child: TextField(
+                                                        controller: _controller,
+                                                        maxLines: 5,
+                                                        minLines: 5,
+                                                        style: TextStyle(
+                                                          fontFamily: FontFamily
+                                                              .iRANSansXFARegular,
+                                                          fontSize: 12,
+                                                        ),
+                                                        decoration:
+                                                            InputDecoration(
+                                                          contentPadding:
+                                                              EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          12,
+                                                                      vertical:
+                                                                          12),
+                                                          enabledBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: Color(
+                                                                  0xffE0E0F9),
+                                                              width: 1,
+                                                            ),
+                                                          ),
+                                                          focusedBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: Color(
+                                                                  0xff861C8C),
+                                                              width: 1,
+                                                            ),
+                                                          ),
+                                                          isCollapsed: true,
+                                                          border:
+                                                              InputBorder.none,
+                                                          fillColor:
+                                                              Colors.white,
+                                                          filled: true,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
+                                                    SizedBox(height: 72),
+                                                    RequestGrowthWidget(
+                                                      controller: _controller,
+                                                      data: data,
+                                                      onReportSuccess: (UserItem
+                                                          updatedItem) {
+                                                        setState(() {
+                                                          final index =
+                                                              _userItems!
+                                                                  .indexWhere(
+                                                            (element) =>
+                                                                element.id ==
+                                                                updatedItem.id,
+                                                          );
+                                                          if (index != -1) {
+                                                            _userItems![index] =
+                                                                updatedItem;
+                                                          }
+                                                        });
+                                                      },
+                                                    ),
+                                                  ],
                                                 ),
-                                                SizedBox(height: 72),
-                                                RequestGrowthWidget(
-                                                  controller: _controller,
-                                                  data: data,
-                                                  onReportSuccess:
-                                                      (UserItem updatedItem) {
-                                                    setState(() {
-                                                      final index = _userItems!
-                                                          .indexWhere(
-                                                              (element) =>
-                                                                  element.id ==
-                                                                  updatedItem
-                                                                      .id);
-                                                      if (index != -1) {
-                                                        _userItems![index] =
-                                                            updatedItem;
-                                                      }
-                                                    });
-                                                  },
-                                                ),
-                                              ],
+                                              ),
                                             ),
-                                          ),
-                                        ),
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
-                          child: Container(
-                            height: 72,
-                            margin: EdgeInsets.only(bottom: 16),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      gradient: LinearGradient(
-                                        begin: isEnglish
-                                            ? Alignment.centerRight
-                                            : Alignment.centerLeft,
-                                        end: isEnglish
-                                            ? Alignment.centerLeft
-                                            : Alignment.centerRight,
-                                        colors: [
+                              child: Container(
+                                height: 72,
+                                margin: EdgeInsets.only(bottom: 16),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        gradient: LinearGradient(
+                                          begin: isEnglish
+                                              ? Alignment.centerRight
+                                              : Alignment.centerLeft,
+                                          end: isEnglish
+                                              ? Alignment.centerLeft
+                                              : Alignment.centerRight,
+                                          colors: [
+                                            data.done!
+                                                ? Colors.black.withOpacity(0.2)
+                                                : Color(color).withOpacity(0.2),
+                                            data.done!
+                                                ? Colors.black.withOpacity(0.8)
+                                                : Color(color).withOpacity(0.8),
+                                          ],
+                                        ),
+                                      ),
+                                      child: data.image!.isNotEmpty
+                                          ? CachedNetworkImage(
+                                              imageUrl: data.image!,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : SizedBox(
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                            ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16),
+                                      child: Row(
+                                        children: [
                                           data.done!
-                                              ? Colors.black
-                                                  .withValues(alpha: 0.2)
-                                              : Color(color)
-                                                  .withValues(alpha: 0.2),
-                                          data.done!
-                                              ? Colors.black
-                                                  .withValues(alpha: 0.8)
-                                              : Color(color)
-                                                  .withValues(alpha: 0.8),
+                                              ? Assets.icons.check
+                                                  .svg(color: Colors.white)
+                                              : SizedBox(),
+                                          SizedBox(width: 4),
+                                          NormalDemiBold(
+                                            data.title!,
+                                            textColorInLight: Colors.white,
+                                          ),
                                         ],
                                       ),
                                     ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: data.image!,
-                                      fit: BoxFit.cover,
-                                    )),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                  child: Row(
-                                    children: [
-                                      data.done!
-                                          ? Assets.icons.check
-                                              .svg(color: Colors.white)
-                                          : SizedBox(),
-                                      SizedBox(width: 4),
-                                      NormalDemiBold(
-                                        data.title!,
-                                        textColorInLight: Colors.white,
-                                      ),
-                                    ],
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+
+                            // Divider برای جدا کردن گروه‌ها
+                            if (index <
+                                    state.userSelfEntity.userItems!.length -
+                                        1 &&
+                                state.userSelfEntity.userItems![index + 1]
+                                        .type !=
+                                    data.type)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: Divider(
+                                    thickness: 1, color: Colors.grey.shade300),
+                              ),
+                          ],
                         );
                       },
                     ),
@@ -341,7 +375,7 @@ class RequestGrowthWidget extends StatelessWidget {
             if (_controller.text.isNotEmpty) {
               BlocProvider.of<GrowthBloc>(context).add(
                 UserSelfAddEvent(
-                  improvementId: data.id!,
+                  improvementId: int.parse(data.id!),
                   description: _controller.text,
                 ),
               );

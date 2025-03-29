@@ -1,5 +1,5 @@
 # استفاده از تصویر رسمی فلاتر
- FROM cirrusci/flutter:3.29.0  # نسخه فلاتر شما
+ FROM cirrusci/flutter:3.29.2  # نسخه فلاتر شما
  
  # تنظیم مسیر کاری
  WORKDIR /app
