@@ -37,6 +37,7 @@ jobs:
             flutter build web
             rm -rf /var/www/html/pwa/*
             cp -r build/web/* /var/www/html/pwa
+            systemctl restart nginx 
 
       - name: Purge ArvanCloud Cache
         run: |
