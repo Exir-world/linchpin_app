@@ -21,4 +21,11 @@ class ApiGrowth {
     });
     return response;
   }
+
+  // لیست امتیازدهی به هر هوش
+  Future<dynamic> subitems(int itemId) async {
+    final response =
+        await httpclient.get('user-self-improvement/subitems/$itemId');
+    return response;
+  }
 }

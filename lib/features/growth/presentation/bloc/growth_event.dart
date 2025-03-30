@@ -12,3 +12,10 @@ final class UserSelfAddEvent extends GrowthEvent {
 
   UserSelfAddEvent({required this.improvementId, required this.description});
 }
+
+// لیست امتیازدهی به هر هوش
+final class SubitemsEvent extends GrowthEvent {
+  final int itemId;
+
+  SubitemsEvent(this.itemId);
+}

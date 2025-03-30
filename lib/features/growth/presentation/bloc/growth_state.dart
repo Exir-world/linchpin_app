@@ -33,3 +33,18 @@ final class UserSelfAddErrorState extends GrowthState {
 
   UserSelfAddErrorState(this.errorText);
 }
+
+// لیست امتیازدهی به هر هوش
+final class SubitemsLoadingState extends GrowthState {}
+
+final class SubitemsCompletedState extends GrowthState {
+  final List<SubItemsEntity> subItemsEntity;
+
+  SubitemsCompletedState(this.subItemsEntity);
+}
+
+final class SubitemsErrorState extends GrowthState {
+  final String errorText;
+
+  SubitemsErrorState(this.errorText);
+}

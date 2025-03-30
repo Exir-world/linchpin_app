@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/features/growth/domain/entity/sub_items_entity.dart';
 import 'package:linchpin/features/growth/domain/entity/user_self_entity.dart';
 import 'package:linchpin/features/growth/domain/use_case/growth_usecase.dart';
 
@@ -14,6 +15,7 @@ class GrowthBloc extends Bloc<GrowthEvent, GrowthState> {
   GrowthBloc(this.growthUsecase) : super(GrowthInitial()) {
     on<UserSelfEvent>(_userSelfEvent);
     on<UserSelfAddEvent>(_userSelfAddEvent);
+    on<SubitemsEvent>(_subitemsEvent);
   }
 
   FutureOr<void> _userSelfEvent(
@@ -42,6 +44,20 @@ class GrowthBloc extends Bloc<GrowthEvent, GrowthState> {
 
     if (dataState is DataFailed) {
       emit(UserSelfAddErrorState(dataState.error!));
+    }
+  }
+
+  FutureOr<void> _subitemsEvent(
+      SubitemsEvent event, Emitter<GrowthState> emit) async {
+    emit(SubitemsLoadingState());
+    DataState dataState = await growthUsecase.subitems(event.itemId);
+
+    if (dataState is DataSuccess) {
+      emit(SubitemsCompletedState(dataState.data));
+    }
+
+    if (dataState is DataFailed) {
+      emit(SubitemsErrorState(dataState.error!));
     }
   }
 }

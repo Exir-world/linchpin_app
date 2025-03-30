@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class UserItem {
-  final String? id;
+  final int? id;
   final String? title;
   final String? type;
   final String? image;
@@ -19,7 +19,7 @@ class UserItem {
   });
 
   factory UserItem.fromJson(Map<String, dynamic> json) => UserItem(
-        id: json['String'] as String?,
+        id: json['id'] as int?,
         title: json['title'] as String?,
         type: json['type'] as String?,
         image: json['image'] as String?,

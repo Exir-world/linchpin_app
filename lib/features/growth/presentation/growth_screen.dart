@@ -11,6 +11,7 @@ import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/duties/presentation/duties_screen.dart';
 import 'package:linchpin/features/growth/data/models/user_self_model/user_item.dart';
 import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart';
+import 'package:linchpin/features/growth/presentation/sub_items_screen.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
 import 'package:linchpin/gen/assets.gen.dart';
 import 'package:linchpin/gen/fonts.gen.dart';
@@ -46,6 +47,119 @@ class _GrowthScreenState extends State<GrowthScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       PaintingBinding.instance.reassembleApplication();
+    }
+  }
+
+  void showReportModal(BuildContext context, UserItem data) {
+    if (data.done!) {
+      return;
+    } else if (data.type == 'IMPROVMENT' || data.type == 'FORBIDDEN') {
+      _controller.text = '';
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        backgroundColor: Colors.transparent,
+        sheetAnimationStyle: AnimationStyle(
+          reverseCurve: Curves.easeIn,
+          duration: Duration(milliseconds: 400),
+        ),
+        builder: (context) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: IOSModalStyle(
+              childBody: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        width: 23,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(2),
+                          color: Color(0xff000000).withOpacity(0.15),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    LargeBold(LocaleKeys.activityReport.tr()),
+                    SizedBox(height: 24),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Color(0xffE0E0F9),
+                        ),
+                      ),
+                      child: TextField(
+                        controller: _controller,
+                        maxLines: 5,
+                        minLines: 5,
+                        style: TextStyle(
+                          fontFamily: FontFamily.iRANSansXFARegular,
+                          fontSize: 12,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 12),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: Color(0xffE0E0F9),
+                              width: 1,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: Color(0xff861C8C),
+                              width: 1,
+                            ),
+                          ),
+                          isCollapsed: true,
+                          border: InputBorder.none,
+                          fillColor: Colors.white,
+                          filled: true,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 72),
+                    RequestGrowthWidget(
+                      controller: _controller,
+                      data: data,
+                      onReportSuccess: (UserItem updatedItem) {
+                        setState(() {
+                          final index = _userItems!.indexWhere(
+                            (element) => element.id == updatedItem.id,
+                          );
+                          if (index != -1) {
+                            _userItems![index] = updatedItem;
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    } else if (data.type == 'INTELLIGENSE') {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SubItemsScreen(
+              title: data.title!,
+              itemId: data.id!,
+            ),
+          ));
     }
   }
 
@@ -88,150 +202,7 @@ class _GrowthScreenState extends State<GrowthScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             GestureDetector(
-                              onTap: data.type == 'FORBIDDEN' && data.done!
-                                  ? null
-                                  : () {
-                                      _controller.text = '';
-                                      showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        useSafeArea: true,
-                                        backgroundColor: Colors.transparent,
-                                        sheetAnimationStyle: AnimationStyle(
-                                          reverseCurve: Curves.easeIn,
-                                          duration: Duration(milliseconds: 400),
-                                        ),
-                                        builder: (context) {
-                                          return Padding(
-                                            padding: EdgeInsets.only(
-                                              bottom: MediaQuery.of(context)
-                                                  .viewInsets
-                                                  .bottom,
-                                            ),
-                                            child: IOSModalStyle(
-                                              childBody: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(24.0),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Container(
-                                                        width: 23,
-                                                        height: 4,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(2),
-                                                          color:
-                                                              Color(0xff000000)
-                                                                  .withOpacity(
-                                                                      0.15),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 16),
-                                                    LargeBold(LocaleKeys
-                                                        .activityReport
-                                                        .tr()),
-                                                    SizedBox(height: 24),
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        border: Border.all(
-                                                          color:
-                                                              Color(0xffE0E0F9),
-                                                        ),
-                                                      ),
-                                                      child: TextField(
-                                                        controller: _controller,
-                                                        maxLines: 5,
-                                                        minLines: 5,
-                                                        style: TextStyle(
-                                                          fontFamily: FontFamily
-                                                              .iRANSansXFARegular,
-                                                          fontSize: 12,
-                                                        ),
-                                                        decoration:
-                                                            InputDecoration(
-                                                          contentPadding:
-                                                              EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          12,
-                                                                      vertical:
-                                                                          12),
-                                                          enabledBorder:
-                                                              OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
-                                                            borderSide:
-                                                                BorderSide(
-                                                              color: Color(
-                                                                  0xffE0E0F9),
-                                                              width: 1,
-                                                            ),
-                                                          ),
-                                                          focusedBorder:
-                                                              OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
-                                                            borderSide:
-                                                                BorderSide(
-                                                              color: Color(
-                                                                  0xff861C8C),
-                                                              width: 1,
-                                                            ),
-                                                          ),
-                                                          isCollapsed: true,
-                                                          border:
-                                                              InputBorder.none,
-                                                          fillColor:
-                                                              Colors.white,
-                                                          filled: true,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 72),
-                                                    RequestGrowthWidget(
-                                                      controller: _controller,
-                                                      data: data,
-                                                      onReportSuccess: (UserItem
-                                                          updatedItem) {
-                                                        setState(() {
-                                                          final index =
-                                                              _userItems!
-                                                                  .indexWhere(
-                                                            (element) =>
-                                                                element.id ==
-                                                                updatedItem.id,
-                                                          );
-                                                          if (index != -1) {
-                                                            _userItems![index] =
-                                                                updatedItem;
-                                                          }
-                                                        });
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
+                              onTap: () => showReportModal(context, data),
                               child: Container(
                                 height: 72,
                                 margin: EdgeInsets.only(bottom: 16),
@@ -375,7 +346,7 @@ class RequestGrowthWidget extends StatelessWidget {
             if (_controller.text.isNotEmpty) {
               BlocProvider.of<GrowthBloc>(context).add(
                 UserSelfAddEvent(
-                  improvementId: int.parse(data.id!),
+                  improvementId: data.id!,
                   description: _controller.text,
                 ),
               );
