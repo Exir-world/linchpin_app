@@ -37,8 +37,8 @@ android/app/.cxx/
 /build/
 
 # اجازه دادن فقط به build/web
-!build/web/
-!build/web/**
+# !build/web/
+# !build/web/**
 
 # Symbolication related
 app.*.symbols
