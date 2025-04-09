@@ -1,8 +1,11 @@
 import 'package:calendar_pro_farhad/core/text_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/auth/presentation/auth_screen.dart';
+import 'package:linchpin/features/root/presentation/root_screen.dart';
 import 'package:linchpin/gen/assets.gen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,11 +34,20 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
         AccessLocationScreen.latitudeNotifire.value = position.latitude;
         AccessLocationScreen.longitudeNotifire.value = position.longitude;
         isLoadingNotifire.value = false;
-        widget.isFirstApp
-            ? Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => AuthScreen()),
-              )
-            : Navigator.pop(context);
+        final PrefService prefService = PrefService();
+        String? token = await prefService.readCacheString(SharedKey.jwtToken);
+        if (token == null) {
+          // اگر توکن وجود نداشت، صفحه لاگین را نمایش می‌دهیم
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => AuthScreen()),
+          );
+        } else {
+          widget.isFirstApp
+              ? Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => RootScreen()),
+                )
+              : Navigator.pop(context);
+        }
       } catch (e) {
         isLoadingNotifire.value = false;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -83,11 +95,20 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
       AccessLocationScreen.latitudeNotifire.value = position.latitude;
       AccessLocationScreen.longitudeNotifire.value = position.longitude;
       isLoadingNotifire.value = false;
-      widget.isFirstApp
-          ? Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => AuthScreen()),
-            )
-          : Navigator.pop(context);
+      final PrefService prefService = PrefService();
+      String? token = await prefService.readCacheString(SharedKey.jwtToken);
+      if (token == null) {
+        // اگر توکن وجود نداشت، صفحه لاگین را نمایش می‌دهیم
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => AuthScreen()),
+        );
+      } else {
+        widget.isFirstApp
+            ? Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => RootScreen()),
+              )
+            : Navigator.pop(context);
+      }
     } catch (e) {
       isLoadingNotifire.value = false;
       ScaffoldMessenger.of(context).showSnackBar(

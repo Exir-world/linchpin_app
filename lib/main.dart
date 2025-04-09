@@ -21,9 +21,6 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   // locator مربوط به گت ایت و
   await configureDependencies(environment: Env.prod);
-  // // ابتدا بررسی موقعیت مکانی قبل از اجرای اپلیکیشن
-  // LocationService locationService = LocationService();
-  // Widget homePage = await locationService.checkLocationPermission();
 
   // مقدار زبان انتخاب‌شده را از SharedPreferences بخوانیم
   PrefService prefService = PrefService();

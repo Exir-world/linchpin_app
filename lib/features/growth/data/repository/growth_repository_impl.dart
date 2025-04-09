@@ -50,4 +50,18 @@ class GrowthRepositoryImpl extends GrowthRepository {
       return await handleError(e);
     }
   }
+
+  @override
+  Future<DataState<List<SubItemsEntity>>> subitemsScore(
+      int itemId, int subItemId, int userScore) async {
+    try {
+      Response response =
+          await apiGrowth.subitemsScore(itemId, subItemId, userScore);
+      List<SubItemsEntity> subItemsScoreEntity = List<SubItemsEntity>.from(
+          response.data.map((model) => SubItemsModel.fromJson(model)));
+      return DataSuccess(subItemsScoreEntity);
+    } on DioException catch (e) {
+      return await handleError(e);
+    }
+  }
 }

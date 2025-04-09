@@ -67,35 +67,35 @@ class _AllDutiesScreenState extends State<AllDutiesScreen>
         true,
         () => Navigator.pop(context),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      floatingActionButton: SizedBox(
-        height: 56,
-        width: 56,
-        child: FloatingActionButton(
-          backgroundColor: Color(0xff861C8C),
-          shape: CircleBorder(),
-          child: Container(
-            height: 56,
-            width: 56,
-            decoration: BoxDecoration(
-                color: Color(0xff861C8C),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    offset: Offset(8, 8),
-                    blurRadius: 15,
-                    color: Color(0xffE549FE).withValues(alpha: 0.15),
-                  ),
-                ]),
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 32,
-            ),
-          ),
-          onPressed: () {},
-        ),
-      ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      // floatingActionButton: SizedBox(
+      //   height: 56,
+      //   width: 56,
+      //   child: FloatingActionButton(
+      //     backgroundColor: Color(0xff861C8C),
+      //     shape: CircleBorder(),
+      //     child: Container(
+      //       height: 56,
+      //       width: 56,
+      //       decoration: BoxDecoration(
+      //           color: Color(0xff861C8C),
+      //           shape: BoxShape.circle,
+      //           boxShadow: [
+      //             BoxShadow(
+      //               offset: Offset(8, 8),
+      //               blurRadius: 15,
+      //               color: Color(0xffE549FE).withValues(alpha: 0.15),
+      //             ),
+      //           ]),
+      //       child: Icon(
+      //         Icons.add,
+      //         color: Colors.white,
+      //         size: 32,
+      //       ),
+      //     ),
+      //     onPressed: () {},
+      //   ),
+      // ),
       body: BlocConsumer<DutiesBloc, DutiesState>(
         listener: (context, state) {
           if (state is AllTasksCompleted) {

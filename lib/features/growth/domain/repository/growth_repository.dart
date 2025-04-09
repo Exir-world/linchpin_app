@@ -12,4 +12,8 @@ abstract class GrowthRepository {
 
   // لیست امتیازدهی به هر هوش
   Future<DataState<List<SubItemsEntity>>> subitems(int itemId);
+
+  // امتیاز دهی به ساب آیتم های هر هوش
+  Future<DataState<List<SubItemsEntity>>> subitemsScore(
+      int itemId, int subItemId, int userScore);
 }

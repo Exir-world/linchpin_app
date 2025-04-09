@@ -19,6 +19,10 @@ abstract class GrowthUsecase {
 
   // لیست امتیازدهی به هر هوش
   Future<DataState<List<SubItemsEntity>>> subitems(int itemId);
+
+// امتیاز دهی به ساب آیتم های هر هوش
+  Future<DataState<List<SubItemsEntity>>> subitemsScore(
+      int itemId, int subItemId, int userScore);
 }
 
 @Singleton(as: GrowthUsecase, env: [Env.prod])
@@ -43,6 +47,14 @@ class GrowthUsecaseUsecaseImpl extends GrowthUsecase {
   Future<DataState<List<SubItemsEntity>>> subitems(int itemId) async {
     DataState<List<SubItemsEntity>> dataState =
         await growthRepository.subitems(itemId);
+    return dataState;
+  }
+
+  @override
+  Future<DataState<List<SubItemsEntity>>> subitemsScore(
+      int itemId, int subItemId, int userScore) async {
+    DataState<List<SubItemsEntity>> dataState =
+        await growthRepository.subitemsScore(itemId, subItemId, userScore);
     return dataState;
   }
 }

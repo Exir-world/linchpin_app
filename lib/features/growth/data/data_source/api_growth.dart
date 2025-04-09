@@ -28,4 +28,16 @@ class ApiGrowth {
         await httpclient.get('user-self-improvement/subitems/$itemId');
     return response;
   }
+
+  // امتیاز دهی به ساب آیتم های هر هوش
+  Future<dynamic> subitemsScore(
+      int itemId, int subItemId, int userScore) async {
+    final response = await httpclient.post('user-self-improvement/subitem',
+        data: {
+          "itemId": itemId,
+          "subItemId": subItemId,
+          "userScore": userScore
+        });
+    return response;
+  }
 }

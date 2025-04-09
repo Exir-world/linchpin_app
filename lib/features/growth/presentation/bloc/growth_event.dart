@@ -19,3 +19,12 @@ final class SubitemsEvent extends GrowthEvent {
 
   SubitemsEvent(this.itemId);
 }
+
+// امتیاز دهی به ساب آیتم های هر هوش
+final class SubitemsScoreEvent extends GrowthEvent {
+  final int itemId;
+  final int subItemId;
+  final int userScore;
+
+  SubitemsScoreEvent(this.itemId, this.subItemId, this.userScore);
+}

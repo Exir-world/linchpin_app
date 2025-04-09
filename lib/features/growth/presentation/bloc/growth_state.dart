@@ -48,3 +48,18 @@ final class SubitemsErrorState extends GrowthState {
 
   SubitemsErrorState(this.errorText);
 }
+
+// امتیاز دهی به ساب آیتم های هر هوش
+final class SubitemsScoreLoadingState extends GrowthState {}
+
+final class SubitemsScoreCompletedState extends GrowthState {
+  final List<SubItemsEntity> subItemsEntity;
+
+  SubitemsScoreCompletedState(this.subItemsEntity);
+}
+
+final class SubitemsScoreErrorState extends GrowthState {
+  final String errorText;
+
+  SubitemsScoreErrorState(this.errorText);
+}

@@ -16,6 +16,7 @@ class GrowthBloc extends Bloc<GrowthEvent, GrowthState> {
     on<UserSelfEvent>(_userSelfEvent);
     on<UserSelfAddEvent>(_userSelfAddEvent);
     on<SubitemsEvent>(_subitemsEvent);
+    on<SubitemsScoreEvent>(_subitemsScoreEvent);
   }
 
   FutureOr<void> _userSelfEvent(
@@ -58,6 +59,21 @@ class GrowthBloc extends Bloc<GrowthEvent, GrowthState> {
 
     if (dataState is DataFailed) {
       emit(SubitemsErrorState(dataState.error!));
+    }
+  }
+
+  FutureOr<void> _subitemsScoreEvent(
+      SubitemsScoreEvent event, Emitter<GrowthState> emit) async {
+    emit(SubitemsScoreLoadingState());
+    DataState dataState = await growthUsecase.subitemsScore(
+        event.itemId, event.subItemId, event.userScore);
+
+    if (dataState is DataSuccess) {
+      emit(SubitemsScoreCompletedState(dataState.data));
+    }
+
+    if (dataState is DataFailed) {
+      emit(SubitemsScoreErrorState(dataState.error!));
     }
   }
 }

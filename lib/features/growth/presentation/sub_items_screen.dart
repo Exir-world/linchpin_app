@@ -1,4 +1,3 @@
-import 'package:calendar_pro_farhad/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin/core/common/custom_text.dart';
@@ -6,6 +5,7 @@ import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 
 class SubItemsScreen extends StatefulWidget {
   final String title;
@@ -31,7 +31,23 @@ class _SubItemsScreenState extends State<SubItemsScreen> {
         true,
         () => Navigator.pop(context),
       ),
-      body: BlocBuilder<GrowthBloc, GrowthState>(
+      body: BlocConsumer<GrowthBloc, GrowthState>(
+        listenWhen: (previous, current) {
+          if (current is SubitemsScoreCompletedState ||
+              current is SubitemsScoreLoadingState ||
+              current is SubitemsScoreErrorState) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        listener: (context, state) {
+          if (state is SubitemsScoreCompletedState) {
+            BlocProvider.of<GrowthBloc>(context)
+                .add(SubitemsEvent(widget.itemId));
+            Navigator.pop(context);
+          }
+        },
         buildWhen: (previous, current) {
           if (current is SubitemsCompletedState ||
               current is SubitemsLoadingState ||
@@ -117,20 +133,34 @@ class _SubItemsScreenState extends State<SubItemsScreen> {
                                                       (index) {
                                                     final score =
                                                         data.score![index];
-                                                    return Container(
-                                                      width: 80,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        border: Border.all(
-                                                            color: Color(
-                                                                0xffE0E0F9)),
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        BlocProvider.of<
+                                                                    GrowthBloc>(
+                                                                context)
+                                                            .add(
+                                                                SubitemsScoreEvent(
+                                                          widget.itemId,
+                                                          data.id!,
+                                                          score,
+                                                        ));
+                                                      },
+                                                      child: Container(
+                                                        width: 80,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          border: Border.all(
+                                                              color: Color(
+                                                                  0xffE0E0F9)),
+                                                        ),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: VeryBigBold(
+                                                            '$score'),
                                                       ),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child:
-                                                          VeryBigBold('$score'),
                                                     );
                                                   }),
                                                 ),
@@ -155,7 +185,7 @@ class _SubItemsScreenState extends State<SubItemsScreen> {
                               children: [
                                 NormalRegular('${data.title}'),
                                 data.done!
-                                    ? Assets.icons.calendar.svg()
+                                    ? Assets.icons.check.svg()
                                     : SizedBox.shrink(),
                               ],
                             ),
