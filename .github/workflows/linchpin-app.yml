@@ -20,26 +20,34 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            export PATH="$PATH:/opt/flutter/bin"  # Ensure Flutter is available
+            export PATH="$PATH:/opt/flutter/bin"
             cd /var/www/html
-            
+
             if [ ! -d "flutter/.git" ]; then
               rm -rf flutter
               git clone https://github.com/Exir-world/linchpin_app.git flutter
             fi
-            
+
+            git config --global --add safe.directory /var/www/html/flutter
+
             cd flutter
             git checkout v2
             git pull origin v2
-            
+
             flutter build web
             rm -rf /var/www/html/pwa/*
             cp -r build/web/* /var/www/html/pwa
-            
+            systemctl restart nginx 
+
       - name: Purge ArvanCloud Cache
         run: |
           curl --location 'https://napi.arvancloud.ir/cdn/4.0/domains/420dccd6-fe45-4fee-8e94-4b48e2177c30/caching/purge' \
             -H "Authorization: Apikey ${{ secrets.ARVAN_API_KEY }}" \
             -H "Content-Type: application/json" \
             --data '{"purge":"all"}'
-            
+
+      - name: Notify Telegram
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text="✅ Flutter PWA deployed successfully to production and ArvanCloud cache purged."
