@@ -196,5 +196,5 @@ class LocationService {
     return AccessLocationScreen(
         isFirstApp:
             true); // مقدار پیش‌فرض در صورتی که هیچکدام از شرایط اجرا نشد
-  }
+  } //
 }
