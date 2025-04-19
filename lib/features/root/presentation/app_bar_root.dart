@@ -4,6 +4,7 @@ import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/laws/laws_screen.dart';
 import 'package:linchpin/features/notifications/presentation/notifications_screen.dart';
 import 'package:linchpin/features/pay_slip/presentation/pay_slip_screen.dart';
+import 'package:linchpin/features/property/presentation/property_screen.dart';
 import 'package:linchpin/features/setting/setting_screen.dart';
 import 'package:linchpin/features/time_management/presentation/time_management_screen.dart';
 import 'package:flutter/material.dart';
@@ -158,6 +159,17 @@ PreferredSize appBarRoot(
                                   navigateToScreen(
                                     context,
                                     PaySlipScreen(),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 24),
+                              _ItemProfile(
+                                image: Assets.icons.box.svg(height: 24),
+                                title: 'لیست اموال',
+                                onTap: () {
+                                  navigateToScreen(
+                                    context,
+                                    PropertyScreen(),
                                   );
                                 },
                               ),

@@ -72,6 +72,16 @@ import 'package:linchpin/features/performance_report/domain/use_case/last_quarte
     as _i46;
 import 'package:linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart'
     as _i4;
+import 'package:linchpin/features/property/data/data_source/api_property.dart'
+    as _i60;
+import 'package:linchpin/features/property/data/repository/properties_repository_impl.dart'
+    as _i807;
+import 'package:linchpin/features/property/domain/repository/property_repository.dart'
+    as _i474;
+import 'package:linchpin/features/property/domain/use_case/property_usecase.dart'
+    as _i761;
+import 'package:linchpin/features/property/presentation/bloc/property_bloc.dart'
+    as _i616;
 import 'package:linchpin/features/requests/data/data_source/api_request.dart'
     as _i554;
 import 'package:linchpin/features/requests/data/repository/request_repository_impl.dart'
@@ -119,6 +129,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i554.ApiRequest>(() => _i554.ApiRequest(gh<_i361.Dio>()));
     gh.singleton<_i864.ApiTimeMamagement>(
         () => _i864.ApiTimeMamagement(gh<_i361.Dio>()));
+    gh.singleton<_i60.ApiProperty>(() => _i60.ApiProperty(gh<_i361.Dio>()));
     gh.singleton<_i246.TimeManagementRepository>(
       () => _i762.TimeManagementRepositoryImpl(gh<_i864.ApiTimeMamagement>()),
       registerFor: {_prod},
@@ -130,6 +141,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.singleton<_i127.NotificationsRepository>(
       () => _i496.NotificationsRepositoryImpl(gh<_i534.ApiNotifications>()),
+      registerFor: {_prod},
+    );
+    gh.singleton<_i474.PropertyRepository>(
+      () => _i807.PropertiesRepositoryImpl(gh<_i60.ApiProperty>()),
       registerFor: {_prod},
     );
     gh.singleton<_i703.PaySlipRepository>(
@@ -163,8 +178,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factoryAsync<_i361.Response<dynamic>>(
         () => dioProvider.refresh(gh<String>()));
+    gh.singleton<_i761.PropertyUsecase>(
+      () => _i761.PropertyUsecaseImpl(gh<_i474.PropertyRepository>()),
+      registerFor: {_prod},
+    );
     gh.factory<_i658.TimeManagementBloc>(
         () => _i658.TimeManagementBloc(gh<_i436.TimeManagementUsecase>()));
+    gh.factory<_i616.PropertyBloc>(
+        () => _i616.PropertyBloc(gh<_i761.PropertyUsecase>()));
     gh.factory<_i12.PaySlipBloc>(
         () => _i12.PaySlipBloc(gh<_i375.PaySlipUsecase>()));
     gh.singleton<_i817.AuthUsecase>(

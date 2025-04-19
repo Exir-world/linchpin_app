@@ -14,6 +14,7 @@ import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:linchpin/features/pay_slip/presentation/bloc/pay_slip_bloc.dart';
 import 'package:linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
+import 'package:linchpin/features/property/presentation/bloc/property_bloc.dart';
 import 'package:linchpin/features/root/presentation/root_screen.dart';
 
 void main() async {
@@ -92,6 +93,9 @@ class _MyAppState extends State<MyApp> {
         ),
         BlocProvider<PaySlipBloc>(
           create: (context) => getIt<PaySlipBloc>(),
+        ),
+        BlocProvider<PropertyBloc>(
+          create: (context) => getIt<PropertyBloc>(),
         ),
       ],
       child: MaterialApp(
