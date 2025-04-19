@@ -2,8 +2,6 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_REGISTRY_URL = 'docker.exirtu.be'
-        IMAGE_NAME = 'linchpin.exir' // not used here but kept for consistency
         GIT_REPO_URL = 'git@github.com:Exir-world/linchpin_app.git'
         TELEGRAM_CHAT_ID = '-1002585379912'
         TELEGRAM_BOT_TOKEN = '8027466900:AAG6Q_0p6rSeEXtg8e0gDcYJmIJ_R7zBVew'
