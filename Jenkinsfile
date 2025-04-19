@@ -10,6 +10,9 @@ pipeline {
         SERVER_USER = credentials('server_user')
         SSH_PRIVATE_KEY = credentials('ssh_private_key')
         ARVAN_API_KEY = credentials('arvan_api_key')
+
+        FLUTTER_HOME = '/opt/flutter'
+        PATH = "${FLUTTER_HOME}/bin:$PATH"
     }
 
     stages {
@@ -20,12 +23,6 @@ pipeline {
         }
 
         stage('Build Flutter Web') {
-            agent {
-                docker {
-                    image 'cirrusci/flutter:stable'
-                    args '-u root:root'
-                }
-            }
             steps {
                 sh 'flutter pub get'
                 sh 'flutter build web'
