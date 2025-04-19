@@ -22,12 +22,16 @@ pipeline {
             }
         }
 
-        stage('Build Flutter Web') {
-            steps {
-                sh 'flutter pub get'
-                sh 'flutter build web'
-            }
+    stage('Build Flutter Web') {
+        steps {
+            sh '''
+                git config --global --add safe.directory /opt/flutter
+                flutter pub get
+                flutter build web
+            '''
         }
+    }
+
 
         stage('Deploy to Server') {
             steps {
