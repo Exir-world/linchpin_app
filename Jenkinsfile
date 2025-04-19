@@ -1,38 +1,87 @@
 pipeline {
-     agent {
-         docker {
-             image 'docker:latest'
-         }
-     }
-     environment {
-         IMAGE_NAME = "linchpin-flutter-web"  // اسم ایمیج
-         CONTAINER_NAME = "linchpin-container"  // اسم کانتینر
-         SERVER = "user@your-deploy-server"  // آدرس سرور دیپلوی
-         DEPLOY_PATH = "/var/www/html"  // پوشه‌ای که می‌خوای خروجی رو بهش منتقل کنی
-     }
-     stages {
-         stage('Clone Repository') {
-             steps {
-                 git 'https://github.com/Exir-world/linchpin_app.git'  // آدرس پروژه
-             }
-         }
-         stage('Build Docker Image') {
-             steps {
-                 sh 'docker build -t $IMAGE_NAME .'
-             }
-         }
-         stage('Run Container') {
-             steps {
-                 sh 'docker stop $CONTAINER_NAME || true'
-                 sh 'docker rm $CONTAINER_NAME || true'
-                 sh 'docker run -d --name $CONTAINER_NAME -p 8080:80 $IMAGE_NAME'
-             }
-         }
-         stage('Deploy to Server') {
-             steps {
-                 // انتقال خروجی وب به سرور
-                 sh 'scp -r build/web/* $SERVER:$DEPLOY_PATH'
-             }
-         }
-     }
- }
+    agent any
+
+    environment {
+        DOCKER_REGISTRY_URL = 'docker.exirtu.be'
+        IMAGE_NAME = 'linchpin.exir' // not used here but kept for consistency
+        GIT_REPO_URL = 'git@github.com:Exir-world/linchpin_app.git'
+        TELEGRAM_CHAT_ID = '-1002585379912'
+        TELEGRAM_BOT_TOKEN = '8027466900:AAG6Q_0p6rSeEXtg8e0gDcYJmIJ_R7zBVew'
+
+        SERVER_IP = credentials('server_ip')
+        SERVER_USER = credentials('server_user')
+        SSH_PRIVATE_KEY = credentials('ssh_private_key')
+        ARVAN_API_KEY = credentials('arvan_api_key')
+    }
+
+    stages {
+        stage('Checkout Flutter App') {
+            steps {
+                git branch: 'v2', url: "${GIT_REPO_URL}"
+            }
+        }
+
+        stage('Build Flutter Web') {
+            agent {
+                docker {
+                    image 'cirrusci/flutter:stable'
+                    args '-u root:root'
+                }
+            }
+            steps {
+                sh 'flutter pub get'
+                sh 'flutter build web'
+            }
+        }
+
+        stage('Deploy to Server') {
+            steps {
+                sshagent (credentials: ['ssh_private_key']) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} << 'ENDSSH'
+                        export PATH="\$PATH:/opt/flutter/bin"
+                        cd /var/www/html
+
+                        if [ ! -d "flutter/.git" ]; then
+                            rm -rf flutter
+                            git clone https://github.com/Exir-world/linchpin_app.git flutter
+                        fi
+
+                        git config --global --add safe.directory /var/www/html/flutter
+
+                        cd flutter
+                        git checkout v2
+                        git pull origin v2
+
+                        flutter build web
+                        rm -rf /var/www/html/pwa/*
+                        cp -r build/web/* /var/www/html/pwa
+                        systemctl restart nginx
+                    ENDSSH
+                    """
+                }
+            }
+        }
+
+        stage('Purge ArvanCloud Cache') {
+            steps {
+                sh """
+                curl --location 'https://napi.arvancloud.ir/cdn/4.0/domains/420dccd6-fe45-4fee-8e94-4b48e2177c30/caching/purge' \\
+                  -H "Authorization: Apikey ${ARVAN_API_KEY}" \\
+                  -H "Content-Type: application/json" \\
+                  --data '{"purge":"all"}'
+                """
+            }
+        }
+
+        stage('Notify Telegram') {
+            steps {
+                sh """
+                curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \\
+                  -d chat_id=${TELEGRAM_CHAT_ID} \\
+                  -d text="✅ Flutter PWA deployed successfully to production and ArvanCloud cache purged."
+                """
+            }
+        }
+    }
+}
