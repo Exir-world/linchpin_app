@@ -32,34 +32,37 @@ pipeline {
                                  string(credentialsId: 'server_user', variable: 'SERVER_USER'),
                                  string(credentialsId: 'server_ip', variable: 'SERVER_IP')]) {
                     sh '''
-                        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << 'ENDSSH'
-                            # Add the flutter directory to safe Git directories
+                        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "
+                            # Ensure the flutter directory is safe for git
                             git config --global --add safe.directory /opt/flutter
         
-                            export PATH="$PATH:/opt/flutter/bin"
+                            export PATH=\"$PATH:/opt/flutter/bin\"
                             cd /var/www/html
         
-                            if [ ! -d "flutter/.git" ]; then
+                            # Clone or update the flutter project
+                            if [ ! -d \"flutter/.git\" ]; then
                                 rm -rf flutter
                                 git clone https://github.com/Exir-world/linchpin_app.git flutter
                             fi
         
                             git config --global --add safe.directory /var/www/html/flutter
-        
                             cd flutter
                             git checkout v2
                             git pull origin v2
         
+                            # Build the Flutter web app
                             flutter build web
                             rm -rf /var/www/html/pwa/*
                             cp -r build/web/* /var/www/html/pwa
+        
+                            # Restart Nginx to serve the new app
                             systemctl restart nginx
-                        ENDSSH
+                        "
                     '''
                 }
             }
         }
-
+        
         stage('Purge ArvanCloud Cache') {
             environment {
                 ARVAN_API_KEY = credentials('arvan_api_key')
