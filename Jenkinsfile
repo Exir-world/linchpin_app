@@ -11,8 +11,8 @@ pipeline {
         SSH_PRIVATE_KEY = credentials('ssh_private_key')
         ARVAN_API_KEY = credentials('arvan_api_key')
 
-        FLUTTER_HOME = '/opt/flutter'
-        PATH = "${FLUTTER_HOME}/bin:$PATH"
+        DOCKER_REGISTRY_URL = 'docker.exirtu.be'
+        IMAGE_NAME = 'front.linchpin.exir'
     }
 
     stages {
@@ -22,40 +22,27 @@ pipeline {
             }
         }
 
-    stage('Build Flutter Web') {
-        steps {
-            sh '''
-                git config --global --add safe.directory /opt/flutter
-                flutter pub get
-                flutter build web
-            '''
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    def imageTag = "${DOCKER_REGISTRY_URL}/${IMAGE_NAME}:latest"
+                    sh """
+                        docker build -t ${imageTag} .
+                        docker push ${imageTag}
+                    """
+                }
+            }
         }
-    }
-
 
         stage('Deploy to Server') {
             steps {
                 sshagent (credentials: ['ssh_private_key']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} << 'ENDSSH'
-                        export PATH="\$PATH:/opt/flutter/bin"
-                        cd /var/www/html
-
-                        if [ ! -d "flutter/.git" ]; then
-                            rm -rf flutter
-                            git clone https://github.com/Exir-world/linchpin_app.git flutter
-                        fi
-
-                        git config --global --add safe.directory /var/www/html/flutter
-
-                        cd flutter
-                        git checkout v2
-                        git pull origin v2
-
-                        flutter build web
-                        rm -rf /var/www/html/pwa/*
-                        cp -r build/web/* /var/www/html/pwa
-                        systemctl restart nginx
+                        docker pull ${DOCKER_REGISTRY_URL}/${IMAGE_NAME}:latest
+                        docker stop flutter_front || true
+                        docker rm flutter_front || true
+                        docker run -d --name flutter_front -p 80:80 ${DOCKER_REGISTRY_URL}/${IMAGE_NAME}:latest
                     ENDSSH
                     """
                 }
@@ -78,7 +65,7 @@ pipeline {
                 sh """
                 curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \\
                   -d chat_id=${TELEGRAM_CHAT_ID} \\
-                  -d text="✅ Flutter PWA deployed successfully to production and ArvanCloud cache purged."
+                  -d text="✅ Flutter PWA Docker image built and deployed. Cache purged on ArvanCloud."
                 """
             }
         }
