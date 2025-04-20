@@ -32,35 +32,36 @@ pipeline {
         }
     }
 
-
+    stages {
         stage('Deploy to Server') {
             steps {
-                sshagent (credentials: ['ssh_private_key']) {
-                    sh """
-                    ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} << 'ENDSSH'
-                        export PATH="\$PATH:/opt/flutter/bin"
-                        cd /var/www/html
+                withCredentials([string(credentialsId: 'server_password', variable: 'SERVER_PASSWORD')]) {
+                    sh '''
+                        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << 'ENDSSH'
+                            export PATH="$PATH:/opt/flutter/bin"
+                            cd /var/www/html
 
-                        if [ ! -d "flutter/.git" ]; then
-                            rm -rf flutter
-                            git clone https://github.com/Exir-world/linchpin_app.git flutter
-                        fi
+                            if [ ! -d "flutter/.git" ]; then
+                                rm -rf flutter
+                                git clone https://github.com/Exir-world/linchpin_app.git flutter
+                            fi
 
-                        git config --global --add safe.directory /var/www/html/flutter
+                            git config --global --add safe.directory /var/www/html/flutter
 
-                        cd flutter
-                        git checkout v2
-                        git pull origin v2
+                            cd flutter
+                            git checkout v2
+                            git pull origin v2
 
-                        flutter build web
-                        rm -rf /var/www/html/pwa/*
-                        cp -r build/web/* /var/www/html/pwa
-                        systemctl restart nginx
-                    ENDSSH
-                    """
+                            flutter build web
+                            rm -rf /var/www/html/pwa/*
+                            cp -r build/web/* /var/www/html/pwa
+                            systemctl restart nginx
+                        ENDSSH
+                    '''
                 }
             }
         }
+    }
 
         stage('Purge ArvanCloud Cache') {
             steps {
