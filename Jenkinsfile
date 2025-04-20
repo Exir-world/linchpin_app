@@ -28,7 +28,9 @@ pipeline {
 
         stage('Deploy to Server') {
             steps {
-                withCredentials([string(credentialsId: 'server_password', variable: 'SERVER_PASSWORD')]) {
+                withCredentials([string(credentialsId: 'server_password', variable: 'SERVER_PASSWORD'),
+                                 string(credentialsId: 'server_user', variable: 'SERVER_USER'),
+                                 string(credentialsId: 'server_ip', variable: 'SERVER_IP')]) {
                     sh '''
                         sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << 'ENDSSH'
                             # Add the flutter directory to safe Git directories
