@@ -5,12 +5,6 @@ pipeline {
         GIT_REPO_URL = 'git@github.com:Exir-world/linchpin_app.git'
         TELEGRAM_CHAT_ID = '-1002585379912'
         TELEGRAM_BOT_TOKEN = '8027466900:AAG6Q_0p6rSeEXtg8e0gDcYJmIJ_R7zBVew'
-
-        SERVER_IP = credentials('server_ip')
-        SERVER_USER = credentials('server_user')
-        SSH_PRIVATE_KEY = credentials('ssh_private_key')
-        ARVAN_API_KEY = credentials('arvan_api_key')
-
         FLUTTER_HOME = '/opt/flutter'
         PATH = "${FLUTTER_HOME}/bin:$PATH"
     }
@@ -22,18 +16,21 @@ pipeline {
             }
         }
 
-    stage('Build Flutter Web') {
-        steps {
-            sh '''
-                git config --global --add safe.directory /opt/flutter
-                flutter pub get
-                flutter build web
-            '''
+        stage('Build Flutter Web') {
+            steps {
+                sh '''
+                    git config --global --add safe.directory /opt/flutter
+                    flutter pub get
+                    flutter build web
+                '''
+            }
         }
-    }
 
-    stages {
         stage('Deploy to Server') {
+            environment {
+                SERVER_IP = credentials('server_ip')
+                SERVER_USER = credentials('server_user')
+            }
             steps {
                 withCredentials([string(credentialsId: 'server_password', variable: 'SERVER_PASSWORD')]) {
                     sh '''
@@ -61,15 +58,17 @@ pipeline {
                 }
             }
         }
-    }
 
         stage('Purge ArvanCloud Cache') {
+            environment {
+                ARVAN_API_KEY = credentials('arvan_api_key')
+            }
             steps {
                 sh """
-                curl --location 'https://napi.arvancloud.ir/cdn/4.0/domains/420dccd6-fe45-4fee-8e94-4b48e2177c30/caching/purge' \\
-                  -H "Authorization: Apikey ${ARVAN_API_KEY}" \\
-                  -H "Content-Type: application/json" \\
-                  --data '{"purge":"all"}'
+                    curl --location 'https://napi.arvancloud.ir/cdn/4.0/domains/420dccd6-fe45-4fee-8e94-4b48e2177c30/caching/purge' \\
+                    -H "Authorization: Apikey ${ARVAN_API_KEY}" \\
+                    -H "Content-Type: application/json" \\
+                    --data '{"purge":"all"}'
                 """
             }
         }
@@ -77,9 +76,9 @@ pipeline {
         stage('Notify Telegram') {
             steps {
                 sh """
-                curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \\
-                  -d chat_id=${TELEGRAM_CHAT_ID} \\
-                  -d text="✅ Flutter PWA deployed successfully to production and ArvanCloud cache purged."
+                    curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \\
+                    -d chat_id=${TELEGRAM_CHAT_ID} \\
+                    -d text="✅ Flutter PWA deployed successfully to production and ArvanCloud cache purged."
                 """
             }
         }
