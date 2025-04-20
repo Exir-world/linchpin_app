@@ -27,28 +27,27 @@ pipeline {
         }
 
         stage('Deploy to Server') {
-            environment {
-                SERVER_IP = credentials('server_ip')
-                SERVER_USER = credentials('server_user')
-            }
             steps {
                 withCredentials([string(credentialsId: 'server_password', variable: 'SERVER_PASSWORD')]) {
                     sh '''
                         sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << 'ENDSSH'
+                            # Add the flutter directory to safe Git directories
+                            git config --global --add safe.directory /opt/flutter
+        
                             export PATH="$PATH:/opt/flutter/bin"
                             cd /var/www/html
-
+        
                             if [ ! -d "flutter/.git" ]; then
                                 rm -rf flutter
                                 git clone https://github.com/Exir-world/linchpin_app.git flutter
                             fi
-
+        
                             git config --global --add safe.directory /var/www/html/flutter
-
+        
                             cd flutter
                             git checkout v2
                             git pull origin v2
-
+        
                             flutter build web
                             rm -rf /var/www/html/pwa/*
                             cp -r build/web/* /var/www/html/pwa
