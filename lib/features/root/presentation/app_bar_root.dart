@@ -250,39 +250,7 @@ PreferredSize appBarRoot(
                                                   Expanded(
                                                     child: GestureDetector(
                                                       onTap: () {
-                                                        PrefService
-                                                            prefService =
-                                                            PrefService();
-                                                        prefService
-                                                            .readCacheString(
-                                                                SharedKey
-                                                                    .jwtToken)
-                                                            .then(
-                                                          (value) {
-                                                            prefService
-                                                                .removeCache(
-                                                                    SharedKey
-                                                                        .expires);
-                                                            prefService.removeCache(
-                                                                SharedKey
-                                                                    .refreshToken);
-                                                            prefService
-                                                                .removeCache(
-                                                                    value);
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pushAndRemoveUntil(
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        AuthScreen(),
-                                                              ),
-                                                              (Route<dynamic>
-                                                                      route) =>
-                                                                  false,
-                                                            );
-                                                          },
-                                                        );
+                                                        _handleLogout(context);
                                                       },
                                                       child: Container(
                                                         height: 44,
@@ -467,4 +435,26 @@ void navigateToScreen(BuildContext context, Widget screen) {
 
 class NavigationManager {
   static ValueNotifier<String?> activeScreen = ValueNotifier<String?>(null);
+}
+
+Future<void> _logoutAsync() async {
+  final prefService = PrefService();
+  final value = await prefService.readCacheString(SharedKey.jwtToken);
+  await prefService.removeCache(SharedKey.expires);
+  await prefService.removeCache(SharedKey.refreshToken);
+  await prefService.removeCache(value);
+}
+
+void _handleLogout(BuildContext context) {
+  _logoutAsync().then((_) {
+    if (!context.mounted) return;
+    _navigateToAuthScreen(context);
+  });
+}
+
+void _navigateToAuthScreen(BuildContext context) {
+  Navigator.of(context).pushAndRemoveUntil(
+    MaterialPageRoute(builder: (context) => AuthScreen()),
+    (Route<dynamic> route) => false,
+  );
 }

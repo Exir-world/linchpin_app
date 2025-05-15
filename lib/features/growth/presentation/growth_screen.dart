@@ -82,7 +82,7 @@ class _GrowthScreenState extends State<GrowthScreen>
                         height: 4,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(2),
-                          color: Color(0xff000000).withOpacity(0.15),
+                          color: withOpacityNew(Color(0xff000000), 0.15),
                         ),
                       ),
                     ),
@@ -163,6 +163,10 @@ class _GrowthScreenState extends State<GrowthScreen>
     }
   }
 
+  Color withOpacityNew(Color color, double opacity) {
+    return color.withAlpha((opacity * 255).round());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,11 +229,15 @@ class _GrowthScreenState extends State<GrowthScreen>
                                               : Alignment.centerRight,
                                           colors: [
                                             data.done!
-                                                ? Colors.black.withOpacity(0.2)
-                                                : Color(color).withOpacity(0.2),
+                                                ? withOpacityNew(
+                                                    Colors.black, 0.2)
+                                                : withOpacityNew(
+                                                    Color(color), 0.2),
                                             data.done!
-                                                ? Colors.black.withOpacity(0.8)
-                                                : Color(color).withOpacity(0.8),
+                                                ? withOpacityNew(
+                                                    Colors.black, 0.8)
+                                                : withOpacityNew(
+                                                    Color(color), 0.8),
                                           ],
                                         ),
                                       ),
@@ -249,8 +257,11 @@ class _GrowthScreenState extends State<GrowthScreen>
                                       child: Row(
                                         children: [
                                           data.done!
-                                              ? Assets.icons.check
-                                                  .svg(color: Colors.white)
+                                              ? Assets.icons.check.svg(
+                                                  colorFilter: ColorFilter.mode(
+                                                      Colors.white,
+                                                      BlendMode.srcIn),
+                                                )
                                               : SizedBox(),
                                           SizedBox(width: 4),
                                           NormalDemiBold(

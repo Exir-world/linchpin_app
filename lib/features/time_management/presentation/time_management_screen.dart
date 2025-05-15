@@ -463,19 +463,31 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
     );
   }
 
-  Future<void> getLocation() async {
-    // لوکیشن کاربر روشن هست یا نه؟
+  Future<Position?> _getLocationPosition() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AccessLocationScreen(isFirstApp: false),
-          ));
-    } else {
-      Position position = await Geolocator.getCurrentPosition(
+      return null;
+    }
+    try {
+      return await Geolocator.getCurrentPosition(
         locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
       );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> getLocation() async {
+    final position = await _getLocationPosition();
+    if (!mounted) return;
+    if (position == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AccessLocationScreen(isFirstApp: false),
+        ),
+      );
+    } else {
       AccessLocationScreen.latitudeNotifire.value = position.latitude;
       AccessLocationScreen.longitudeNotifire.value = position.longitude;
     }

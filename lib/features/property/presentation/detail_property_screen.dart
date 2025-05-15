@@ -70,7 +70,9 @@ class DetailPropertyScreen extends StatelessWidget {
                   SizedBox(height: 24),
                   Row(
                     children: [
-                      Assets.icons.calendar.svg(color: Color(0xff4F4F4F)),
+                      Assets.icons.calendar.svg(
+                          colorFilter: ColorFilter.mode(
+                              Color(0xff4F4F4F), BlendMode.srcIn)),
                       SizedBox(width: 4),
                       NormalRegular(
                         'تحویل:',

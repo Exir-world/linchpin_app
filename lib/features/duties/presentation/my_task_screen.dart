@@ -356,7 +356,10 @@ class TaskDescWidget extends StatelessWidget {
                 textColorInLight: Color(0xff88719B),
               ),
               SizedBox(width: 4),
-              Assets.icons.calendar.svg(color: Color(0xff88719B)),
+              Assets.icons.calendar.svg(
+                colorFilter:
+                    ColorFilter.mode(Color(0xff88719B), BlendMode.srcIn),
+              )
             ],
           ),
         ],
@@ -379,7 +382,8 @@ class PriorityWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Assets.icons.flag.svg(color: Color(colorFlag)),
+        Assets.icons.flag.svg(
+            colorFilter: ColorFilter.mode(Color(colorFlag), BlendMode.srcIn)),
         SizedBox(width: 4),
         SmallMedium(
           title,

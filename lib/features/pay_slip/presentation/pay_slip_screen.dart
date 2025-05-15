@@ -125,7 +125,9 @@ class _PaySlipScreenState extends State<PaySlipScreen> {
                                             children: [
                                               Assets.icons.calendar.svg(
                                                 height: 24,
-                                                color: Color(0xff861C8C),
+                                                colorFilter: ColorFilter.mode(
+                                                    Color(0xff861C8C),
+                                                    BlendMode.srcIn),
                                               ),
                                               SizedBox(width: 4),
                                               NormalRegular(

@@ -76,20 +76,30 @@ class _SettingScreenState extends State<SettingScreen> {
     }
   }
 
-  Future<void> _saveSelectedLanguage(
-      BuildContext context, String language) async {
+  Future<void> _saveSelectedLanguageToPrefs(String language) async {
     PrefService prefService = PrefService();
     await prefService.createCacheString(SharedKey.selectedLanguage, language);
+  }
+
+  void _onLanguageSelected(String language) async {
+    await _saveSelectedLanguageToPrefs(language);
+    if (!mounted) return;
     formatDateTime(context, DateTime.now());
+    if (mounted) {
+      context.setLocale(Locale(language));
+    }
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     languageApp = EasyLocalization.of(context)?.locale.languageCode;
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
         BlocProvider.of<GrowthBloc>(context).add(UserSelfEvent());
-        return true;
       },
       child: Scaffold(
         appBar: appBarRoot(
@@ -152,44 +162,10 @@ class _SettingScreenState extends State<SettingScreen> {
                                 final data = listLanguege[index];
                                 return GestureDetector(
                                   onTap: () async {
-                                    switch (data.name) {
-                                      case 'فارسی (Persian)':
-                                        setState(() {
-                                          languageApp = data.code;
-                                        });
-                                        break;
-                                      case 'انگلیسی (English)':
-                                        setState(() {
-                                          languageApp = data.code;
-                                        });
-                                        break;
-                                      case 'عربی (Arabic)':
-                                        setState(() {
-                                          languageApp = data.code;
-                                        });
-                                        break;
-                                      default:
-                                        setState(() {
-                                          languageApp = data.code;
-                                        });
-                                    }
-                                    if (data.name == 'فارسی (Persian)') {
-                                      await _saveSelectedLanguage(
-                                          context, data.code);
-                                    } else if (data.name ==
-                                        'انگلیسی (English)') {
-                                      await _saveSelectedLanguage(
-                                          context, data.code);
-                                    } else if (data.name == 'عربی (Arabic)') {
-                                      await _saveSelectedLanguage(
-                                          context, data.code);
-                                    }
-
-                                    if (mounted) {
-                                      context.setLocale(Locale(languageApp!));
-                                    }
-
-                                    Navigator.pop(context);
+                                    setState(() {
+                                      languageApp = data.code;
+                                    });
+                                    _onLanguageSelected(data.code);
                                   },
                                   child: Container(
                                     height: 56,
