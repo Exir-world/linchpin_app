@@ -1,15 +1,15 @@
 import 'package:calendar_pro_farhad/core/text_widgets.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/auth/presentation/auth_screen.dart';
 import 'package:linchpin/features/root/presentation/root_screen.dart';
 import 'package:linchpin/gen/assets.gen.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 
 class AccessLocationScreen extends StatefulWidget {
   final bool isFirstApp;
@@ -17,105 +17,13 @@ class AccessLocationScreen extends StatefulWidget {
 
   @override
   State<AccessLocationScreen> createState() => _AccessLocationScreenState();
+
   static ValueNotifier<double?> latitudeNotifire = ValueNotifier(null);
   static ValueNotifier<double?> longitudeNotifire = ValueNotifier(null);
 }
 
 class _AccessLocationScreenState extends State<AccessLocationScreen> {
   ValueNotifier<bool> isLoadingNotifire = ValueNotifier(false);
-
-  // متد برای درخواست دسترسی و دریافت موقعیت مکانی
-  Future<void> _requestPermissionAndGetLocation() async {
-    isLoadingNotifire.value = true;
-
-    if (kIsWeb) {
-      try {
-        Position position = await Geolocator.getCurrentPosition();
-        AccessLocationScreen.latitudeNotifire.value = position.latitude;
-        AccessLocationScreen.longitudeNotifire.value = position.longitude;
-        isLoadingNotifire.value = false;
-        final PrefService prefService = PrefService();
-        String? token = await prefService.readCacheString(SharedKey.jwtToken);
-        if (token == null) {
-          // اگر توکن وجود نداشت، صفحه لاگین را نمایش می‌دهیم
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => AuthScreen()),
-          );
-        } else {
-          widget.isFirstApp
-              ? Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => RootScreen()),
-                )
-              : Navigator.pop(context);
-        }
-      } catch (e) {
-        isLoadingNotifire.value = false;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text("خطا در دریافت موقعیت مکانی: ${e.toString()}")),
-        );
-      }
-    } else {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
-      if (permission == LocationPermission.deniedForever) {
-        isLoadingNotifire.value = false;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text("دسترسی به موقعیت مکانی برای همیشه رد شده است")),
-        );
-        return;
-      }
-      if (permission == LocationPermission.whileInUse ||
-          permission == LocationPermission.always) {
-        await _getCurrentLocation();
-      } else {
-        isLoadingNotifire.value = false;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("دسترسی به موقعیت مکانی رد شده است")),
-        );
-      }
-    }
-  }
-
-  // متد برای دریافت موقعیت مکانی فعلی
-  Future<void> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
-    if (!serviceEnabled) {
-      Geolocator.openLocationSettings();
-      isLoadingNotifire.value = false;
-      return;
-    }
-    try {
-      // دریافت موقعیت مکانی با دقت بالا
-      Position position = await Geolocator.getCurrentPosition();
-      AccessLocationScreen.latitudeNotifire.value = position.latitude;
-      AccessLocationScreen.longitudeNotifire.value = position.longitude;
-      isLoadingNotifire.value = false;
-      final PrefService prefService = PrefService();
-      String? token = await prefService.readCacheString(SharedKey.jwtToken);
-      if (token == null) {
-        // اگر توکن وجود نداشت، صفحه لاگین را نمایش می‌دهیم
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => AuthScreen()),
-        );
-      } else {
-        widget.isFirstApp
-            ? Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => RootScreen()),
-              )
-            : Navigator.pop(context);
-      }
-    } catch (e) {
-      isLoadingNotifire.value = false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: NormalMedium(LocaleKeys.retrievingLocationText.tr())),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,53 +41,53 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
                   height: 140,
                   width: 140,
                   decoration: BoxDecoration(
-                    color: Color(0xffE0E0F9),
+                    color: const Color(0xffE0E0F9),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   alignment: Alignment.center,
                   child: Assets.icons.location.svg(),
                 ),
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     LargeRegular(LocaleKeys.dearUser.tr()),
                   ],
                 ),
-                LargeRegular(
-                  LocaleKeys.permissionsText.tr(),
-                ),
-                SizedBox(height: 48),
+                LargeRegular(LocaleKeys.permissionsText.tr()),
+                const SizedBox(height: 48),
                 Row(
                   children: [
                     Container(
                       height: 8,
                       width: 8,
-                      margin: EdgeInsets.only(right: 4),
-                      decoration: BoxDecoration(
+                      margin: const EdgeInsets.only(right: 4),
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: Color(0xff540E5C),
                       ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     LargeDemiBold(LocaleKeys.locationText.tr()),
                   ],
                 ),
-                Spacer(),
-                ValueListenableBuilder(
+                const Spacer(),
+                ValueListenableBuilder<bool>(
                   valueListenable: isLoadingNotifire,
-                  builder: (context, value, child) {
+                  builder: (context, isLoading, _) {
                     return GestureDetector(
-                      onTap: value ? null : _requestPermissionAndGetLocation,
+                      onTap: isLoading ? null : _handleLocationAccess,
                       child: Container(
                         height: 56,
                         decoration: BoxDecoration(
-                          color: value ? Colors.grey : Color(0xff861C8C),
+                          color:
+                              isLoading ? Colors.grey : const Color(0xff861C8C),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         alignment: Alignment.center,
-                        child: value
-                            ? CupertinoActivityIndicator(color: Colors.white)
+                        child: isLoading
+                            ? const CupertinoActivityIndicator(
+                                color: Colors.white)
                             : LargeMedium(
                                 LocaleKeys.confirmation.tr(),
                                 textColorInLight: Colors.white,
@@ -193,6 +101,88 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  /// تابع اصلی برای کنترل دسترسی به موقعیت مکانی و هدایت صفحه
+  void _handleLocationAccess() async {
+    isLoadingNotifire.value = true;
+
+    final position = await _getUserLocation();
+    if (!mounted) return;
+
+    if (position == null) {
+      isLoadingNotifire.value = false;
+      _showSnackbar("خطا در دریافت موقعیت مکانی یا دسترسی رد شده است.");
+      return;
+    }
+
+    AccessLocationScreen.latitudeNotifire.value = position.latitude;
+    AccessLocationScreen.longitudeNotifire.value = position.longitude;
+
+    final token = await _getUserToken();
+    if (!mounted) return;
+
+    isLoadingNotifire.value = false;
+
+    if (token == null) {
+      _goTo(const AuthScreen());
+    } else {
+      widget.isFirstApp ? _goTo(const RootScreen()) : Navigator.pop(context);
+    }
+  }
+
+  /// دریافت موقعیت مکانی کاربر
+  Future<Position?> _getUserLocation() async {
+    if (kIsWeb) {
+      try {
+        return await Geolocator.getCurrentPosition();
+      } catch (_) {
+        return null;
+      }
+    }
+
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return null;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever ||
+        (permission != LocationPermission.whileInUse &&
+            permission != LocationPermission.always)) {
+      return null;
+    }
+
+    try {
+      return await Geolocator.getCurrentPosition();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// دریافت توکن از SharedPreferences
+  Future<String?> _getUserToken() async {
+    final prefService = PrefService();
+    return await prefService.readCacheString(SharedKey.jwtToken);
+  }
+
+  /// هدایت به یک صفحه جدید
+  void _goTo(Widget page) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => page),
+    );
+  }
+
+  /// نمایش پیام خطا
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
     );
   }
 }

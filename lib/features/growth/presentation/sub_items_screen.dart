@@ -177,6 +177,14 @@ class _SubItemsScreenState extends State<SubItemsScreen> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: Offset(0, 3),
+                                  blurRadius: 30,
+                                  color:
+                                      Color(0xff828282).withValues(alpha: 0.04),
+                                ),
+                              ],
                             ),
                             margin: EdgeInsets.only(bottom: 16),
                             padding: EdgeInsets.all(16),

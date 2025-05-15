@@ -81,6 +81,14 @@ class _PropertyScreenState extends State<PropertyScreen> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(12),
                                     color: Color(0xffFFFFFF),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        offset: Offset(0, 3),
+                                        blurRadius: 30,
+                                        color: Color(0xff828282)
+                                            .withValues(alpha: 0.04),
+                                      ),
+                                    ],
                                   ),
                                   child: Row(
                                     mainAxisAlignment:
