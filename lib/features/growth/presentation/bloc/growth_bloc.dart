@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:linchpin/core/resources/data_state.dart';
 import 'package:linchpin/features/growth/domain/entity/sub_items_entity.dart';
+import 'package:linchpin/features/growth/domain/entity/user_improvement_entity.dart';
 import 'package:linchpin/features/growth/domain/entity/user_self_entity.dart';
 import 'package:linchpin/features/growth/domain/use_case/growth_usecase.dart';
 
@@ -13,23 +14,39 @@ part 'growth_state.dart';
 class GrowthBloc extends Bloc<GrowthEvent, GrowthState> {
   final GrowthUsecase growthUsecase;
   GrowthBloc(this.growthUsecase) : super(GrowthInitial()) {
-    on<UserSelfEvent>(_userSelfEvent);
+    // on<UserSelfEvent>(_userSelfEvent);
+    on<UserImprovementEvent>(_userImprovementEvent);
     on<UserSelfAddEvent>(_userSelfAddEvent);
     on<SubitemsEvent>(_subitemsEvent);
     on<SubitemsScoreEvent>(_subitemsScoreEvent);
   }
 
-  FutureOr<void> _userSelfEvent(
-      UserSelfEvent event, Emitter<GrowthState> emit) async {
-    emit(UserSelfLoadingState());
-    DataState dataState = await growthUsecase.userSelf();
+  // FutureOr<void> _userSelfEvent(
+  //     UserSelfEvent event, Emitter<GrowthState> emit) async {
+  //   emit(UserSelfLoadingState());
+  //   DataState dataState = await growthUsecase.userSelf();
+
+  //   if (dataState is DataSuccess) {
+  //     emit(UserSelfCompletedState(dataState.data));
+  //   }
+
+  //   if (dataState is DataFailed) {
+  //     emit(UserSelfErrorState(dataState.error!));
+  //   }
+  // }
+
+  FutureOr<void> _userImprovementEvent(
+      UserImprovementEvent event, Emitter<GrowthState> emit) async {
+    emit(UserImprovementLoadingState());
+    DataState dataState =
+        await growthUsecase.userImprovementParameters(parentId: event.parentId);
 
     if (dataState is DataSuccess) {
-      emit(UserSelfCompletedState(dataState.data));
+      emit(UserImprovementCompletedState(dataState.data));
     }
 
     if (dataState is DataFailed) {
-      emit(UserSelfErrorState(dataState.error!));
+      emit(UserImprovementErrorState(dataState.error!));
     }
   }
 
@@ -51,7 +68,8 @@ class GrowthBloc extends Bloc<GrowthEvent, GrowthState> {
   FutureOr<void> _subitemsEvent(
       SubitemsEvent event, Emitter<GrowthState> emit) async {
     emit(SubitemsLoadingState());
-    DataState dataState = await growthUsecase.subitems(event.itemId);
+    DataState dataState =
+        await growthUsecase.userImprovementParameters(parentId: event.parentId);
 
     if (dataState is DataSuccess) {
       emit(SubitemsCompletedState(dataState.data));

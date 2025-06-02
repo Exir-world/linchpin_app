@@ -6,9 +6,19 @@ class ApiGrowth {
   final Dio httpclient;
   ApiGrowth(this.httpclient);
 
-  // اطلاعات توسعه فردی
-  Future<dynamic> userSelf() async {
-    final response = await httpclient.get('user-self-improvement');
+  // // اطلاعات توسعه فردی
+  // Future<dynamic> userSelf() async {
+  //   final response = await httpclient.get('user-self-improvement');
+  //   return response;
+  // }
+
+  // اطلاعات توسعه فردی (با تغییرات جدید)
+  // جایگزین userSelf
+  Future<dynamic> userImprovementParameters({int? parentId}) async {
+    final response =
+        await httpclient.get('user-improvement-parameters', queryParameters: {
+      'parentId': parentId,
+    });
     return response;
   }
 

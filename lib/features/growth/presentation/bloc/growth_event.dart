@@ -2,8 +2,16 @@ part of 'growth_bloc.dart';
 
 sealed class GrowthEvent {}
 
-// اطلاعات توسعه فردی
-final class UserSelfEvent extends GrowthEvent {}
+// // اطلاعات توسعه فردی
+// final class UserSelfEvent extends GrowthEvent {}
+
+// اطلاعات توسعه فردی (با تغییرات جدید)
+// جایگزین userSelf
+final class UserImprovementEvent extends GrowthEvent {
+  final int? parentId;
+
+  UserImprovementEvent({this.parentId});
+}
 
 // ثبت گزارش توسعه فردی
 final class UserSelfAddEvent extends GrowthEvent {
@@ -15,9 +23,9 @@ final class UserSelfAddEvent extends GrowthEvent {
 
 // لیست امتیازدهی به هر هوش
 final class SubitemsEvent extends GrowthEvent {
-  final int itemId;
+  final int? parentId;
 
-  SubitemsEvent(this.itemId);
+  SubitemsEvent({this.parentId});
 }
 
 // امتیاز دهی به ساب آیتم های هر هوش

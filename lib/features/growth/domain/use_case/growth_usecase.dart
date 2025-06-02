@@ -2,6 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/core/resources/data_state.dart';
 import 'package:linchpin/features/growth/domain/entity/sub_items_entity.dart';
+import 'package:linchpin/features/growth/domain/entity/user_improvement_entity.dart';
 import 'package:linchpin/features/growth/domain/entity/user_self_entity.dart';
 import 'package:linchpin/features/growth/domain/repository/growth_repository.dart';
 
@@ -10,8 +11,13 @@ abstract class GrowthUsecase {
 
   GrowthUsecase(this.growthRepository);
 
-  // اطلاعات توسعه فردی
-  Future<DataState<UserSelfEntity>> userSelf();
+  // // اطلاعات توسعه فردی
+  // Future<DataState<UserSelfEntity>> userSelf();
+
+  // اطلاعات توسعه فردی (با تغییرات جدید)
+  // جایگزین userSelf
+  Future<DataState<UserImprovementEntity>> userImprovementParameters(
+      {int? parentId});
 
   // ثبت گزارش توسعه فردی
   Future<DataState<UserSelfEntity>> userSelfAdd(
@@ -29,9 +35,17 @@ abstract class GrowthUsecase {
 class GrowthUsecaseUsecaseImpl extends GrowthUsecase {
   GrowthUsecaseUsecaseImpl(super.growthRepository);
 
+  // @override
+  // Future<DataState<UserSelfEntity>> userSelf() async {
+  //   DataState<UserSelfEntity> dataState = await growthRepository.userSelf();
+  //   return dataState;
+  // }
+
   @override
-  Future<DataState<UserSelfEntity>> userSelf() async {
-    DataState<UserSelfEntity> dataState = await growthRepository.userSelf();
+  Future<DataState<UserImprovementEntity>> userImprovementParameters(
+      {int? parentId}) async {
+    DataState<UserImprovementEntity> dataState =
+        await growthRepository.userImprovementParameters(parentId: parentId);
     return dataState;
   }
 

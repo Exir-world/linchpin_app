@@ -19,7 +19,8 @@ class SubItemsScreen extends StatefulWidget {
 class _SubItemsScreenState extends State<SubItemsScreen> {
   @override
   void initState() {
-    BlocProvider.of<GrowthBloc>(context).add(SubitemsEvent(widget.itemId));
+    BlocProvider.of<GrowthBloc>(context)
+        .add(SubitemsEvent(parentId: widget.itemId));
     super.initState();
   }
 
@@ -44,7 +45,7 @@ class _SubItemsScreenState extends State<SubItemsScreen> {
         listener: (context, state) {
           if (state is SubitemsScoreCompletedState) {
             BlocProvider.of<GrowthBloc>(context)
-                .add(SubitemsEvent(widget.itemId));
+                .add(SubitemsEvent(parentId: widget.itemId));
             Navigator.pop(context);
           }
         },
@@ -72,132 +73,156 @@ class _SubItemsScreenState extends State<SubItemsScreen> {
                     ),
                     SizedBox(height: 24),
                     ListView.builder(
-                      itemCount: state.subItemsEntity.length,
+                      itemCount: state.userImprovementEntity.userItems?.length,
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        final data = state.subItemsEntity[index];
-                        return GestureDetector(
-                          onTap: data.done!
-                              ? () {}
-                              : () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true, // to full height
-                                    useSafeArea:
-                                        true, // to show under status bar
-                                    backgroundColor: Colors
-                                        .transparent, // to show BorderRadius of Container
-                                    sheetAnimationStyle: AnimationStyle(
-                                      reverseCurve: Curves.easeIn,
-                                      duration: Duration(milliseconds: 400),
-                                    ),
-                                    builder: (context) {
-                                      return IOSModalStyle(
-                                        childBody: Padding(
-                                          padding: const EdgeInsets.all(24.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Align(
-                                                alignment: Alignment.center,
-                                                child: Container(
-                                                  width: 23,
-                                                  height: 4,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            2),
-                                                    color: Color(0xff000000)
-                                                        .withValues(alpha: .15),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(height: 32),
-                                              LargeBold(
-                                                'میزان محبوبیت:',
-                                                textColorInLight:
-                                                    Color(0xff333333),
-                                              ),
-                                              SizedBox(height: 24),
-                                              SizedBox(
-                                                height: 80,
-                                                width: double.infinity,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: List.generate(
-                                                      data.score!.length,
-                                                      (index) {
-                                                    final score =
-                                                        data.score![index];
-                                                    return GestureDetector(
-                                                      onTap: () {
-                                                        BlocProvider.of<
-                                                                    GrowthBloc>(
-                                                                context)
-                                                            .add(
-                                                                SubitemsScoreEvent(
-                                                          widget.itemId,
-                                                          data.id!,
-                                                          score,
-                                                        ));
-                                                      },
-                                                      child: Container(
-                                                        width: 80,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
-                                                          border: Border.all(
-                                                              color: Color(
-                                                                  0xffE0E0F9)),
-                                                        ),
+                        final data =
+                            state.userImprovementEntity.userItems![index];
+                        return Column(
+                          children: [
+                            ...data.items!.map(
+                              (item) {
+                                return GestureDetector(
+                                  onTap: item.done!
+                                      ? () {}
+                                      : () {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled:
+                                                true, // to full height
+                                            useSafeArea:
+                                                true, // to show under status bar
+                                            backgroundColor: Colors
+                                                .transparent, // to show BorderRadius of Container
+                                            sheetAnimationStyle: AnimationStyle(
+                                              reverseCurve: Curves.easeIn,
+                                              duration:
+                                                  Duration(milliseconds: 400),
+                                            ),
+                                            builder: (context) {
+                                              return IOSModalStyle(
+                                                childBody: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      24.0),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Align(
                                                         alignment:
                                                             Alignment.center,
-                                                        child: VeryBigBold(
-                                                            '$score'),
+                                                        child: Container(
+                                                          width: 23,
+                                                          height: 4,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        2),
+                                                            color: Color(
+                                                                    0xff000000)
+                                                                .withValues(
+                                                                    alpha: .15),
+                                                          ),
+                                                        ),
                                                       ),
-                                                    );
-                                                  }),
+                                                      SizedBox(height: 32),
+                                                      LargeBold(
+                                                        'میزان محبوبیت:',
+                                                        textColorInLight:
+                                                            Color(0xff333333),
+                                                      ),
+                                                      SizedBox(height: 24),
+                                                      SizedBox(
+                                                        height: 80,
+                                                        width: double.infinity,
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children:
+                                                              List.generate(
+                                                                  item.score!
+                                                                      .length,
+                                                                  (index) {
+                                                            final score = item
+                                                                .score![index];
+                                                            return GestureDetector(
+                                                              onTap: () {
+                                                                BlocProvider.of<
+                                                                            GrowthBloc>(
+                                                                        context)
+                                                                    .add(
+                                                                        SubitemsScoreEvent(
+                                                                  widget.itemId,
+                                                                  item.id!,
+                                                                  score,
+                                                                ));
+                                                              },
+                                                              child: Container(
+                                                                width: 80,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              12),
+                                                                  border: Border.all(
+                                                                      color: Color(
+                                                                          0xffE0E0F9)),
+                                                                ),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                child:
+                                                                    VeryBigBold(
+                                                                        '$score'),
+                                                              ),
+                                                            );
+                                                          }),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                  child: Container(
+                                    height: 56,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          offset: Offset(0, 3),
+                                          blurRadius: 30,
+                                          color: Color(0xff828282)
+                                              .withValues(alpha: 0.04),
                                         ),
-                                      );
-                                    },
-                                  );
-                                },
-                          child: Container(
-                            height: 56,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  offset: Offset(0, 3),
-                                  blurRadius: 30,
-                                  color:
-                                      Color(0xff828282).withValues(alpha: 0.04),
-                                ),
-                              ],
+                                      ],
+                                    ),
+                                    margin: EdgeInsets.only(bottom: 16),
+                                    padding: EdgeInsets.all(16),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        NormalRegular('${item.title}'),
+                                        item.done!
+                                            ? Assets.icons.check.svg()
+                                            : SizedBox.shrink(),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                            margin: EdgeInsets.only(bottom: 16),
-                            padding: EdgeInsets.all(16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                NormalRegular('${data.title}'),
-                                data.done!
-                                    ? Assets.icons.check.svg()
-                                    : SizedBox.shrink(),
-                              ],
-                            ),
-                          ),
+                          ],
                         );
                       },
                     ),
@@ -211,7 +236,8 @@ class _SubItemsScreenState extends State<SubItemsScreen> {
             return ErrorUiWidget(
               title: state.errorText,
               onTap: () {
-                BlocProvider.of<GrowthBloc>(context).add(UserSelfEvent());
+                BlocProvider.of<GrowthBloc>(context)
+                    .add(UserImprovementEvent());
               },
             );
           } else {

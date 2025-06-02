@@ -5,8 +5,10 @@ import 'package:linchpin/core/resources/data_state.dart';
 import 'package:linchpin/core/utils/handle_error.dart';
 import 'package:linchpin/features/growth/data/data_source/api_growth.dart';
 import 'package:linchpin/features/growth/data/models/sub_items_model/sub_items_model.dart';
+import 'package:linchpin/features/growth/data/models/user_improvement_model/user_improvement_model.dart';
 import 'package:linchpin/features/growth/data/models/user_self_model/user_self_model.dart';
 import 'package:linchpin/features/growth/domain/entity/sub_items_entity.dart';
+import 'package:linchpin/features/growth/domain/entity/user_improvement_entity.dart';
 import 'package:linchpin/features/growth/domain/entity/user_self_entity.dart';
 import 'package:linchpin/features/growth/domain/repository/growth_repository.dart';
 
@@ -15,12 +17,26 @@ class GrowthRepositoryImpl extends GrowthRepository {
   final ApiGrowth apiGrowth;
 
   GrowthRepositoryImpl(this.apiGrowth);
+  // @override
+  // Future<DataState<UserSelfEntity>> userSelf() async {
+  //   try {
+  //     Response response = await apiGrowth.userSelf();
+  //     UserSelfEntity userSelfEntity = UserSelfModel.fromJson(response.data);
+  //     return DataSuccess(userSelfEntity);
+  //   } on DioException catch (e) {
+  //     return await handleError(e);
+  //   }
+  // }
+
   @override
-  Future<DataState<UserSelfEntity>> userSelf() async {
+  Future<DataState<UserImprovementEntity>> userImprovementParameters(
+      {int? parentId}) async {
     try {
-      Response response = await apiGrowth.userSelf();
-      UserSelfEntity userSelfEntity = UserSelfModel.fromJson(response.data);
-      return DataSuccess(userSelfEntity);
+      Response response =
+          await apiGrowth.userImprovementParameters(parentId: parentId);
+      UserImprovementEntity userImprovementEntity =
+          UserImprovementModel.fromJson(response.data);
+      return DataSuccess(userImprovementEntity);
     } on DioException catch (e) {
       return await handleError(e);
     }

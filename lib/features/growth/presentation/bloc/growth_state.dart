@@ -4,19 +4,35 @@ sealed class GrowthState {}
 
 final class GrowthInitial extends GrowthState {}
 
-// اطلاعات توسعه فردی
-final class UserSelfLoadingState extends GrowthState {}
+// // اطلاعات توسعه فردی
+// final class UserSelfLoadingState extends GrowthState {}
 
-final class UserSelfCompletedState extends GrowthState {
-  final UserSelfEntity userSelfEntity;
+// final class UserSelfCompletedState extends GrowthState {
+//   final UserSelfEntity userSelfEntity;
 
-  UserSelfCompletedState(this.userSelfEntity);
+//   UserSelfCompletedState(this.userSelfEntity);
+// }
+
+// final class UserSelfErrorState extends GrowthState {
+//   final String errorText;
+
+//   UserSelfErrorState(this.errorText);
+// }
+
+// اطلاعات توسعه فردی (با تغییرات جدید)
+// جایگزین userSelf
+final class UserImprovementLoadingState extends GrowthState {}
+
+final class UserImprovementCompletedState extends GrowthState {
+  final UserImprovementEntity userImprovementEntity;
+
+  UserImprovementCompletedState(this.userImprovementEntity);
 }
 
-final class UserSelfErrorState extends GrowthState {
+final class UserImprovementErrorState extends GrowthState {
   final String errorText;
 
-  UserSelfErrorState(this.errorText);
+  UserImprovementErrorState(this.errorText);
 }
 
 // ثبت گزارش توسعه فردی
@@ -38,9 +54,9 @@ final class UserSelfAddErrorState extends GrowthState {
 final class SubitemsLoadingState extends GrowthState {}
 
 final class SubitemsCompletedState extends GrowthState {
-  final List<SubItemsEntity> subItemsEntity;
+  final UserImprovementEntity userImprovementEntity;
 
-  SubitemsCompletedState(this.subItemsEntity);
+  SubitemsCompletedState(this.userImprovementEntity);
 }
 
 final class SubitemsErrorState extends GrowthState {

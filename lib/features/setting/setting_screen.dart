@@ -99,7 +99,7 @@ class _SettingScreenState extends State<SettingScreen> {
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
-        BlocProvider.of<GrowthBloc>(context).add(UserSelfEvent());
+        BlocProvider.of<GrowthBloc>(context).add(UserImprovementEvent());
       },
       child: Scaffold(
         appBar: appBarRoot(
@@ -107,7 +107,7 @@ class _SettingScreenState extends State<SettingScreen> {
           true,
           () {
             Navigator.pop(context);
-            BlocProvider.of<GrowthBloc>(context).add(UserSelfEvent());
+            BlocProvider.of<GrowthBloc>(context).add(UserImprovementEvent());
           },
         ),
         body: Padding(
