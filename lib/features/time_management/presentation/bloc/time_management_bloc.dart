@@ -16,7 +16,9 @@ class TimeManagementBloc
   }
 
   Future<void> _dailyEvent(
-      DailyEvent event, Emitter<TimeManagementState> emit) async {
+    DailyEvent event,
+    Emitter<TimeManagementState> emit,
+  ) async {
     emit(DailyLoadingState());
 
     DataState dataState = await timeManagementUsecase.daily(event.actionType);

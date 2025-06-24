@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin_app/features/requests/presentation/widgets/persian_calender/calendar_header.dart';
 import 'package:shamsi_date/shamsi_date.dart';
-import 'persian_calendar.dart';
+import 'package:linchpin_app/features/requests/presentation/widgets/persian_calender/persian_calendar.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 
 /// ویجت DayView که روزهای ماه را نمایش می‌دهد.
@@ -27,8 +27,11 @@ class _DayViewState extends State<DayView> {
   /// و به کال‌بک ارسال می‌کند.
   void selectDay(int day) {
     // ایجاد تاریخ جدید بر اساس روز انتخاب‌شده
-    final selectedDate = Jalali(PersianCalendar.currentDate.value!.year,
-        PersianCalendar.currentDate.value!.month, day);
+    final selectedDate = Jalali(
+      PersianCalendar.currentDate.value!.year,
+      PersianCalendar.currentDate.value!.month,
+      day,
+    );
     final englishDate = selectedDate.toDateTime();
 
     // فرمت‌بندی تاریخ به شکل‌های مختلف
@@ -66,13 +69,13 @@ class _DayViewState extends State<DayView> {
       child: Column(
         children: [
           // هدر تقویم
-          CalendarHeader(calendarType: 'day'),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+          const CalendarHeader(calendarType: 'day'),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
             child: Row(
               mainAxisAlignment:
                   MainAxisAlignment.spaceBetween, // فاصله مساوی بین روزهای هفته
-              children: const [
+              children: [
                 SmallMedium('ش', textColorInLight: Color(0xff9CA3AF)),
                 SmallMedium('ی', textColorInLight: Color(0xff9CA3AF)),
                 SmallMedium('د', textColorInLight: Color(0xff9CA3AF)),
@@ -98,7 +101,8 @@ class _DayViewState extends State<DayView> {
                   itemBuilder: (context, index) {
                     int? day = days[index]; // روز جاری در ایندکس مشخص
                     int startDay = PersianCalendar.getFirstDayOfMonth(
-                        PersianCalendar.currentDate.value!); // روز شروع ماه
+                      PersianCalendar.currentDate.value!,
+                    ); // روز شروع ماه
                     int endDayStartIndex = startDay +
                         PersianCalendar
                             .currentDate.value!.monthLength; // آخرین روز ماه
@@ -126,16 +130,19 @@ class _DayViewState extends State<DayView> {
                                     alignment: Alignment
                                         .center, // تراز کردن روز در مرکز
                                     margin: const EdgeInsets.all(
-                                        6), // فاصله بین خانه‌ها
+                                      6,
+                                    ), // فاصله بین خانه‌ها
                                     decoration: BoxDecoration(
                                       color: (selectedDay == day &&
                                               !isPreviousMonthDay &&
                                               !isNextMonthDay)
                                           ? const Color(
-                                              0xff861C8C) // رنگ پس‌زمینه روز انتخابی
+                                              0xff861C8C,
+                                            ) // رنگ پس‌زمینه روز انتخابی
                                           : null,
                                       borderRadius: BorderRadius.circular(
-                                          8), // گوشه‌های گرد
+                                        8,
+                                      ), // گوشه‌های گرد
                                     ),
                                     child: NormalMedium(
                                       '$day', // نمایش روز
@@ -147,7 +154,8 @@ class _DayViewState extends State<DayView> {
                                               ? Colors
                                                   .white // رنگ سفید برای روز انتخابی
                                               : const Color(
-                                                  0xff030712)), // رنگ پیش‌فرض برای روزهای دیگر
+                                                  0xff030712,
+                                                )), // رنگ پیش‌فرض برای روزهای دیگر
                                     ),
                                   );
                                 },

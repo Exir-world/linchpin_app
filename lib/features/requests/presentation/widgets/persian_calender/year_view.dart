@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin_app/features/requests/presentation/widgets/persian_calender/calendar_header.dart';
 import 'package:shamsi_date/shamsi_date.dart';
-import 'persian_calendar.dart';
+import 'package:linchpin_app/features/requests/presentation/widgets/persian_calender/persian_calendar.dart';
 import 'package:linchpin_app/core/common/text_widgets.dart';
 
 /// ویجت YearView برای نمایش سال‌های قابل انتخاب در تقویم
@@ -18,7 +18,9 @@ class _YearViewState extends State<YearView> {
   List<int> _getYearsForView() {
     int currentYear = PersianCalendar.currentDate.value!.year;
     return List.generate(
-        12, (index) => currentYear + index); // سال جاری و 11 سال بعد
+      12,
+      (index) => currentYear + index,
+    ); // سال جاری و 11 سال بعد
   }
 
   @override
@@ -33,7 +35,7 @@ class _YearViewState extends State<YearView> {
       child: Column(
         children: [
           // هدر تقویم که نوع سال را نمایش می‌دهد
-          CalendarHeader(calendarType: 'year'),
+          const CalendarHeader(calendarType: 'year'),
 
           // استفاده از ValueListenableBuilder برای واکنش به تغییرات در روزهای ماه
           ValueListenableBuilder(
@@ -63,8 +65,11 @@ class _YearViewState extends State<YearView> {
                             // بروزرسانی تاریخ با استفاده از سال انتخابی
                             PersianCalendar.persianDateSlashNotifier.value =
                                 '$year/${PersianCalendar.currentDate.value!.month}/${PersianCalendar.currentDate.value!.day}';
-                            PersianCalendar.currentDate.value = Jalali(year,
-                                PersianCalendar.currentDate.value!.month, 1);
+                            PersianCalendar.currentDate.value = Jalali(
+                              year,
+                              PersianCalendar.currentDate.value!.month,
+                              1,
+                            );
                             PersianCalendar.isTypeCalenderNotifier.value =
                                 'month'; // تغییر به حالت ماه
                             PersianCalendar.persianDateNotifier.value =
@@ -76,7 +81,8 @@ class _YearViewState extends State<YearView> {
                             width: itemWidth, // عرض هر سال
                             height: itemHeight, // ارتفاع هر سال
                             decoration: BoxDecoration(
-                              color: Color(0xffF1F3F5), // رنگ پس‌زمینه هر سال
+                              color: const Color(
+                                  0xffF1F3F5), // رنگ پس‌زمینه هر سال
                               borderRadius:
                                   BorderRadius.circular(8), // گوشه‌های گرد
                             ),

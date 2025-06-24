@@ -51,10 +51,10 @@ class _AuthScreenState extends State<AuthScreen> {
     _navigateToRoot();
   }
 
-  void _navigateToRoot() {
+  Future<void> _navigateToRoot() async {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => RootScreen()),
+      MaterialPageRoute(builder: (context) => const RootScreen()),
     );
   }
 
@@ -68,7 +68,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Future<bool> _onWillPop() async {
     final now = DateTime.now();
     if (_lastPressedTime == null ||
-        now.difference(_lastPressedTime!) > Duration(milliseconds: 500)) {
+        now.difference(_lastPressedTime!) > const Duration(milliseconds: 500)) {
       _lastPressedTime = now;
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarVerify(
@@ -86,14 +86,20 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is LoginCompletedState) {
           prefService.createCacheString(
-              SharedKey.jwtToken, state.loginEntity.accessToken ?? '');
+            SharedKey.jwtToken,
+            state.loginEntity.accessToken ?? '',
+          );
           prefService.createCacheString(
-              SharedKey.refreshToken, state.loginEntity.refreshToken ?? '');
+            SharedKey.refreshToken,
+            state.loginEntity.refreshToken ?? '',
+          );
           prefService.createCacheInt(
-              SharedKey.expires, state.loginEntity.expires ?? 0);
+            SharedKey.expires,
+            state.loginEntity.expires ?? 0,
+          );
           _navigateToRoot();
         } else if (state is LoginErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -119,11 +125,12 @@ class _AuthScreenState extends State<AuthScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Align(
-                        alignment: Alignment.center,
-                        child: Assets.images.logo.image(height: 50)),
-                    SizedBox(height: 80),
-                    NormalMedium('نام کاربری'),
-                    SizedBox(height: 12),
+                      alignment: Alignment.center,
+                      child: Assets.images.logo.image(height: 50),
+                    ),
+                    const SizedBox(height: 80),
+                    const NormalMedium('نام کاربری'),
+                    const SizedBox(height: 12),
                     TextFormField(
                       controller: AuthScreen.accountControllerNotifire.value,
                       textAlign: TextAlign.end,
@@ -133,7 +140,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         fillColor: Colors.white,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xffE0E0F9),
                             width: 1,
                           ),
@@ -143,9 +150,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 24),
-                    NormalMedium('رمز عبور'),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 24),
+                    const NormalMedium('رمز عبور'),
+                    const SizedBox(height: 12),
                     TextFormField(
                       controller: AuthScreen.passControllerNotifire.value,
                       obscureText: obscureText,
@@ -155,7 +162,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         fillColor: Colors.white,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xffE0E0F9),
                             width: 1,
                           ),
@@ -175,7 +182,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                       obscureText
                                           ? Icons.visibility_off
                                           : Icons.visibility,
-                                      color: Color(0xffCAC4CF),
+                                      color: const Color(0xffCAC4CF),
                                     ),
                                   )
                                 : Container();
@@ -186,19 +193,21 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 48),
+                    const SizedBox(height: 48),
                     GestureDetector(
                       onTap: () {
                         if (AuthScreen.accountControllerNotifire.value.text
                                 .isNotEmpty &&
                             AuthScreen
                                 .passControllerNotifire.value.text.isNotEmpty) {
-                          BlocProvider.of<AuthBloc>(context).add(LoginEvent(
-                            phoneNumber:
-                                AuthScreen.accountControllerNotifire.value.text,
-                            password:
-                                AuthScreen.passControllerNotifire.value.text,
-                          ));
+                          BlocProvider.of<AuthBloc>(context).add(
+                            LoginEvent(
+                              phoneNumber: AuthScreen
+                                  .accountControllerNotifire.value.text,
+                              password:
+                                  AuthScreen.passControllerNotifire.value.text,
+                            ),
+                          );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             snackBarVerify(
@@ -213,18 +222,18 @@ class _AuthScreenState extends State<AuthScreen> {
                       child: Container(
                         height: 56,
                         decoration: BoxDecoration(
-                          color: Color(0xff861C8C),
+                          color: const Color(0xff861C8C),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         alignment: Alignment.center,
                         child: BlocBuilder<AuthBloc, AuthState>(
                           builder: (context, state) {
                             if (state is LoginLoadingState) {
-                              return CupertinoActivityIndicator(
+                              return const CupertinoActivityIndicator(
                                 color: Colors.white,
                               );
                             } else {
-                              return LargeMedium(
+                              return const LargeMedium(
                                 'ورود',
                                 textColorInLight: Colors.white,
                               );
@@ -233,7 +242,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 48),
+                    const SizedBox(height: 48),
                   ],
                 ),
               ),

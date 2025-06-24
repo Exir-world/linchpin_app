@@ -10,7 +10,7 @@ AppBar appBarRoot(BuildContext context, bool isRequestScreen) {
     backgroundColor: BACKGROUND_LIGHT_APP_BAR_COLOR,
     leading: isRequestScreen
         ? IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back,
               color: Color(0xff861C8C),
               size: 26,
@@ -27,21 +27,23 @@ AppBar appBarRoot(BuildContext context, bool isRequestScreen) {
           children: [
             !isRequestScreen
                 ? GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RequestsScreen(),
-                          ));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RequestsScreen(),
+                        ),
+                      );
                     },
                     child: Container(
-                        color: Colors.transparent,
-                        height: kToolbarHeight,
-                        padding: EdgeInsets.only(left: 12),
-                        child: Assets.icons.docs.svg(height: 26)),
+                      color: Colors.transparent,
+                      height: kToolbarHeight,
+                      padding: const EdgeInsets.only(left: 12),
+                      child: Assets.icons.docs.svg(height: 26),
+                    ),
                   )
-                : SizedBox.shrink(),
-            Spacer(),
+                : const SizedBox.shrink(),
+            const Spacer(),
             ValueListenableBuilder(
               valueListenable: RootScreen.timeServerNotofire,
               builder: (context, value, child) {

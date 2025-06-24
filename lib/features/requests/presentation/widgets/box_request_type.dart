@@ -8,7 +8,10 @@ import 'package:linchpin_app/gen/assets.gen.dart';
 class BoxRequestType extends StatefulWidget {
   final List<RequestTypesEntity> state;
 
-  const BoxRequestType({super.key, required this.state});
+  const BoxRequestType({
+    required this.state,
+    super.key,
+  });
 
   @override
   State<BoxRequestType> createState() => _BoxRequestTypeState();
@@ -85,8 +88,10 @@ class _BoxRequestTypeState extends State<BoxRequestType> {
                         });
                       },
                       child: Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 12,
+                        ),
                         child: Row(
                           children: [
                             NormalRegular(title),
@@ -129,8 +134,8 @@ class _BoxRequestTypeState extends State<BoxRequestType> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          NormalMedium('نوع درخواست'),
-          SizedBox(height: 12),
+          const NormalMedium('نوع درخواست'),
+          const SizedBox(height: 12),
           GestureDetector(
             onTap: () => _toggleDropdown(
               context,
@@ -138,14 +143,15 @@ class _BoxRequestTypeState extends State<BoxRequestType> {
             child: Container(
               width: double.infinity,
               height: 50,
-              padding: EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                    color: _isDropdownOpen
-                        ? Color(0xff861C8C)
-                        : Color(0xffE0E0F9)),
+                  color: _isDropdownOpen
+                      ? const Color(0xff861C8C)
+                      : const Color(0xffE0E0F9),
+                ),
               ),
               alignment: Alignment.centerLeft,
               child: Row(
@@ -154,8 +160,8 @@ class _BoxRequestTypeState extends State<BoxRequestType> {
                   NormalRegular(
                     selecteditemName ?? 'انتخاب کنید',
                     textColorInLight: selectedItem == null
-                        ? Color(0xffCAC4CF)
-                        : Color(0xff540E5C),
+                        ? const Color(0xffCAC4CF)
+                        : const Color(0xff540E5C),
                   ),
                   Assets.icons.chevronUpDown.svg(),
                 ],

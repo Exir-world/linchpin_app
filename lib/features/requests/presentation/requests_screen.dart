@@ -94,7 +94,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
       appBar: appBarRoot(context, true),
       body: SafeArea(
         child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           child: BlocConsumer<RequestsBloc, RequestsState>(
             listener: (context, state) {
               if (state is RequestCancelCompleted) {
@@ -110,21 +110,23 @@ class _RequestsScreenState extends State<RequestsScreen> {
               if (state is RequestsCompleted) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: padding_Horizantalx),
+                    horizontal: padding_Horizantalx,
+                  ),
                   child: Column(
                     children: [
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       Row(
                         children: [
-                          BigDemiBold('درخواست ها'),
-                          Spacer(),
+                          const BigDemiBold('درخواست ها'),
+                          const Spacer(),
                           GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        RequestDetailScreen()),
+                                  builder: (context) =>
+                                      const RequestDetailScreen(),
+                                ),
                               ).then((value) {
                                 if (value == true) {
                                   setState(() {
@@ -136,13 +138,16 @@ class _RequestsScreenState extends State<RequestsScreen> {
                             },
                             child: Container(
                               color: Colors.transparent,
-                              padding: EdgeInsets.only(
-                                  right: 24, bottom: 12, top: 12),
+                              padding: const EdgeInsets.only(
+                                right: 24,
+                                bottom: 12,
+                                top: 12,
+                              ),
                               child: Row(
                                 children: [
                                   Assets.icons.plus.svg(),
-                                  SizedBox(width: 8),
-                                  NormalMedium(
+                                  const SizedBox(width: 8),
+                                  const NormalMedium(
                                     'ثبت درخواست جدید',
                                     textColorInLight: Color(0xff861C8C),
                                   ),
@@ -152,14 +157,14 @@ class _RequestsScreenState extends State<RequestsScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       state.requestUserEntity.isEmpty
                           ? Column(
                               children: [
                                 SizedBox(
                                   height: context.screenHeight / 3.2,
                                 ),
-                                NormalRegular(
+                                const NormalRegular(
                                   'درخواستی وجود ندارد',
                                   textColorInLight: Color(0xffCAC4CF),
                                 ),
@@ -168,7 +173,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
                           : ListView.builder(
                               itemCount: state.requestUserEntity.length,
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 final data = state.requestUserEntity[index];
                                 DateTime startTime = data.startTime!.toLocal();
@@ -184,12 +189,12 @@ class _RequestsScreenState extends State<RequestsScreen> {
                                     : _formatTime(startTime);
                                 return Container(
                                   height: 92,
-                                  margin: EdgeInsets.only(bottom: 12),
+                                  margin: const EdgeInsets.only(bottom: 12),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  padding: EdgeInsets.all(16),
+                                  padding: const EdgeInsets.all(16),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -200,20 +205,21 @@ class _RequestsScreenState extends State<RequestsScreen> {
                                             Row(
                                               children: [
                                                 NormalRegular(
-                                                    getTypeLabel(data.type!)),
+                                                  getTypeLabel(data.type!),
+                                                ),
                                                 NormalRegular(createdAt),
-                                                Spacer(),
+                                                const Spacer(),
                                                 SmallRegular(
                                                   getStatusLabel(data.status!),
                                                   textColorInLight:
-                                                      Color(0xff828282),
+                                                      const Color(0xff828282),
                                                 ),
                                               ],
                                             ),
                                             Row(
                                               children: [
                                                 _getIconForType(data.type!),
-                                                SizedBox(width: 8),
+                                                const SizedBox(width: 8),
                                                 SmallRegular(
                                                   _getDetailsForType(
                                                     type: data.type!,
@@ -225,7 +231,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
                                                   textColorInLight:
                                                       const Color(0xff861C8C),
                                                 ),
-                                                Spacer(),
+                                                const Spacer(),
                                                 data.status == 'CANCELLED' ||
                                                         data.status ==
                                                             'REJECTED'
@@ -233,14 +239,18 @@ class _RequestsScreenState extends State<RequestsScreen> {
                                                     : GestureDetector(
                                                         onTap: () {
                                                           BlocProvider.of<
-                                                                      RequestsBloc>(
-                                                                  context)
-                                                              .add(RequestCancelEvent(data
-                                                                  .id
-                                                                  .toString()));
+                                                              RequestsBloc>(
+                                                            context,
+                                                          ).add(
+                                                            RequestCancelEvent(
+                                                              data.id
+                                                                  .toString(),
+                                                            ),
+                                                          );
                                                         },
                                                         child: Assets.icons.tag
-                                                            .svg()),
+                                                            .svg(),
+                                                      ),
                                               ],
                                             ),
                                           ],
@@ -263,7 +273,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
                     child: Container(
                       width: 70,
                       height: 70,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
                         boxShadow: [
@@ -274,7 +284,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
                           ),
                         ],
                       ),
-                      child: Center(
+                      child: const Center(
                         child: SpinKitFadingCube(
                           size: 24,
                           color: Color(0xff670099),
@@ -285,14 +295,15 @@ class _RequestsScreenState extends State<RequestsScreen> {
                 );
               } else if (state is RequestsError) {
                 return SizedBox(
-                    width: context.screenWidth,
-                    height: context.screenHeight,
-                    child: Center(child: SmallRegular(state.textError)));
+                  width: context.screenWidth,
+                  height: context.screenHeight,
+                  child: Center(child: SmallRegular(state.textError)),
+                );
               } else {
                 return SizedBox(
                   width: context.screenWidth,
                   height: context.screenHeight,
-                  child: SmallRegular('Technical error'),
+                  child: const SmallRegular('Technical error'),
                 );
               }
             },

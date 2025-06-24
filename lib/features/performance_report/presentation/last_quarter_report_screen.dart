@@ -37,10 +37,10 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFAFAFF),
+      backgroundColor: const Color(0xffFAFAFF),
       body: SafeArea(
         child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           child: Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: padding_Horizantalx),
@@ -50,16 +50,16 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: VERTICAL_SPACING_6x),
-                      LargeDemiBold("گزارش عملکرد"),
-                      SizedBox(height: VERTICAL_SPACING_6x),
+                      const SizedBox(height: VERTICAL_SPACING_6x),
+                      const LargeDemiBold("گزارش عملکرد"),
+                      const SizedBox(height: VERTICAL_SPACING_6x),
                       state.monthsEntity.isEmpty
                           ? Column(
                               children: [
                                 SizedBox(
                                   height: context.screenHeight / 3.2,
                                 ),
-                                Center(
+                                const Center(
                                   child: NormalRegular(
                                     'عملکردی ثبت نشده',
                                     textColorInLight: Color(0xffCAC4CF),
@@ -70,7 +70,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                           : ListView.builder(
                               itemCount: state.monthsEntity.length,
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 final data = state.monthsEntity[index];
                                 final dateTitle =
@@ -92,17 +92,20 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
 
                                 // کل حضور
                                 final String sumTime = formatWorkMinutes(
-                                    data.workMinutes! + data.overDuration!);
+                                  data.workMinutes! + data.overDuration!,
+                                );
 
                                 return Container(
                                   height: 100,
-                                  margin: EdgeInsets.only(bottom: 12),
+                                  margin: const EdgeInsets.only(bottom: 12),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -116,7 +119,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                       if (data.month! >= 10 &&
                                           data.month! <= 12)
                                         Assets.icons.winter.svg(),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                       Expanded(
                                         child: Column(
                                           mainAxisAlignment:
@@ -128,17 +131,20 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                                       .spaceBetween,
                                               children: [
                                                 NormalMedium(
-                                                    'ساعات کاری ${dateTitle.formatter.mN} ${dateTitle.formatter.y}'),
+                                                  'ساعات کاری ${dateTitle.formatter.mN} ${dateTitle.formatter.y}',
+                                                ),
                                                 SmallMedium(sumTime),
                                               ],
                                             ),
-                                            SizedBox(height: 12),
+                                            const SizedBox(height: 12),
                                             Row(
                                               children: [
                                                 _BoxTime(
                                                   time: 'مفید: $workTime',
-                                                  colorBox: Color(0xffF5EEFC),
-                                                  colorTitle: Color(0xff9B51E0),
+                                                  colorBox:
+                                                      const Color(0xffF5EEFC),
+                                                  colorTitle:
+                                                      const Color(0xff9B51E0),
                                                   isWidth: true,
                                                 ),
                                                 data.lessDuration! == 0 &&
@@ -146,7 +152,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                                             0 &&
                                                         data.leaveDuration! == 0
                                                     ? Container()
-                                                    : SizedBox(width: 8),
+                                                    : const SizedBox(width: 8),
                                                 data.lessDuration! == 0 &&
                                                         data.overDuration! ==
                                                             0 &&
@@ -156,20 +162,28 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                                         ? _BoxTime(
                                                             time:
                                                                 'کسری: $lessTime',
-                                                            colorBox: Color(
-                                                                0xffFFEFF1),
-                                                            colorTitle: Color(
-                                                                0xffFD5B71),
+                                                            colorBox:
+                                                                const Color(
+                                                              0xffFFEFF1,
+                                                            ),
+                                                            colorTitle:
+                                                                const Color(
+                                                              0xffFD5B71,
+                                                            ),
                                                             isWidth: false,
                                                           )
                                                         : data.overDuration! > 0
                                                             ? _BoxTime(
                                                                 time:
                                                                     'اضافه کار: $overTime',
-                                                                colorBox: Color(
-                                                                    0xffE6FCF4),
-                                                                colorTitle: Color(
-                                                                    0xff07E092),
+                                                                colorBox:
+                                                                    const Color(
+                                                                  0xffE6FCF4,
+                                                                ),
+                                                                colorTitle:
+                                                                    const Color(
+                                                                  0xff07E092,
+                                                                ),
                                                                 isWidth: false,
                                                               )
                                                             : data.leaveDuration! >
@@ -177,11 +191,14 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                                                 ? _BoxTime(
                                                                     time:
                                                                         'مرخصی: $leaveTime',
-                                                                    colorBox: Color(
-                                                                        0xffFFA656),
+                                                                    colorBox:
+                                                                        const Color(
+                                                                      0xffFFA656,
+                                                                    ),
                                                                     colorTitle:
-                                                                        Color(
-                                                                            0xffFEF5ED),
+                                                                        const Color(
+                                                                      0xffFEF5ED,
+                                                                    ),
                                                                     isWidth:
                                                                         false,
                                                                   )
@@ -199,7 +216,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                     ],
                   );
                 } else {
-                  return CupertinoActivityIndicator();
+                  return const CupertinoActivityIndicator();
                 }
               },
             ),
@@ -226,7 +243,7 @@ class _BoxTime extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 120,
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
         color: colorBox,
         borderRadius: BorderRadius.circular(6),

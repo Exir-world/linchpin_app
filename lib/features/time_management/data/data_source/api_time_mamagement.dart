@@ -8,10 +8,13 @@ class ApiTimeMamagement {
 
   // اطلاعات صفحه اصلی
   Future<dynamic> daily(String actionType) async {
-    final response = await httpclient.post('attendance/main-page', data: {
-      "actionType": actionType,
-      "workReport": "string",
-    });
+    final response = await httpclient.post(
+      'attendance/main-page',
+      data: {
+        "actionType": actionType,
+        "workReport": "string",
+      },
+    );
     return response;
   }
 }

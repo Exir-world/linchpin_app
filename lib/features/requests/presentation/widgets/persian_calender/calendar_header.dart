@@ -11,8 +11,8 @@ class CalendarHeader extends StatefulWidget {
   final String calendarType;
 
   const CalendarHeader({
-    super.key,
     required this.calendarType, // نوع تقویم که مشخص می‌کند باید هدر مربوط به ماه، روز یا سال نمایش داده شود.
+    super.key,
   });
 
   @override
@@ -55,9 +55,10 @@ class _CalendarHeaderState extends State<CalendarHeader> {
   void _changeYear(int increment) {
     // تغییر سال و بروزرسانی تاریخ.
     PersianCalendar.currentDate.value = Jalali(
-        PersianCalendar.currentDate.value!.year + increment,
-        PersianCalendar.currentDate.value!.month,
-        1);
+      PersianCalendar.currentDate.value!.year + increment,
+      PersianCalendar.currentDate.value!.month,
+      1,
+    );
 
     PersianCalendar.persianDateNotifier.value =
         PersianCalendar.getPersianDate(PersianCalendar.currentDate.value!);

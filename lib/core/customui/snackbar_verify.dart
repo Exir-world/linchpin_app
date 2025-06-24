@@ -22,17 +22,17 @@ SnackBar snackBarVerify({
     content: Container(
       height: 48,
       decoration: BoxDecoration(
-        color: Color(0xff302432),
+        color: const Color(0xff302432),
         borderRadius: BorderRadius.circular(RADIUS_4x),
       ),
       child: Row(
         children: [
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           icon,
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           SmallRegular(
             title,
-            textColorInLight: Color(0xffC8C5C5),
+            textColorInLight: const Color(0xffC8C5C5),
           ),
         ],
       ),

@@ -24,15 +24,15 @@ class _RootScreenState extends State<RootScreen> {
           return IndexedStack(
             index: value, // تعیین اینکه کدام تب فعال باشه
             children: [
-              Center(child: Text('وظایف')),
-              TimeManagementScreen(), // صفحه اول
-              LastQuarterReportScreen(), // صفحه دوم
+              const Center(child: Text('وظایف')),
+              const TimeManagementScreen(), // صفحه اول
+              const LastQuarterReportScreen(), // صفحه دوم
             ],
           );
         },
       ),
       bottomNavigationBar: ClipRRect(
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(30),
           topRight: Radius.circular(30),
         ),

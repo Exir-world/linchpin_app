@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:linchpin_app/core/locator/di/di.dart';
@@ -18,7 +20,8 @@ class LastQuarterReportRepositoryImpl extends LastQuarterReportRepository {
     try {
       Response response = await apiLastQuarterReport.months();
       List<MonthsEntity> monthsEntity = List<MonthsEntity>.from(
-          response.data.map((model) => MonthsModel.fromJson(model)));
+        response.data.map((model) => MonthsModel.fromJson(model)),
+      );
       return DataSuccess(monthsEntity);
     } on DioException catch (e) {
       return await handleError(e);

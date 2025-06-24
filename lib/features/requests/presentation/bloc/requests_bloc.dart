@@ -21,7 +21,9 @@ class RequestsBloc extends Bloc<RequestsEvent, RequestsState> {
   }
 
   Future<void> _requestUser(
-      RequestsEvent event, Emitter<RequestsState> emit) async {
+    RequestsEvent event,
+    Emitter<RequestsState> emit,
+  ) async {
     emit(RequestsLoading());
 
     DataState dataState = await requestUsecase.requestsUser();
@@ -36,7 +38,9 @@ class RequestsBloc extends Bloc<RequestsEvent, RequestsState> {
   }
 
   Future<void> _requestCancelEvent(
-      RequestCancelEvent event, Emitter<RequestsState> emit) async {
+    RequestCancelEvent event,
+    Emitter<RequestsState> emit,
+  ) async {
     emit(RequestsLoading());
 
     DataState dataState = await requestUsecase.requestCancel(event.id);
@@ -51,7 +55,9 @@ class RequestsBloc extends Bloc<RequestsEvent, RequestsState> {
   }
 
   Future<void> _requestTypesEvent(
-      RequestTypesEvent event, Emitter<RequestsState> emit) async {
+    RequestTypesEvent event,
+    Emitter<RequestsState> emit,
+  ) async {
     emit(RequestTypesLoading());
 
     DataState dataState = await requestUsecase.requestTypes();
@@ -66,14 +72,17 @@ class RequestsBloc extends Bloc<RequestsEvent, RequestsState> {
   }
 
   Future<void> _requestCreateEvent(
-      RequestCreateEvent event, Emitter<RequestsState> emit) async {
+    RequestCreateEvent event,
+    Emitter<RequestsState> emit,
+  ) async {
     emit(RequestCreateLoading());
 
     DataState dataState = await requestUsecase.requestCreate(
-        type: event.type,
-        description: event.description,
-        startTime: event.startTime,
-        endTime: event.endTime);
+      type: event.type,
+      description: event.description,
+      startTime: event.startTime,
+      endTime: event.endTime,
+    );
 
     if (dataState is DataSuccess) {
       emit(RequestCreateCompleted(dataState.data));

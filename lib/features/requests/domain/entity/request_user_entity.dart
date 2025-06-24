@@ -41,6 +41,6 @@ class RequestUserEntity extends Equatable {
         reviewedById,
         reviewedAt,
         createdAt,
-        updatedAt
+        updatedAt,
       ];
 }

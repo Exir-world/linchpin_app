@@ -11,7 +11,9 @@ class AuthUsecase {
 
   // ورود کاربر
   Future<DataState<LoginEntity>> login(
-      String phoneNumber, String password) async {
+    String phoneNumber,
+    String password,
+  ) async {
     DataState<LoginEntity> dataState =
         await authRepository.login(phoneNumber, password);
     return dataState;

@@ -16,7 +16,6 @@ class CircularTimer extends StatefulWidget {
   final int stopDuration; // زمان توقفی که کاربر کرده بر حسب ثانیه
 
   const CircularTimer({
-    super.key,
     required this.initTime,
     required this.endTime,
     required this.openAppTime,
@@ -24,6 +23,7 @@ class CircularTimer extends StatefulWidget {
     required this.shouldReset,
     required this.remainingDuration,
     required this.stopDuration,
+    super.key,
   });
 
   @override
@@ -79,7 +79,7 @@ class _CircularTimerState extends State<CircularTimer> {
 
   // تایمر کاهش زمان باقی‌مانده
   void _startRemainingTimeTimer() {
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
       if (remainingTime > 0) {
         setState(() {
           remainingTime--;
@@ -92,7 +92,7 @@ class _CircularTimerState extends State<CircularTimer> {
 
   // تایمر افزایش زمان توقف
   void _startStopDurationTimer() {
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         stopDuration++;
       });
@@ -130,13 +130,13 @@ class _CircularTimerState extends State<CircularTimer> {
 
   // تایمر را برای به روز رسانی openAppTime هر ثانیه شروع می کنیم
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!widget.isTimerAllowed) {
         return; // اگر اجازه داده نشده، از ادامه جلوگیری می‌کنیم
       }
 
       setState(() {
-        elapsedDuration += Duration(seconds: 1);
+        elapsedDuration += const Duration(seconds: 1);
         _calculateCompletedSegments();
       });
 
@@ -206,7 +206,7 @@ class _CircularTimerState extends State<CircularTimer> {
       return Color.lerp(activeColorStart, activeColorMiddle, progress * 2)!;
     } else {
       return Color.lerp(
-          activeColorMiddle, activeColorEnd, (progress - 0.5) * 2)!;
+          activeColorMiddle, activeColorEnd, (progress - 0.5) * 2,)!;
     }
   }
 
@@ -236,22 +236,22 @@ class _CircularTimerState extends State<CircularTimer> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Assets.icons.ringing.svg(),
-                  SizedBox(width: 5),
-                  NormalRegular('صدا: روشن'),
+                  const SizedBox(width: 5),
+                  const NormalRegular('صدا: روشن'),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               MegaBold(
                 _formatDuration(elapsedDuration), // به جای مقدار ثابت
                 textColorInLight: TEXT_LIGHT_CHRONOMETER_COLOR,
               ),
               NormalRegular(
-                  '${_formatRemainingTime(remainingTime)} باقی مانده'),
-              !widget.isTimerAllowed ? SizedBox(height: 12) : Container(),
+                  '${_formatRemainingTime(remainingTime)} باقی مانده',),
+              !widget.isTimerAllowed ? const SizedBox(height: 12) : Container(),
               !widget.isTimerAllowed
                   ? SmallRegular(
                       _formatStopDurationTime(stopDuration),
-                      textColorInLight: Color(0xffFF912E),
+                      textColorInLight: const Color(0xffFF912E),
                     )
                   : Container(),
             ],

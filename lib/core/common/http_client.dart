@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:linchpin_app/core/common/constants.dart';
@@ -46,11 +48,17 @@ abstract class DioProvider {
                   int newExpires = response.data['expires'];
 
                   await prefService.createCacheString(
-                      SharedKey.jwtToken, newAccessToken);
+                    SharedKey.jwtToken,
+                    newAccessToken,
+                  );
                   await prefService.createCacheString(
-                      SharedKey.refreshToken, newRefreshToken);
+                    SharedKey.refreshToken,
+                    newRefreshToken,
+                  );
                   await prefService.createCacheInt(
-                      SharedKey.expires, newExpires);
+                    SharedKey.expires,
+                    newExpires,
+                  );
 
                   // درخواست اصلی را دوباره ارسال کن
                   e.requestOptions.headers['Authorization'] =

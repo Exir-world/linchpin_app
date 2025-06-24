@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:linchpin_app/core/locator/di/di.dart';
@@ -24,7 +26,8 @@ class RequestRepositoryImpl extends RequestRepository {
     try {
       Response response = await apiRequest.requestsUser();
       List<RequestUserEntity> monthsEntity = List<RequestUserEntity>.from(
-          response.data.map((model) => RequestUserModel.fromJson(model)));
+        response.data.map((model) => RequestUserModel.fromJson(model)),
+      );
       return DataSuccess(monthsEntity);
     } on DioException catch (e) {
       return await handleError(e);
@@ -48,7 +51,8 @@ class RequestRepositoryImpl extends RequestRepository {
       Response response = await apiRequest.requestTypes();
       List<RequestTypesEntity> requestTypesEntity =
           List<RequestTypesEntity>.from(
-              response.data.map((model) => RequestTypesModel.fromJson(model)));
+        response.data.map((model) => RequestTypesModel.fromJson(model)),
+      );
       return DataSuccess(requestTypesEntity);
     } on DioException catch (e) {
       return await handleError(e);
@@ -56,17 +60,19 @@ class RequestRepositoryImpl extends RequestRepository {
   }
 
   @override
-  Future<DataState<RequestCreateEntity>> requestCreate(
-      {required String type,
-      String? description,
-      required String startTime,
-      String? endTime}) async {
+  Future<DataState<RequestCreateEntity>> requestCreate({
+    required String type,
+    String? description,
+    required String startTime,
+    String? endTime,
+  }) async {
     try {
       Response response = await apiRequest.requestCreate(
-          type: type,
-          description: description,
-          startTime: startTime,
-          endTime: endTime);
+        type: type,
+        description: description,
+        startTime: startTime,
+        endTime: endTime,
+      );
       RequestCreateEntity requestCreateEntity =
           RequestCreateModel.fromJson(response.data);
       return DataSuccess(requestCreateEntity);

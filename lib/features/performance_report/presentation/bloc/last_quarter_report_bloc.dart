@@ -16,7 +16,9 @@ class LastQuarterReportBloc
     on<MonthsEvent>(_monthsEvent);
   }
   Future<void> _monthsEvent(
-      MonthsEvent event, Emitter<LastQuarterReportState> emit) async {
+    MonthsEvent event,
+    Emitter<LastQuarterReportState> emit,
+  ) async {
     emit(MonthsLoadingState());
 
     DataState dataState = await lastQuarterReportUsecase.months();

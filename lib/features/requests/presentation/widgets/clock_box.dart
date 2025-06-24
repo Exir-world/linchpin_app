@@ -7,7 +7,11 @@ import 'package:linchpin_app/gen/fonts.gen.dart';
 class ClockBox extends StatefulWidget {
   final String title;
   final bool isEndTime;
-  const ClockBox({super.key, required this.title, required this.isEndTime});
+  const ClockBox({
+    required this.title,
+    required this.isEndTime,
+    super.key,
+  });
 
   @override
   State<ClockBox> createState() => _ClockBoxState();
@@ -50,19 +54,19 @@ class _ClockBoxState extends State<ClockBox> {
             top: position.dy + renderBox.size.height + 8,
             width: renderBox.size.width,
             child: Material(
-              color: Color(0xff828282).withValues(alpha: 0.04),
+              color: const Color(0xff828282).withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(8),
               elevation: 3, // سایه
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(height: 18),
+                      const SizedBox(height: 18),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -74,9 +78,9 @@ class _ClockBoxState extends State<ClockBox> {
                             isHour: false,
                           ),
 
-                          SizedBox(width: 30),
-                          BigRegular(':'),
-                          SizedBox(width: 30),
+                          const SizedBox(width: 30),
+                          const BigRegular(':'),
+                          const SizedBox(width: 30),
                           // ساعت
                           _buildTimeColumn(
                             controller: _hourController,
@@ -86,7 +90,7 @@ class _ClockBoxState extends State<ClockBox> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       GestureDetector(
                         onTap: () {
                           _closeDropdown();
@@ -94,15 +98,15 @@ class _ClockBoxState extends State<ClockBox> {
                         child: Container(
                           height: 37,
                           decoration: BoxDecoration(
-                            color: Color(0xffF1F3F5),
+                            color: const Color(0xffF1F3F5),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           alignment: Alignment.center,
-                          margin: EdgeInsets.symmetric(horizontal: 14),
-                          child: NormalMedium('ثبت'),
+                          margin: const EdgeInsets.symmetric(horizontal: 14),
+                          child: const NormalMedium('ثبت'),
                         ),
                       ),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                     ],
                   ),
                 ),
@@ -131,7 +135,8 @@ class _ClockBoxState extends State<ClockBox> {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          icon: Icon(Icons.keyboard_arrow_up_rounded, color: Color(0xff861C8C)),
+          icon: const Icon(Icons.keyboard_arrow_up_rounded,
+              color: Color(0xff861C8C)),
           onPressed: () {
             final currentValue = int.tryParse(controller.text) ?? minValue;
             if (currentValue < maxValue) {
@@ -157,7 +162,7 @@ class _ClockBoxState extends State<ClockBox> {
             controller: controller,
             textAlign: TextAlign.center,
             keyboardType: TextInputType.number,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: FontFamily.iRANSansXFAMedium,
               color: Color(0xff540E5C),
             ),
@@ -175,7 +180,7 @@ class _ClockBoxState extends State<ClockBox> {
                 return newValue;
               }),
             ],
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: '00',
               hintStyle: TextStyle(
                 color: Color(0xffCAC4CF),
@@ -218,8 +223,8 @@ class _ClockBoxState extends State<ClockBox> {
           ),
         ),
         IconButton(
-          icon:
-              Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xff861C8C)),
+          icon: const Icon(Icons.keyboard_arrow_down_rounded,
+              color: Color(0xff861C8C)),
           onPressed: () {
             final currentValue = int.tryParse(controller.text) ?? maxValue;
             if (currentValue > minValue) {
@@ -267,7 +272,7 @@ class _ClockBoxState extends State<ClockBox> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           NormalMedium(widget.title),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           GestureDetector(
             onTap: () => _toggleDropdown(
               context,
@@ -275,7 +280,7 @@ class _ClockBoxState extends State<ClockBox> {
             child: Container(
               width: double.infinity,
               height: 50,
-              padding: EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
@@ -289,7 +294,7 @@ class _ClockBoxState extends State<ClockBox> {
               child: Row(
                 children: [
                   Assets.icons.circleClock.svg(),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   NormalRegular(
                     _hourController.text.isEmpty &&
                             _minuteController.text.isEmpty
@@ -297,8 +302,8 @@ class _ClockBoxState extends State<ClockBox> {
                         : '${_hourController.text}:${_minuteController.text}',
                     textColorInLight: _hourController.text.isEmpty &&
                             _minuteController.text.isEmpty
-                        ? Color(0xffCAC4CF)
-                        : Color(0xff540E5C),
+                        ? const Color(0xffCAC4CF)
+                        : const Color(0xff540E5C),
                   ),
                 ],
               ),

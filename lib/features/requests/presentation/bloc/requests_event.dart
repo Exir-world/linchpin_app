@@ -24,8 +24,8 @@ class RequestCreateEvent extends RequestsEvent {
 
   RequestCreateEvent({
     required this.type,
-    this.description,
     required this.startTime,
+    this.description,
     this.endTime,
   });
 }

@@ -15,10 +15,10 @@ void main() async {
   await configureDependencies(environment: Env.prod);
   runApp(
     EasyLocalization(
-      supportedLocales: [Locale('en'), Locale('fa')],
+      supportedLocales: [const Locale('en'), const Locale('fa')],
       path: 'assets/translations',
-      fallbackLocale: Locale('en'),
-      startLocale: Locale('fa'),
+      fallbackLocale: const Locale('en'),
+      startLocale: const Locale('fa'),
       child: const MyApp(),
     ),
   );
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
         locale: context.locale,
         theme: ThemeData(
           useMaterial3: true,
-          scaffoldBackgroundColor: Color(0xffFAFAFF),
+          scaffoldBackgroundColor: const Color(0xffFAFAFF),
         ),
         home: const AuthScreen(),
       ),

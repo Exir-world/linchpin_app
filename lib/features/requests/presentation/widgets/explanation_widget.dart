@@ -30,8 +30,8 @@ class _ExplanationWidgetState extends State<ExplanationWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        NormalMedium('توضیح'),
-        SizedBox(height: 12),
+        const NormalMedium('توضیح'),
+        const SizedBox(height: 12),
         WillPopScope(
           onWillPop: () async {
             if (_focusNode.hasFocus) {
@@ -45,23 +45,23 @@ class _ExplanationWidgetState extends State<ExplanationWidget> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Color(0xffE0E0F9),
+                color: const Color(0xffE0E0F9),
               ),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: TextField(
               controller: _controller,
               maxLines: null,
               minLines: 5, // حداقل یک خط ارتفاع
               focusNode: _focusNode,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: FontFamily.iRANSansXFARegular,
                 fontSize: 12,
               ),
               onChanged: (value) {
                 ExplanationWidget.explanationNotifire.value = value;
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 isCollapsed: true, // حذف فاصله اضافی داخلی
                 border: InputBorder.none, // حذف حاشیه پیش‌فرض TextField
                 fillColor: Colors.white,

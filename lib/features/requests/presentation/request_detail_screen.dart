@@ -109,7 +109,10 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                         ExplanationWidget.explanationNotifire.value;
 
                     String? formatDateTime(
-                        String date, String? hour, String? minute) {
+                      String date,
+                      String? hour,
+                      String? minute,
+                    ) {
                       if (hour == null || minute == null) {
                         return null;
                       }
@@ -123,8 +126,10 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                       return dateTime.toString().replaceAll(' ', 'T');
                     }
 
-                    void sendRequest(
-                        {required String startTime, String? endTime}) {
+                    void sendRequest({
+                      required String startTime,
+                      String? endTime,
+                    }) {
                       BlocProvider.of<RequestsBloc>(context).add(
                         RequestCreateEvent(
                           type: type!,
@@ -176,7 +181,9 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                             );
                             if (startTime != null && endTime != null) {
                               sendRequest(
-                                  startTime: startTime, endTime: endTime);
+                                startTime: startTime,
+                                endTime: endTime,
+                              );
                             }
                           }
                           break;
@@ -196,13 +203,15 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                 : null,
             child: Container(
               height: 56,
-              margin: EdgeInsets.symmetric(horizontal: 24),
+              margin: const EdgeInsets.symmetric(horizontal: 24),
               decoration: BoxDecoration(
-                color: isEnabled ? Color(0xff861C8C) : Color(0xffCAC4CF),
+                color: isEnabled
+                    ? const Color(0xff861C8C)
+                    : const Color(0xffCAC4CF),
                 borderRadius: BorderRadius.circular(12),
               ),
               alignment: Alignment.center,
-              child: NormalMedium(
+              child: const NormalMedium(
                 'ثبت درخواست',
                 textColorInLight: Colors.white,
               ),
@@ -217,7 +226,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
         },
         child: SafeArea(
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: BlocConsumer<RequestsBloc, RequestsState>(
               listener: (context, state) {
                 if (state is RequestCreateCompleted) {
@@ -247,17 +256,18 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: padding_Horizantalx),
+                          horizontal: padding_Horizantalx,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(height: 24),
-                            BigDemiBold('ثبت درخواست'),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
+                            const BigDemiBold('ثبت درخواست'),
+                            const SizedBox(height: 24),
                             BoxRequestType(
                               state: state.requestTypesEntity,
                             ),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
                             ValueListenableBuilder(
                               valueListenable:
                                   BoxRequestType.selectedItemNotifire,
@@ -281,7 +291,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                                   BoxRequestType.selectedItemNotifire,
                               builder: (context, selectedItem, child) {
                                 if (selectedItem == 'HOURLY_LEAVE') {
-                                  return Column(
+                                  return const Column(
                                     children: [
                                       SizedBox(height: 24),
                                       ClockBox(
@@ -304,13 +314,16 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                                     selectedItem == 'HOURLY_LEAVE') {
                                   return PersianDatePicker(
                                     initialDate: DateTime.now(),
-                                    onDateSelected: (persianDateSlash,
-                                        persianDateHyphen, englishDateIso8601) {
+                                    onDateSelected: (
+                                      persianDateSlash,
+                                      persianDateHyphen,
+                                      englishDateIso8601,
+                                    ) {
                                       RequestDetailScreen.startDateNotifire
                                           .value = englishDateIso8601;
                                     },
-                                    padding:
-                                        EdgeInsets.only(bottom: 24, top: 24),
+                                    padding: const EdgeInsets.only(
+                                        bottom: 24, top: 24),
                                     title: 'تاریخ',
                                   );
                                 } else {
@@ -327,24 +340,30 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                                     children: [
                                       PersianDatePicker(
                                         initialDate: DateTime.now(),
-                                        onDateSelected: (persianDateSlash,
-                                            persianDateHyphen,
-                                            englishDateIso8601) {
+                                        onDateSelected: (
+                                          persianDateSlash,
+                                          persianDateHyphen,
+                                          englishDateIso8601,
+                                        ) {
                                           RequestDetailScreen.startDateNotifire
                                               .value = englishDateIso8601;
                                         },
-                                        padding: EdgeInsets.only(bottom: 24),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 24),
                                         title: 'تاریخ شروع',
                                       ),
                                       PersianDatePicker(
                                         initialDate: DateTime.now(),
-                                        onDateSelected: (persianDateSlash,
-                                            persianDateHyphen,
-                                            englishDateIso8601) {
+                                        onDateSelected: (
+                                          persianDateSlash,
+                                          persianDateHyphen,
+                                          englishDateIso8601,
+                                        ) {
                                           RequestDetailScreen.endDateNotifire
                                               .value = englishDateIso8601;
                                         },
-                                        padding: EdgeInsets.only(bottom: 24),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 24),
                                         title: 'تاریخ پایان',
                                       ),
                                     ],
@@ -363,24 +382,30 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                                     children: [
                                       PersianDatePicker(
                                         initialDate: DateTime.now(),
-                                        onDateSelected: (persianDateSlash,
-                                            persianDateHyphen,
-                                            englishDateIso8601) {
+                                        onDateSelected: (
+                                          persianDateSlash,
+                                          persianDateHyphen,
+                                          englishDateIso8601,
+                                        ) {
                                           RequestDetailScreen.startDateNotifire
                                               .value = englishDateIso8601;
                                         },
-                                        padding: EdgeInsets.only(bottom: 24),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 24),
                                         title: 'تاریخ شروع',
                                       ),
                                       PersianDatePicker(
                                         initialDate: DateTime.now(),
-                                        onDateSelected: (persianDateSlash,
-                                            persianDateHyphen,
-                                            englishDateIso8601) {
+                                        onDateSelected: (
+                                          persianDateSlash,
+                                          persianDateHyphen,
+                                          englishDateIso8601,
+                                        ) {
                                           RequestDetailScreen.endDateNotifire
                                               .value = englishDateIso8601;
                                         },
-                                        padding: EdgeInsets.only(bottom: 24),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 24),
                                         title: 'تاریخ پایان',
                                       ),
                                     ],
@@ -395,7 +420,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                                   BoxRequestType.selectedItemNotifire,
                               builder: (context, value, child) {
                                 if (value != null) {
-                                  return ExplanationWidget();
+                                  return const ExplanationWidget();
                                 } else {
                                   return Container();
                                 }
@@ -413,7 +438,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                             child: Container(
                               width: 70,
                               height: 70,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Colors.white,
                                 shape: BoxShape.circle,
                                 boxShadow: [
@@ -424,7 +449,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                                   ),
                                 ],
                               ),
-                              child: Center(
+                              child: const Center(
                                 child: SpinKitFadingCube(
                                   size: 24,
                                   color: Color(0xff670099),
@@ -444,7 +469,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                       child: Container(
                         width: 70,
                         height: 70,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
                           boxShadow: [
@@ -455,7 +480,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                             ),
                           ],
                         ),
-                        child: Center(
+                        child: const Center(
                           child: SpinKitFadingCube(
                             size: 24,
                             color: Color(0xff670099),
@@ -466,14 +491,15 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                   );
                 } else if (state is RequestTypesError) {
                   return SizedBox(
-                      width: context.screenWidth,
-                      height: context.screenHeight,
-                      child: Center(child: SmallRegular(state.textError)));
+                    width: context.screenWidth,
+                    height: context.screenHeight,
+                    child: Center(child: SmallRegular(state.textError)),
+                  );
                 } else {
                   return SizedBox(
                     width: context.screenWidth,
                     height: context.screenHeight,
-                    child: SmallRegular('Technical error'),
+                    child: const SmallRegular('Technical error'),
                   );
                 }
               },

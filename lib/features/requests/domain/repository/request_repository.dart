@@ -17,8 +17,8 @@ abstract class RequestRepository {
   // ثبت درخواست
   Future<DataState<RequestCreateEntity>> requestCreate({
     required String type,
-    String? description,
     required String startTime,
+    String? description,
     String? endTime,
   });
 }

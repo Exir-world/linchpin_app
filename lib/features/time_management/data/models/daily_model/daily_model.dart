@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin_app/features/time_management/domain/entity/daily_entity.dart';
-import 'user.dart';
+import 'package:linchpin_app/features/time_management/data/models/daily_model/user.dart';
 
 @immutable
 class DailyModel extends DailyEntity {

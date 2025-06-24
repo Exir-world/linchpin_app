@@ -14,11 +14,11 @@ class PersianDatePicker extends StatefulWidget {
   )? onDateSelected;
 
   const PersianDatePicker({
-    super.key,
     required this.initialDate,
-    this.onDateSelected,
     required this.title,
     required this.padding,
+    super.key,
+    this.onDateSelected,
   });
 
   @override
@@ -121,13 +121,15 @@ class _PersianDatePickerState extends State<PersianDatePicker> {
                             children: [
                               Assets.icons.calendar.svg(
                                 colorFilter: const ColorFilter.mode(
-                                    Color(0xffCAC4CF), BlendMode.srcIn),
+                                  Color(0xffCAC4CF),
+                                  BlendMode.srcIn,
+                                ),
                               ),
                               const SizedBox(width: 8),
                               persianDateSlash == null
-                                  ? NormalRegular(
+                                  ? const NormalRegular(
                                       "--/--/--",
-                                      textColorInLight: const Color(0xffCAC4CF),
+                                      textColorInLight: Color(0xffCAC4CF),
                                     )
                                   : NormalRegular(persianDateSlash),
                             ],

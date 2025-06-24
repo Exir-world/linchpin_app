@@ -9,7 +9,8 @@ Future<DataState<T>> handleError<T>(DioException e) async {
   if (e.response == null) {
     if (e.type == DioExceptionType.receiveTimeout) {
       return DataFailed(
-          'It looks like your internet is connected, but the server took some time to respond.');
+        'It looks like your internet is connected, but the server took some time to respond.',
+      );
     } else {
       return DataFailed('Check your internet or vpn status.');
     }

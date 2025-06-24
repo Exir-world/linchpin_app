@@ -13,9 +13,9 @@ class BoxIncreaseDecrease extends StatelessWidget {
   final Color iconColor;
 
   const BoxIncreaseDecrease({
-    super.key,
     required this.onTap, // مقدار onTap که عمل مورد نظر را هنگام لمس دکمه انجام می‌دهد.
     required this.icon, // آیکون مورد نظر که در دکمه نمایش داده می‌شود.
+    super.key,
     this.iconColor = const Color(0xff861C8C), // رنگ پیش‌فرض آیکون، بنفش است.
   });
 
@@ -29,7 +29,8 @@ class BoxIncreaseDecrease extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white, // رنگ پس‌زمینه دکمه سفید است.
           borderRadius: BorderRadius.circular(
-              8), // گوشه‌های دکمه به‌صورت گرد طراحی شده‌اند.
+            8,
+          ), // گوشه‌های دکمه به‌صورت گرد طراحی شده‌اند.
           boxShadow: [
             // سایه‌ای ظریف برای دکمه به‌منظور ایجاد افکت برجسته.
             BoxShadow(

@@ -15,7 +15,9 @@ class AuthRepositoryImpl extends AuthRepository {
   AuthRepositoryImpl(this.apiAuth);
   @override
   Future<DataState<LoginEntity>> login(
-      String phoneNumber, String password) async {
+    String phoneNumber,
+    String password,
+  ) async {
     try {
       Response response = await apiAuth.login(phoneNumber, password);
       LoginEntity loginEntity = LoginModel.fromJson(response.data);
