@@ -1,13 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:linchpin/core/common/dimens.dart';
+import 'package:linchpin/core/common/progress_button.dart';
 import 'package:linchpin/core/common/spacing_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
 
 class VisitorScreen extends StatefulWidget {
   const VisitorScreen({super.key});
@@ -17,18 +21,29 @@ class VisitorScreen extends StatefulWidget {
 }
 
 class _VisitorScreenState extends State<VisitorScreen> {
+  ValueNotifier<bool> isLoadingNotifire = ValueNotifier(false);
   final mapController = MapController();
   final ImagePicker picker = ImagePicker();
+  late VisitorBloc bloc;
   XFile? photo;
+  Position? position;
   List<XFile?> photos = [];
   final List<LatLng> _positions = []; // لیست موقعیت‌ها
   final mapCenter = LatLng(
       AccessLocationScreen.latitudeNotifire.value ?? 35.6892,
       AccessLocationScreen.longitudeNotifire.value ?? 51.3890);
   Future<void> _getLocationAndShowMarker() async {
-    // انتقال دوربین به موقعیت جدید
+    LocationService locationService = LocationService();
+    position = await locationService.getUserLocation();
+    if (!mounted) return;
+    if (position == null) {
+      isLoadingNotifire.value = false;
+      _showSnackbar("خطا در دریافت موقعیت مکانی یا دسترسی رد شده است.");
+      return;
+    }
     setState(() {
       final lat = LatLng(35.6892, 51.3890);
+      // final lat = LatLng(position.latitude, position.longitude);
       mapController.move(lat, 16);
       _positions.add(lat);
       // mapController.move(mapCenter, 16);
@@ -36,71 +51,119 @@ class _VisitorScreenState extends State<VisitorScreen> {
     });
   }
 
+  //! نمایش پیام خطا
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  @override
+  void initState() {
+    bloc = getIt<VisitorBloc>();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          _showMap(),
-          VerticalSpace(50),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              // ProgressButton(
-              //   width: context.screenWidth * 0.3,
-              //   height: context.screenHeight * 0.05,
-              //   label: 'ثبت موقعیت',
-              //   onTap: () {},
-              // ),
-              ElevatedButton(
-                  onPressed: _getLocationAndShowMarker,
-                  child: Text('ثبت موقعیت')),
-              ElevatedButton(
-                  onPressed: () async {
-                    photo = await picker.pickImage(source: ImageSource.camera);
-                    photos.add(photo);
-                  },
-                  child: Text('اضافه کردن عکس')),
-            ],
-          ),
-          VerticalSpace(20),
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: photos.length,
-              itemBuilder: (context, index) {
-                final photo = photos[index];
-                if (photo == null) return SizedBox();
+    return BlocProvider(
+      create: (context) => bloc,
+      child: BlocConsumer<VisitorBloc, VisitorState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          return Scaffold(
+            body: Column(
+              children: [
+                _showMap(),
+                VerticalSpace(50),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    // ProgressButton(
+                    //   width: context.screenWidth * 0.3,
+                    //   height: context.screenHeight * 0.05,
+                    //   label: 'ثبت موقعیت',
+                    //   onTap: () {},
+                    // ),
 
-                return Padding(
-                  padding: EdgeInsets.all(8),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.file(
-                      File(photo.path),
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
+                    ProgressButton(
+                      width: 130,
+                      height: 40,
+                      label: 'ثبت موقعیت',
+                      onTap: _getLocationAndShowMarker,
                     ),
-                  ),
-                );
-              },
-            ),
-          )
+                    ProgressButton(
+                      width: 130,
+                      height: 40,
+                      label: 'اضافه کردن عکس',
+                      onTap: () async {
+                        photo =
+                            await picker.pickImage(source: ImageSource.camera);
+                        setState(() {
+                          photos.add(photo);
+                        });
+                      },
+                    ),
+                    ProgressButton(
+                      width: 130,
+                      height: 40,
+                      isEnabled: photo != null && photos.isNotEmpty,
+                      label: 'ارسال',
+                      onTap: () {
+                        setState(() {
+                          photo = null;
+                          bloc.add(SaveLocationEvent(
+                            position: _positions.isNotEmpty
+                                ? _positions.last
+                                : LatLng(35.6892, 51.3890),
+                            img: photos.isNotEmpty ? photos.last?.path : null,
+                          ));
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                VerticalSpace(40),
+                SizedBox(
+                  height: 100,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: photos.length,
+                    itemBuilder: (context, index) {
+                      final photo = photos[index];
+                      if (photo == null) return SizedBox();
 
-          // Row(
-          //   children: [
-          //     Image.file(
-          //       photo != null
-          //           ? File(photo!.path)
-          //           : File('assets/images/placeholder.png'),
-          //       width: 200,
-          //       height: 100,
-          //     ),
-          //   ],
-          // ),
-        ],
+                      return Padding(
+                        padding: EdgeInsets.all(8),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: Image.file(
+                            File(photo.path),
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+
+                // Row(
+                //   children: [
+                //     Image.file(
+                //       photo != null
+                //           ? File(photo!.path)
+                //           : File('assets/images/placeholder.png'),
+                //       width: 200,
+                //       height: 100,
+                //     ),
+                //   ],
+                // ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -122,7 +185,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
       children: [
         SizedBox(
           width: context.screenWidth * 0.95,
-          height: 300,
+          height: context.screenHeight * 0.5,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: FlutterMap(
@@ -130,7 +193,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
               options: MapOptions(
                 initialCenter: _positions.isNotEmpty
                     ? _positions.last
-                    : LatLng(35.6892, 51.3890), // پیش‌فرض تهران
+                    : LatLng(35.6892, 51.3890),
                 // zoom: 12,
               ),
               children: [

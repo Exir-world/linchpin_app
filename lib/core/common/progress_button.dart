@@ -36,48 +36,51 @@ class ProgressButton extends StatelessWidget {
   Widget build(BuildContext context) {
     Color buttonColor = Colors.grey;
     if (isLoading) {
-      buttonColor = CupertinoColors.systemIndigo;
+      buttonColor = CupertinoColors.systemGrey3;
     } else if (isEnabled) {
       // buttonColor = BUTTON_BACKGROUND_COLOR;
-      buttonColor = btnColor ?? CupertinoColors.systemOrange;
+      buttonColor = btnColor ?? CupertinoColors.activeBlue;
     } else {
-      buttonColor = CupertinoColors.systemPink;
+      buttonColor = CupertinoColors.systemGrey4;
     }
 
-    return Container(
-      width: width ?? context.screenWidth * 0.64, //! 232px
-      height: height ?? context.screenHeight * 0.075, //! 48px
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: buttonColor,
-      ),
-      child: isLoading
-          //! جلوگیری از repaint شدن کل ویجت ها
-          ? const RepaintBoundary(
-              child: CupertinoActivityIndicator(
-                color: CupertinoColors.systemGreen,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: width ?? context.screenWidth * 0.64, //! 232px
+        height: height ?? context.screenHeight * 0.075, //! 48px
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: buttonColor,
+        ),
+        child: isLoading
+            //! جلوگیری از repaint شدن کل ویجت ها
+            ? const RepaintBoundary(
+                child: CupertinoActivityIndicator(
+                  color: CupertinoColors.systemGreen,
+                ),
+              )
+            : Row(
+                mainAxisAlignment: widget != null
+                    ? MainAxisAlignment.spaceAround
+                    : MainAxisAlignment.center,
+                children: [
+                  widgetText ??
+                      NormalRegular(
+                        label,
+                        textColorInLight: !isEnabled && textColor == null
+                            ? CupertinoColors.label
+                            : textColor ??
+                                CupertinoColors.tertiarySystemBackground,
+                        textColorInDark: !isEnabled && textColor == null
+                            ? CupertinoColors.tertiarySystemBackground
+                            : textColor ?? CupertinoColors.systemGrey6,
+                      ),
+                  widget ?? const EmptyContainer(),
+                ],
               ),
-            )
-          : Row(
-              mainAxisAlignment: widget != null
-                  ? MainAxisAlignment.spaceAround
-                  : MainAxisAlignment.center,
-              children: [
-                widgetText ??
-                    NormalRegular(
-                      label,
-                      textColorInLight: !isEnabled && textColor == null
-                          ? CupertinoColors.systemYellow
-                          : textColor ??
-                              CupertinoColors.tertiarySystemBackground,
-                      textColorInDark: !isEnabled && textColor == null
-                          ? CupertinoColors.tertiarySystemBackground
-                          : textColor ?? CupertinoColors.systemGrey6,
-                    ),
-                widget ?? const EmptyContainer(),
-              ],
-            ),
+      ),
     );
   }
 }
