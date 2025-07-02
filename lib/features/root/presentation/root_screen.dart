@@ -4,6 +4,7 @@ import 'package:linchpin/features/growth/presentation/growth_screen.dart';
 import 'package:linchpin/features/performance_report/presentation/last_quarter_report_screen.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
 import 'package:linchpin/features/time_management/presentation/time_management_screen.dart';
+import 'package:linchpin/features/visitor/presentation/visitor_screen.dart';
 import 'package:linchpin/gen/assets.gen.dart';
 
 class RootScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class RootScreen extends StatefulWidget {
 }
 
 class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
+  bool isActive = true;
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -50,16 +52,28 @@ class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
       body: ValueListenableBuilder<int>(
         valueListenable: RootScreen.itemSelectedNotifire,
         builder: (context, value, child) {
-          return IndexedStack(
-            index: value, // تعیین اینکه کدام تب فعال باشه
+          return isActive
+              ? IndexedStack(
+                  index: value, // تعیین اینکه کدام تب فعال باشه
 
-            children: [
-              TimeManagementScreen(),
-              DutiesScreen(),
-              LastQuarterReportScreen(),
-              GrowthScreen(),
-            ],
-          );
+                  children: [
+                    TimeManagementScreen(),
+                    DutiesScreen(),
+                    LastQuarterReportScreen(),
+                    GrowthScreen(),
+                    VisitorScreen(),
+                  ],
+                )
+              : IndexedStack(
+                  index: value, // تعیین اینکه کدام تب فعال باشه
+
+                  children: [
+                    TimeManagementScreen(),
+                    DutiesScreen(),
+                    LastQuarterReportScreen(),
+                    GrowthScreen(),
+                  ],
+                );
         },
       ),
       bottomNavigationBar: Container(
@@ -97,32 +111,65 @@ class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
                   onTap: (value) {
                     RootScreen.itemSelectedNotifire.value = value;
                   },
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: value == 0
-                          ? Assets.icons.clockAddPlusA.svg()
-                          : Assets.icons.clockAddPlus.svg(),
-                      label: "",
-                    ),
-                    BottomNavigationBarItem(
-                      icon: value == 1
-                          ? Assets.icons.boardTasksA.svg()
-                          : Assets.icons.boardTasks.svg(),
-                      label: "",
-                    ),
-                    BottomNavigationBarItem(
-                      icon: value == 2
-                          ? Assets.icons.activityA.svg()
-                          : Assets.icons.activity.svg(),
-                      label: "",
-                    ),
-                    BottomNavigationBarItem(
-                      icon: value == 3
-                          ? Assets.icons.leaves.svg()
-                          : Assets.icons.leavesOff.svg(),
-                      label: "",
-                    ),
-                  ],
+                  items: isActive
+                      ? [
+                          BottomNavigationBarItem(
+                            icon: value == 0
+                                ? Assets.icons.clockAddPlusA.svg()
+                                : Assets.icons.clockAddPlus.svg(),
+                            label: "",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: value == 1
+                                ? Assets.icons.boardTasksA.svg()
+                                : Assets.icons.boardTasks.svg(),
+                            label: "",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: value == 2
+                                ? Assets.icons.activityA.svg()
+                                : Assets.icons.activity.svg(),
+                            label: "",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: value == 3
+                                ? Assets.icons.leaves.svg()
+                                : Assets.icons.leavesOff.svg(),
+                            label: "",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: value == 4
+                                ? Assets.icons.leaves.svg()
+                                : Assets.icons.leavesOff.svg(),
+                            label: "",
+                          ),
+                        ]
+                      : [
+                          BottomNavigationBarItem(
+                            icon: value == 0
+                                ? Assets.icons.clockAddPlusA.svg()
+                                : Assets.icons.clockAddPlus.svg(),
+                            label: "",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: value == 1
+                                ? Assets.icons.boardTasksA.svg()
+                                : Assets.icons.boardTasks.svg(),
+                            label: "",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: value == 2
+                                ? Assets.icons.activityA.svg()
+                                : Assets.icons.activity.svg(),
+                            label: "",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: value == 3
+                                ? Assets.icons.leaves.svg()
+                                : Assets.icons.leavesOff.svg(),
+                            label: "",
+                          ),
+                        ],
                 ),
               );
             },

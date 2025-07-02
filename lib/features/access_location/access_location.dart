@@ -107,8 +107,8 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
   /// تابع اصلی برای کنترل دسترسی به موقعیت مکانی و هدایت صفحه
   void _handleLocationAccess() async {
     isLoadingNotifire.value = true;
-
-    final position = await _getUserLocation();
+    LocationService locationService = LocationService();
+    final position = await locationService.getUserLocation();
     if (!mounted) return;
 
     if (position == null) {
@@ -132,8 +132,30 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
     }
   }
 
-  /// دریافت موقعیت مکانی کاربر
-  Future<Position?> _getUserLocation() async {
+  //! دریافت توکن از SharedPreferences
+  Future<String?> _getUserToken() async {
+    final prefService = PrefService();
+    return await prefService.readCacheString(SharedKey.jwtToken);
+  }
+
+  //! هدایت به یک صفحه جدید
+  void _goTo(Widget page) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => page),
+    );
+  }
+
+  /// نمایش پیام خطا
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+}
+
+//! دریافت موقعیت مکانی کاربر
+class LocationService {
+  Future<Position?> getUserLocation() async {
     if (kIsWeb) {
       try {
         return await Geolocator.getCurrentPosition();
@@ -164,25 +186,5 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
     } catch (_) {
       return null;
     }
-  }
-
-  /// دریافت توکن از SharedPreferences
-  Future<String?> _getUserToken() async {
-    final prefService = PrefService();
-    return await prefService.readCacheString(SharedKey.jwtToken);
-  }
-
-  /// هدایت به یک صفحه جدید
-  void _goTo(Widget page) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => page),
-    );
-  }
-
-  /// نمایش پیام خطا
-  void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
   }
 }

@@ -234,6 +234,7 @@ class NormalBold extends CustomText {
       super.textColorInLight,
       super.textColorInDark,
       super.decoration,
+      super.maxLines,
       super.overflow})
       : super(
           size: TEXT_SIZE_NORMAL,
