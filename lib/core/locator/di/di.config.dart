@@ -102,6 +102,15 @@ import 'package:linchpin/features/time_management/domain/use_case/time_managemen
     as _i436;
 import 'package:linchpin/features/time_management/presentation/bloc/time_management_bloc.dart'
     as _i658;
+import 'package:linchpin/features/visitor/data/api_visitor.dart' as _i547;
+import 'package:linchpin/features/visitor/data/repository/visitor_repository.dart'
+    as _i989;
+import 'package:linchpin/features/visitor/domain/repository/visitor_repository.dart'
+    as _i1051;
+import 'package:linchpin/features/visitor/domain/use_case/upload_usecase.dart'
+    as _i870;
+import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart'
+    as _i573;
 
 const String _prod = 'prod';
 
@@ -118,7 +127,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     final dioProvider = _$DioProvider();
     gh.factory<_i361.Dio>(() => dioProvider.httpclient);
-    gh.factory<_i573.VisitorBloc>(() => _i573.VisitorBloc());
     gh.singleton<_i675.ApiAuth>(() => _i675.ApiAuth(gh<_i361.Dio>()));
     gh.singleton<_i96.ApiDuties>(() => _i96.ApiDuties(gh<_i361.Dio>()));
     gh.singleton<_i302.ApiGrowth>(() => _i302.ApiGrowth(gh<_i361.Dio>()));
@@ -131,7 +139,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i554.ApiRequest>(() => _i554.ApiRequest(gh<_i361.Dio>()));
     gh.singleton<_i864.ApiTimeMamagement>(
         () => _i864.ApiTimeMamagement(gh<_i361.Dio>()));
-    gh.singleton<_i60.ApiProperty>(() => _i60.ApiProperty(gh<_i361.Dio>()));
+    gh.singleton<_i547.ApiProperty>(() => _i547.ApiProperty(gh<_i361.Dio>()));
     gh.singleton<_i246.TimeManagementRepository>(
       () => _i762.TimeManagementRepositoryImpl(gh<_i864.ApiTimeMamagement>()),
       registerFor: {_prod},
@@ -161,8 +169,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i375.AuthUsecaseImpl(gh<_i703.PaySlipRepository>()),
       registerFor: {_prod},
     );
-    gh.factory<_i573.VisitorBloc>(
-        () => _i573.VisitorBloc(gh<_i870.UploadUsecase>()));
     gh.singleton<_i436.TimeManagementUsecase>(
       () =>
           _i436.TimeManagementUsecaseImpl(gh<_i246.TimeManagementRepository>()),
@@ -180,6 +186,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i152.DutiesRepositoryImpl(gh<_i96.ApiDuties>()),
       registerFor: {_prod},
     );
+    gh.singleton<_i1051.VisitorRepository>(
+      () => _i989.VisitorRepositoryImpl(),
+      registerFor: {_prod},
+    );
     gh.factoryAsync<_i361.Response<dynamic>>(
         () => dioProvider.refresh(gh<String>()));
     gh.singleton<_i761.PropertyUsecase>(
@@ -188,6 +198,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i658.TimeManagementBloc>(
         () => _i658.TimeManagementBloc(gh<_i436.TimeManagementUsecase>()));
+    gh.singleton<_i870.UploadUsecase>(
+      () => _i870.UploadImageImpl(gh<_i1051.VisitorRepository>()),
+      registerFor: {_prod},
+    );
     gh.factory<_i616.PropertyBloc>(
         () => _i616.PropertyBloc(gh<_i761.PropertyUsecase>()));
     gh.factory<_i12.PaySlipBloc>(
@@ -219,6 +233,8 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i145.RequestUsecaseImpl(gh<_i1038.RequestRepository>()),
       registerFor: {_prod},
     );
+    gh.factory<_i573.VisitorBloc>(
+        () => _i573.VisitorBloc(gh<_i870.UploadUsecase>()));
     gh.factory<_i4.LastQuarterReportBloc>(
         () => _i4.LastQuarterReportBloc(gh<_i46.LastQuarterReportUsecase>()));
     gh.factory<_i501.GrowthBloc>(
