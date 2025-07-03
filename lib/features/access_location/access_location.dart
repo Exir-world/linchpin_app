@@ -109,6 +109,8 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
     isLoadingNotifire.value = true;
     LocationService locationService = LocationService();
     final position = await locationService.getUserLocation();
+    LocationService locationService = LocationService();
+    final position = await locationService.getUserLocation();
     if (!mounted) return;
 
     if (position == null) {

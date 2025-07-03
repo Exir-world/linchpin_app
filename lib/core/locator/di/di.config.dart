@@ -102,11 +102,6 @@ import 'package:linchpin/features/time_management/domain/use_case/time_managemen
     as _i436;
 import 'package:linchpin/features/time_management/presentation/bloc/time_management_bloc.dart'
     as _i658;
-import 'package:linchpin/features/visitor/data/api_visitor.dart' as _i547;
-import 'package:linchpin/features/visitor/domain/use_case/upload_usecase.dart'
-    as _i870;
-import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart'
-    as _i573;
 
 const String _prod = 'prod';
 
@@ -123,6 +118,7 @@ extension GetItInjectableX on _i174.GetIt {
     );
     final dioProvider = _$DioProvider();
     gh.factory<_i361.Dio>(() => dioProvider.httpclient);
+    gh.factory<_i573.VisitorBloc>(() => _i573.VisitorBloc());
     gh.singleton<_i675.ApiAuth>(() => _i675.ApiAuth(gh<_i361.Dio>()));
     gh.singleton<_i96.ApiDuties>(() => _i96.ApiDuties(gh<_i361.Dio>()));
     gh.singleton<_i302.ApiGrowth>(() => _i302.ApiGrowth(gh<_i361.Dio>()));
@@ -135,7 +131,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i554.ApiRequest>(() => _i554.ApiRequest(gh<_i361.Dio>()));
     gh.singleton<_i864.ApiTimeMamagement>(
         () => _i864.ApiTimeMamagement(gh<_i361.Dio>()));
-    gh.singleton<_i547.ApiProperty>(() => _i547.ApiProperty(gh<_i361.Dio>()));
+    gh.singleton<_i60.ApiProperty>(() => _i60.ApiProperty(gh<_i361.Dio>()));
     gh.singleton<_i246.TimeManagementRepository>(
       () => _i762.TimeManagementRepositoryImpl(gh<_i864.ApiTimeMamagement>()),
       registerFor: {_prod},
