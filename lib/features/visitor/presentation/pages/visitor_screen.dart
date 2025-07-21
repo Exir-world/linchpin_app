@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:linchpin/core/common/constants.dart';
+import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/common/progress_button.dart';
 import 'package:linchpin/core/common/spacing_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
@@ -66,6 +68,12 @@ class _VisitorScreenState extends State<VisitorScreen> {
   }
 
   @override
+  void dispose() {
+    bloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => bloc,
@@ -73,95 +81,92 @@ class _VisitorScreenState extends State<VisitorScreen> {
         listener: (context, state) {},
         builder: (context, state) {
           return Scaffold(
-            body: Column(
-              children: [
-                _showMap(),
-                VerticalSpace(50),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+            body: SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    // ProgressButton(
-                    //   width: context.screenWidth * 0.3,
-                    //   height: context.screenHeight * 0.05,
-                    //   label: 'ثبت موقعیت',
-                    //   onTap: () {},
-                    // ),
-
-                    ProgressButton(
-                      width: context.screenWidth * .34,
-                      height: 40,
-                      label: 'ثبت موقعیت',
-                      onTap: _getLocationAndShowMarker,
+                    _showMap(),
+                    VerticalSpace(50),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ProgressButton(
+                            width: context.screenWidth * .34,
+                            height: 40,
+                            label: 'ثبت موقعیت',
+                            onTap: _getLocationAndShowMarker,
+                          ),
+                          ProgressButton(
+                            width: context.screenWidth * .34,
+                            height: 40,
+                            label:
+                                photos.isEmpty ? 'گرفتن عکس' : 'اضافه کردن عکس',
+                            onTap: () async {
+                              photo = await picker.pickImage(
+                                  source: ImageSource.camera);
+                              setState(() {
+                                photos.add(photo);
+                              });
+                            },
+                          ),
+                          ProgressButton(
+                            width: context.screenWidth * .25,
+                            height: 40,
+                            isEnabled: photo != null && photos.isNotEmpty,
+                            label: 'ارسال',
+                            onTap: () {
+                              setState(() {
+                                bloc.add(SaveLocationEvent(
+                                  position: _positions.isNotEmpty
+                                      ? _positions.last
+                                      : LatLng(
+                                          AccessLocationScreen
+                                                  .latitudeNotifire.value ??
+                                              35.6892,
+                                          AccessLocationScreen
+                                                  .longitudeNotifire.value ??
+                                              51.3890,
+                                        ),
+                                  // img: photos.isNotEmpty ? photos : null,
+                                ));
+                                photo = null;
+                                photos.clear();
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    ProgressButton(
-                      width: context.screenWidth * .34,
-                      height: 40,
-                      label: 'اضافه کردن عکس',
-                      onTap: () async {
-                        photo =
-                            await picker.pickImage(source: ImageSource.camera);
-                        setState(() {
-                          photos.add(photo);
-                        });
+                    VerticalSpace(40),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      itemCount: photos.length,
+                      itemBuilder: (context, index) {
+                        final photo = photos[index];
+                        if (photo == null) return SizedBox();
+                        return ListTile(
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(
+                              File(photo.path),
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          title: SmallMedium(
+                            'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ',
+                          ),
+                        );
                       },
                     ),
-                    ProgressButton(
-                      width: context.screenWidth * .25,
-                      height: 40,
-                      isEnabled: photo != null && photos.isNotEmpty,
-                      label: 'ارسال',
-                      onTap: () {
-                        setState(() {
-                          photo = null;
-                          bloc.add(SaveLocationEvent(
-                            position: _positions.isNotEmpty
-                                ? _positions.last
-                                : LatLng(35.6892, 51.3890),
-                            // img: photos.isNotEmpty ? photos.last?.path : null,
-                          ));
-                        });
-                      },
-                    ),
+                    VerticalSpace(20),
                   ],
                 ),
-                VerticalSpace(40),
-                SizedBox(
-                  height: 100,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: photos.length,
-                    itemBuilder: (context, index) {
-                      final photo = photos[index];
-                      if (photo == null) return SizedBox();
-
-                      return Padding(
-                        padding: EdgeInsets.all(8),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: Image.file(
-                            File(photo.path),
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                )
-
-                // Row(
-                //   children: [
-                //     Image.file(
-                //       photo != null
-                //           ? File(photo!.path)
-                //           : File('assets/images/placeholder.png'),
-                //       width: 200,
-                //       height: 100,
-                //     ),
-                //   ],
-                // ),
-              ],
+              ),
             ),
           );
         },
@@ -185,8 +190,8 @@ class _VisitorScreenState extends State<VisitorScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: context.screenWidth * 0.95,
-          height: context.screenHeight * 0.5,
+          width: context.screenWidth * 0.9,
+          height: context.screenHeight * 0.45,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: FlutterMap(
@@ -194,14 +199,18 @@ class _VisitorScreenState extends State<VisitorScreen> {
               options: MapOptions(
                 initialCenter: _positions.isNotEmpty
                     ? _positions.last
-                    : LatLng(35.6892, 51.3890),
-                // zoom: 12,
+                    : LatLng(
+                        AccessLocationScreen.latitudeNotifire.value ?? 35.6892,
+                        AccessLocationScreen.longitudeNotifire.value ?? 51.3890,
+                      ),
+                initialZoom: 16,
               ),
               children: [
                 TileLayer(
                   urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c'],
+                      'https://api.neshan.org/v2/static?key=${Constants.API_KY_MAP}&type=neshan&zoom=15&center=${AccessLocationScreen.latitudeNotifire.value},${AccessLocationScreen.longitudeNotifire.value}&width=500&height=500&marker=red',
+                  // urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.linchpinx.app.linchpinx',
                 ),
                 MarkerLayer(
                   markers: _positions
@@ -231,66 +240,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
                 ),
               ],
             ),
-            // child: FlutterMap(
-            //   mapController: mapController,
-            //   options: MapOptions(
-            //     initialCenter: LatLng(
-            //       AccessLocationScreen.latitudeNotifire.value ?? 36.29608,
-            //       AccessLocationScreen.longitudeNotifire.value ?? 59.57204,
-            //     ),
-            //     initialZoom: 16.5,
-            //   ),
-            //   children: [
-            //     TileLayer(
-            //       urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            //     ),
-            //     PolylineLayer(
-            //       polylines: [
-            //         Polyline(
-            //           points: [
-            //             LatLng(
-            //               double.parse(
-            //                 AccessLocationScreen.latitudeNotifire.value
-            //                     .toString(),
-            //                 // '36.29608',
-            //               ),
-            //               double.parse(
-            //                 AccessLocationScreen.longitudeNotifire.value
-            //                     .toString(),
-            //                 // '59.57204',
-            //               ),
-            //             ),
-            //           ],
-            //           strokeWidth: 8,
-            //           color: Colors.deepOrange,
-            //         ),
-            //       ],
-            //     ),
-            //     MarkerLayer(
-            //       markers: [
-            //         Marker(
-            //           point: LatLng(
-            //             double.parse(
-            //               AccessLocationScreen.latitudeNotifire.value
-            //                   .toString(),
-            //               // '36.29608',
-            //             ),
-            //             double.parse(
-            //               AccessLocationScreen.longitudeNotifire.value
-            //                   .toString(),
-            //               // '59.57204',
-            //             ),
-            //           ),
-            //           child: const Icon(
-            //             Icons.location_on,
-            //             color: Colors.red,
-            //             size: 30,
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ],
-            // ),
           ),
         ),
       ],

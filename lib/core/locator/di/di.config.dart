@@ -22,6 +22,8 @@ import 'package:linchpin/features/auth/domain/use_case/auth_usecase.dart'
     as _i817;
 import 'package:linchpin/features/auth/presentation/bloc/auth_bloc.dart'
     as _i12;
+import 'package:linchpin/features/auth/presentation/widgets/device_info.dart'
+    as _i363;
 import 'package:linchpin/features/duties/data/data_source/api_duties.dart'
     as _i96;
 import 'package:linchpin/features/duties/data/repository/duties_repository_impl.dart'
@@ -140,6 +142,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i864.ApiTimeMamagement>(
         () => _i864.ApiTimeMamagement(gh<_i361.Dio>()));
     gh.singleton<_i547.ApiProperty>(() => _i547.ApiProperty(gh<_i361.Dio>()));
+    gh.lazySingleton<_i363.DeviceInfo>(() => _i363.DeviceInfoImpl());
     gh.singleton<_i246.TimeManagementRepository>(
       () => _i762.TimeManagementRepositoryImpl(gh<_i864.ApiTimeMamagement>()),
       registerFor: {_prod},
@@ -223,6 +226,10 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i713.LastQuarterReportRepository>()),
       registerFor: {_prod},
     );
+    gh.factory<_i12.AuthBloc>(() => _i12.AuthBloc(
+          gh<_i817.AuthUsecase>(),
+          gh<_i363.DeviceInfo>(),
+        ));
     gh.singleton<_i71.GrowthUsecase>(
       () => _i71.GrowthUsecaseUsecaseImpl(gh<_i443.GrowthRepository>()),
       registerFor: {_prod},
@@ -239,7 +246,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i4.LastQuarterReportBloc(gh<_i46.LastQuarterReportUsecase>()));
     gh.factory<_i501.GrowthBloc>(
         () => _i501.GrowthBloc(gh<_i71.GrowthUsecase>()));
-    gh.factory<_i12.AuthBloc>(() => _i12.AuthBloc(gh<_i817.AuthUsecase>()));
     gh.factory<_i785.RequestsBloc>(
         () => _i785.RequestsBloc(gh<_i145.RequestUsecase>()));
     gh.factory<_i377.NotificationsBloc>(
