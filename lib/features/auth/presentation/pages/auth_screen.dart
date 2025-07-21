@@ -31,7 +31,6 @@ class _AuthScreenState extends State<AuthScreen> with WidgetsBindingObserver {
   TextEditingController accountController = TextEditingController();
   TextEditingController passController = TextEditingController();
   final PrefService prefService = PrefService();
-  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
   @override
   void initState() {

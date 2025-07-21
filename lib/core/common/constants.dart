@@ -3,6 +3,8 @@
 class Constants {
   // static const baseUrl = "https://linchpin.ex.pro/api/";
   static const baseUrl = "https://api.exirtu.be/api/";
+  static const String API_KY_MAP = "service.8e847b8c736041349628c2b2706778a4";
+  static const String BASE_URL_MAP = "https://api.neshan.org/v5/reverse/";
   static const int OTP_TIMER_SECONDS = 90;
   static const int OTP_LENGTH = 5;
   static const int CONNECTION_TIMEOUT_SECONDS = 60;

@@ -1,9 +1,11 @@
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:injectable/injectable.dart';
 
 abstract class DeviceInfo {
   Future<DeviceInfoItems> deviceInfo();
 }
 
+@LazySingleton(as: DeviceInfo)
 class DeviceInfoImpl extends DeviceInfo {
   @override
   Future<DeviceInfoItems> deviceInfo() async {
