@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:linchpin_app/core/resources/data_state.dart';
-import 'package:linchpin_app/core/resources/entity/success_entity.dart';
-import 'package:linchpin_app/features/requests/domain/entity/request_create_entity.dart';
-import 'package:linchpin_app/features/requests/domain/entity/request_types_entity.dart';
-import 'package:linchpin_app/features/requests/domain/entity/request_user_entity.dart';
-import 'package:linchpin_app/features/requests/domain/usecase/request_usecase.dart';
+import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/core/resources/entity/success_entity.dart';
+import 'package:linchpin/features/requests/domain/entity/request_create_entity.dart';
+import 'package:linchpin/features/requests/domain/entity/request_types_entity.dart';
+import 'package:linchpin/features/requests/domain/entity/request_user_entity.dart';
+import 'package:linchpin/features/requests/domain/usecase/request_usecase.dart';
 
 part 'requests_event.dart';
 part 'requests_state.dart';

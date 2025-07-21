@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
+import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 import 'day_view.dart';
 import 'month_view.dart';
@@ -54,7 +54,7 @@ class PersianCalendar {
 
     // بررسی اینکه آیا فضای کافی در پایین صفحه وجود دارد
     final bool hasEnoughSpaceBelow =
-        (position.dy + renderBox.size.height + 8 + calendarHeight) <
+        (position.dy + renderBox.size.height + 16 + calendarHeight) <
             screenHeight;
 
     dropdownOverlay.value = OverlayEntry(

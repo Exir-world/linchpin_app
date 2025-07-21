@@ -1,482 +1,662 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:linchpin_app/core/common/dimens.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
-import 'package:linchpin_app/features/requests/presentation/bloc/requests_bloc.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/box_request_type.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/clock_box.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/explanation_widget.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/persian_date_picker.dart';
-import 'package:linchpin_app/features/root/presentation/app_bar_root.dart';
+import 'package:linchpin/core/common/custom_text.dart';
+import 'package:linchpin/core/customui/error_ui_widget.dart';
+import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/core/customui/snackbar_verify.dart';
+import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
+import 'package:linchpin/features/requests/presentation/bloc/requests_bloc.dart';
+import 'package:linchpin/features/requests/presentation/widgets/box_request_type.dart';
+import 'package:linchpin/features/requests/presentation/widgets/clock_picker_example.dart';
+import 'package:linchpin/features/requests/presentation/widgets/explanation_widget.dart';
+import 'package:linchpin/features/requests/presentation/widgets/persian_date_picker.dart';
+import 'package:linchpin/features/root/presentation/app_bar_root.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 
 class RequestDetailScreen extends StatefulWidget {
   const RequestDetailScreen({super.key});
 
   @override
   State<RequestDetailScreen> createState() => _RequestDetailScreenState();
-  static ValueNotifier<String?> startDateNotifire = ValueNotifier(null);
-  static ValueNotifier<String?> endDateNotifire = ValueNotifier(null);
-  static ValueNotifier<bool> isButtonEnabled = ValueNotifier(false);
+  static late ValueNotifier<String?> startDateNotifire;
+  static late ValueNotifier<String?> endDateNotifire;
+  static late ValueNotifier<bool> isButtonEnabled;
+
+  // نوتیفایرهای جدید برای ساعت و دقیقه شروع و پایان
+  static late ValueNotifier<int?> startHourNotifire;
+  static late ValueNotifier<int?> startMinuteNotifire;
+  static late ValueNotifier<int?> endHourNotifire;
+  static late ValueNotifier<int?> endMinuteNotifire;
+
+  static late ValueNotifier<bool> isStartDateFilled;
+  static late ValueNotifier<bool> isEndDateFilled;
+  static late ValueNotifier<bool> isStartHourFilled;
+  static late ValueNotifier<bool> isStartMinuteFilled;
+  static late ValueNotifier<bool> isEndHourFilled;
+  static late ValueNotifier<bool> isEndMinuteFilled;
 }
 
-class _RequestDetailScreenState extends State<RequestDetailScreen> {
+class _RequestDetailScreenState extends State<RequestDetailScreen>
+    with WidgetsBindingObserver {
+  late RequestsBloc _bloc;
   bool isLoading = false;
+  void checkFormCompletion() {
+    final type = BoxRequestType.selectedItemNotifire.value;
+
+    bool isComplete = false;
+
+    // Reset isButtonEnabled to false when the request type changes
+    if (type == null) {
+      RequestDetailScreen.isButtonEnabled.value = false;
+      return;
+    } else {
+      switch (type) {
+        case 'MANUAL_CHECK_IN':
+        case 'MANUAL_CHECK_OUT':
+          // Needs start date, start hour, and start minute
+          isComplete = RequestDetailScreen.isStartDateFilled.value &&
+              RequestDetailScreen.isStartHourFilled.value &&
+              RequestDetailScreen.isStartMinuteFilled.value;
+          break;
+        case 'HOURLY_LEAVE':
+          // Needs start date, start hour, start minute, end hour, and end minute
+          isComplete = RequestDetailScreen.isStartDateFilled.value &&
+              RequestDetailScreen.isStartHourFilled.value &&
+              RequestDetailScreen.isStartMinuteFilled.value &&
+              RequestDetailScreen.isEndHourFilled.value &&
+              RequestDetailScreen.isEndMinuteFilled.value;
+          break;
+        case 'SICK_LEAVE':
+        case 'DAILY_LEAVE':
+          // Needs start date and end date
+          isComplete = RequestDetailScreen.isStartDateFilled.value &&
+              RequestDetailScreen.isEndDateFilled.value;
+          break;
+      }
+
+      // Update isButtonEnabled based on form completion
+      RequestDetailScreen.isButtonEnabled.value = isComplete;
+    }
+  }
+
   @override
   void initState() {
-    BoxRequestType.selectedItemNotifire.addListener(checkFormCompletion);
-    RequestDetailScreen.startDateNotifire.addListener(checkFormCompletion);
-    RequestDetailScreen.endDateNotifire.addListener(checkFormCompletion);
-    ClockBox.hourNotifireStrat.addListener(checkFormCompletion);
-    ClockBox.minuteNotifireStart.addListener(checkFormCompletion);
-    ClockBox.hourNotifireEnd.addListener(checkFormCompletion);
-    ClockBox.minuteNotifireEnd.addListener(checkFormCompletion);
-    BoxRequestType.selectedItemNotifire.value = null;
-    RequestDetailScreen.startDateNotifire.value = null;
-    RequestDetailScreen.endDateNotifire.value = null;
-    ClockBox.hourNotifireStrat.value = null;
-    ClockBox.minuteNotifireStart.value = null;
-    BlocProvider.of<RequestsBloc>(context).add(RequestTypesEvent());
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _bloc = getIt<RequestsBloc>();
+    RequestDetailScreen.startDateNotifire = ValueNotifier(null);
+    RequestDetailScreen.endDateNotifire = ValueNotifier(null);
+    RequestDetailScreen.startHourNotifire = ValueNotifier(null);
+    RequestDetailScreen.startMinuteNotifire = ValueNotifier(null);
+    RequestDetailScreen.endHourNotifire = ValueNotifier(null);
+    RequestDetailScreen.endMinuteNotifire = ValueNotifier(null);
+    RequestDetailScreen.isButtonEnabled = ValueNotifier(false);
+    RequestDetailScreen.isStartDateFilled = ValueNotifier(false);
+    RequestDetailScreen.isEndDateFilled = ValueNotifier(false);
+    RequestDetailScreen.isStartHourFilled = ValueNotifier(false);
+    RequestDetailScreen.isStartMinuteFilled = ValueNotifier(false);
+    RequestDetailScreen.isEndHourFilled = ValueNotifier(false);
+    RequestDetailScreen.isEndMinuteFilled = ValueNotifier(false);
+    BoxRequestType.selectedItemNotifire.value = null;
+    RequestDetailScreen.isStartDateFilled.addListener(checkFormCompletion);
+    RequestDetailScreen.isEndDateFilled.addListener(checkFormCompletion);
+    RequestDetailScreen.isStartHourFilled.addListener(checkFormCompletion);
+    RequestDetailScreen.isEndHourFilled.addListener(checkFormCompletion);
+    RequestDetailScreen.isStartMinuteFilled.addListener(checkFormCompletion);
+    RequestDetailScreen.isEndMinuteFilled.addListener(checkFormCompletion);
+    _bloc.add(RequestTypesEvent());
+  }
+
+  void updateNotifier(ValueNotifier<bool> notifier, bool value) {
+    if (notifier.value != value) {
+      notifier.value = value;
+      checkFormCompletion();
+    }
   }
 
   @override
   void dispose() {
-    BoxRequestType.selectedItemNotifire.removeListener(checkFormCompletion);
-    RequestDetailScreen.startDateNotifire.removeListener(checkFormCompletion);
-    RequestDetailScreen.endDateNotifire.removeListener(checkFormCompletion);
-    ClockBox.hourNotifireStrat.removeListener(checkFormCompletion);
-    ClockBox.minuteNotifireStart.removeListener(checkFormCompletion);
-    ClockBox.hourNotifireEnd.removeListener(checkFormCompletion);
-    ClockBox.minuteNotifireEnd.removeListener(checkFormCompletion);
+    WidgetsBinding.instance.removeObserver(this);
+    RequestDetailScreen.isStartDateFilled.removeListener(checkFormCompletion);
+    RequestDetailScreen.isEndDateFilled.removeListener(checkFormCompletion);
+    RequestDetailScreen.isStartHourFilled.removeListener(checkFormCompletion);
+    RequestDetailScreen.isEndHourFilled.removeListener(checkFormCompletion);
+    RequestDetailScreen.isStartMinuteFilled.removeListener(checkFormCompletion);
+    RequestDetailScreen.isEndMinuteFilled.removeListener(checkFormCompletion);
+    RequestDetailScreen.startDateNotifire.dispose();
+    RequestDetailScreen.endDateNotifire.dispose();
+    RequestDetailScreen.startHourNotifire.dispose();
+    RequestDetailScreen.startMinuteNotifire.dispose();
+    RequestDetailScreen.endHourNotifire.dispose();
+    RequestDetailScreen.endMinuteNotifire.dispose();
+    RequestDetailScreen.isButtonEnabled.dispose();
+    RequestDetailScreen.isStartDateFilled.dispose();
+    RequestDetailScreen.isEndDateFilled.dispose();
+    RequestDetailScreen.isStartHourFilled.dispose();
+    RequestDetailScreen.isStartMinuteFilled.dispose();
+    RequestDetailScreen.isEndHourFilled.dispose();
+    RequestDetailScreen.isEndMinuteFilled.dispose();
+
+    _bloc.close();
+
     super.dispose();
   }
 
-  void checkFormCompletion() {
-    final type = BoxRequestType.selectedItemNotifire.value;
-    final startDate = RequestDetailScreen.startDateNotifire.value;
-    final endDate = RequestDetailScreen.endDateNotifire.value;
-    final hourStart = ClockBox.hourNotifireStrat.value;
-    final minuteStart = ClockBox.minuteNotifireStart.value;
-    final hourEnd = ClockBox.hourNotifireEnd.value;
-    final minuteEnd = ClockBox.minuteNotifireEnd.value;
-
-    bool isComplete = false;
-
-    switch (type) {
-      case 'MANUAL_CHECK_IN':
-      case 'MANUAL_CHECK_OUT':
-        isComplete =
-            startDate != null && hourStart != null && minuteStart != null;
-        break;
-
-      case 'HOURLY_LEAVE':
-        isComplete = startDate != null &&
-            hourStart != null &&
-            minuteStart != null &&
-            hourEnd != null &&
-            minuteEnd != null;
-        break;
-
-      case 'SICK_LEAVE':
-      case 'DAILY_LEAVE':
-        isComplete = startDate != null && endDate != null;
-        break;
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      PaintingBinding.instance.reassembleApplication();
     }
-
-    RequestDetailScreen.isButtonEnabled.value = isComplete;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBarRoot(context, true),
-      resizeToAvoidBottomInset: true,
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterFloat,
-      floatingActionButton: ValueListenableBuilder<bool>(
-        valueListenable: RequestDetailScreen.isButtonEnabled,
-        builder: (context, isEnabled, child) {
-          return GestureDetector(
-            onTap: isEnabled
-                ? () {
-                    final type = BoxRequestType.selectedItemNotifire.value;
-                    final startDate =
-                        RequestDetailScreen.startDateNotifire.value;
-                    final endDate = RequestDetailScreen.endDateNotifire.value;
-                    final description =
-                        ExplanationWidget.explanationNotifire.value;
+    return BlocProvider(
+      create: (context) => _bloc,
+      child: Scaffold(
+        appBar: appBarRoot(
+          context,
+          true,
+          () => Navigator.pop(context),
+        ),
+        resizeToAvoidBottomInset: true,
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.miniCenterFloat,
+        floatingActionButton: isLoading
+            ? null
+            : ValueListenableBuilder(
+                valueListenable: BoxRequestType.selectedItemNotifire,
+                builder: (context, value, child) {
+                  if (value == null) {
+                    return Container();
+                  } else {
+                    return ValueListenableBuilder<bool>(
+                      valueListenable: RequestDetailScreen.isButtonEnabled,
+                      builder: (context, isEnabled, child) {
+                        return GestureDetector(
+                          onTap: isEnabled
+                              ? () {
+                                  final type =
+                                      BoxRequestType.selectedItemNotifire.value;
+                                  final startDate = RequestDetailScreen
+                                      .startDateNotifire.value;
+                                  final endDate =
+                                      RequestDetailScreen.endDateNotifire.value;
+                                  final description = ExplanationWidget
+                                      .explanationNotifire.value;
 
-                    String? formatDateTime(
-                        String date, String? hour, String? minute) {
-                      if (hour == null || minute == null) {
-                        return null;
-                      }
-                      final dateTime = DateTime.parse(date)
-                          .toLocal()
-                          .copyWith(
-                            hour: int.parse(hour),
-                            minute: int.parse(minute),
-                          )
-                          .toUtc();
-                      return dateTime.toString().replaceAll(' ', 'T');
-                    }
+                                  String? formatDateTime(String date,
+                                      String? hour, String? minute) {
+                                    if (hour == null || minute == null) {
+                                      return null;
+                                    }
+                                    final dateTime = DateTime.parse(date)
+                                        .toLocal()
+                                        .copyWith(
+                                          hour: int.parse(hour),
+                                          minute: int.parse(minute),
+                                        )
+                                        .toUtc();
+                                    return dateTime
+                                        .toString()
+                                        .replaceAll(' ', 'T');
+                                  }
 
-                    void sendRequest(
-                        {required String startTime, String? endTime}) {
-                      BlocProvider.of<RequestsBloc>(context).add(
-                        RequestCreateEvent(
-                          type: type!,
-                          description: description,
-                          startTime: startTime,
-                          endTime: endTime,
+                                  void sendRequest(
+                                      {required String startTime,
+                                      String? endTime}) {
+                                    _bloc.add(
+                                      RequestCreateEvent(
+                                        type: type!,
+                                        description: description,
+                                        startTime: startTime,
+                                        endTime: endTime,
+                                      ),
+                                    );
+                                  }
+
+                                  // بررسی شرایط برای هر نوع درخواست و ارسال آن
+                                  switch (type) {
+                                    case 'MANUAL_CHECK_IN':
+                                    case 'MANUAL_CHECK_OUT':
+                                      {
+                                        if (startDate != null &&
+                                            RequestDetailScreen
+                                                    .startHourNotifire.value !=
+                                                null &&
+                                            RequestDetailScreen
+                                                    .startMinuteNotifire
+                                                    .value !=
+                                                null) {
+                                          final startTime = formatDateTime(
+                                            startDate,
+                                            RequestDetailScreen
+                                                .startHourNotifire.value
+                                                .toString(),
+                                            RequestDetailScreen
+                                                .startMinuteNotifire.value
+                                                .toString(),
+                                          );
+                                          if (startTime != null) {
+                                            sendRequest(startTime: startTime);
+                                          }
+                                        }
+                                        break;
+                                      }
+
+                                    case 'HOURLY_LEAVE':
+                                      {
+                                        if (startDate != null &&
+                                            RequestDetailScreen
+                                                    .startHourNotifire.value !=
+                                                null &&
+                                            RequestDetailScreen
+                                                    .startMinuteNotifire
+                                                    .value !=
+                                                null &&
+                                            RequestDetailScreen
+                                                    .endHourNotifire.value !=
+                                                null &&
+                                            RequestDetailScreen
+                                                    .endMinuteNotifire.value !=
+                                                null) {
+                                          final startTime = formatDateTime(
+                                            startDate,
+                                            RequestDetailScreen
+                                                .startHourNotifire.value
+                                                .toString(),
+                                            RequestDetailScreen
+                                                .startMinuteNotifire.value
+                                                .toString(),
+                                          );
+                                          final endTime = formatDateTime(
+                                            startDate,
+                                            RequestDetailScreen
+                                                .endHourNotifire.value
+                                                .toString(),
+                                            RequestDetailScreen
+                                                .endMinuteNotifire.value
+                                                .toString(),
+                                          );
+                                          if (startTime != null &&
+                                              endTime != null) {
+                                            sendRequest(
+                                                startTime: startTime,
+                                                endTime: endTime);
+                                          }
+                                        }
+                                        break;
+                                      }
+
+                                    case 'SICK_LEAVE':
+                                    case 'DAILY_LEAVE':
+                                      {
+                                        if (startDate != null &&
+                                            endDate != null) {
+                                          sendRequest(
+                                              startTime: startDate,
+                                              endTime: endDate);
+                                        }
+                                        break;
+                                      }
+                                  }
+                                }
+                              : null,
+                          child: Container(
+                            height: 56,
+                            margin: EdgeInsets.symmetric(horizontal: 24),
+                            decoration: BoxDecoration(
+                              color: isEnabled
+                                  ? Color(0xff861C8C)
+                                  : Color(0xffCAC4CF),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            alignment: Alignment.center,
+                            child: NormalMedium(
+                              LocaleKeys.submitARequest.tr(),
+                              textColorInLight: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+        body: GestureDetector(
+          onTap: () {
+            // زمانی که کاربر خارج از متن کلیک کند، فوکوس برداشته می‌شود
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: BlocConsumer<RequestsBloc, RequestsState>(
+                listener: (context, state) {
+                  if (state is RequestCreateCompleted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarVerify(
+                        context: context,
+                        title: 'ثبت موفق آمیز بود',
+                        desc: '',
+                        icon: Assets.icons.check.svg(),
+                      ),
+                    );
+                    Navigator.pop(context, true);
+                  } else if (state is RequestCreateLoading) {
+                    setState(() {
+                      isLoading = true;
+                    });
+                  } else if (state is RequestCreateError) {
+                    setState(() {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        snackBarVerify(
+                          context: context,
+                          title: state.textError,
+                          desc: '',
+                          icon: Assets.icons.close.svg(),
                         ),
                       );
-                    }
-
-                    // بررسی شرایط برای هر نوع درخواست و ارسال آن
-                    switch (type) {
-                      case 'MANUAL_CHECK_IN':
-                      case 'MANUAL_CHECK_OUT':
-                        {
-                          // بررسی اینکه آیا تاریخ شروع و ساعت ورود پر شده‌اند
-                          if (startDate != null &&
-                              ClockBox.hourNotifireStrat.value != null &&
-                              ClockBox.minuteNotifireStart.value != null) {
-                            final startTime = formatDateTime(
-                              startDate,
-                              ClockBox.hourNotifireStrat.value,
-                              ClockBox.minuteNotifireStart.value,
-                            );
-                            if (startTime != null) {
-                              sendRequest(startTime: startTime);
-                            }
-                          }
-                          break;
-                        }
-
-                      case 'HOURLY_LEAVE':
-                        {
-                          // بررسی اینکه تاریخ شروع، ساعت شروع و ساعت پایان پر شده‌اند
-                          if (startDate != null &&
-                              ClockBox.hourNotifireStrat.value != null &&
-                              ClockBox.minuteNotifireStart.value != null &&
-                              ClockBox.hourNotifireEnd.value != null &&
-                              ClockBox.minuteNotifireEnd.value != null) {
-                            final startTime = formatDateTime(
-                              startDate,
-                              ClockBox.hourNotifireStrat.value,
-                              ClockBox.minuteNotifireStart.value,
-                            );
-                            final endTime = formatDateTime(
-                              startDate,
-                              ClockBox.hourNotifireEnd.value,
-                              ClockBox.minuteNotifireEnd.value,
-                            );
-                            if (startTime != null && endTime != null) {
-                              sendRequest(
-                                  startTime: startTime, endTime: endTime);
-                            }
-                          }
-                          break;
-                        }
-
-                      case 'SICK_LEAVE':
-                      case 'DAILY_LEAVE':
-                        {
-                          // بررسی اینکه تاریخ شروع و تاریخ پایان پر شده‌اند
-                          if (startDate != null && endDate != null) {
-                            sendRequest(startTime: startDate, endTime: endDate);
-                          }
-                          break;
-                        }
-                    }
+                      isLoading = false;
+                    });
                   }
-                : null,
-            child: Container(
-              height: 56,
-              margin: EdgeInsets.symmetric(horizontal: 24),
-              decoration: BoxDecoration(
-                color: isEnabled ? Color(0xff861C8C) : Color(0xffCAC4CF),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              alignment: Alignment.center,
-              child: NormalMedium(
-                'ثبت درخواست',
-                textColorInLight: Colors.white,
-              ),
-            ),
-          );
-        },
-      ),
-      body: GestureDetector(
-        onTap: () {
-          // زمانی که کاربر خارج از متن کلیک کند، فوکوس برداشته می‌شود
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: SafeArea(
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: BlocConsumer<RequestsBloc, RequestsState>(
-              listener: (context, state) {
-                if (state is RequestCreateCompleted) {
-                  Navigator.pop(context, true);
-                } else if (state is RequestCreateLoading) {
-                  setState(() {
-                    isLoading = true;
-                  });
-                } else if (state is RequestCreateError) {
-                  setState(() {
-                    isLoading = false;
-                  });
-                }
-              },
-              buildWhen: (previous, current) {
-                if (current is RequestTypesCompleted ||
-                    current is RequestTypesLoading ||
-                    current is RequestTypesError) {
-                  return true;
-                } else {
-                  return false;
-                }
-              },
-              builder: (context, state) {
-                if (state is RequestTypesCompleted) {
-                  return Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: padding_Horizantalx),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 24),
-                            BigDemiBold('ثبت درخواست'),
-                            SizedBox(height: 24),
-                            BoxRequestType(
-                              state: state.requestTypesEntity,
-                            ),
-                            SizedBox(height: 24),
-                            ValueListenableBuilder(
-                              valueListenable:
-                                  BoxRequestType.selectedItemNotifire,
-                              builder: (context, selectedItem, child) {
-                                if (selectedItem == 'MANUAL_CHECK_IN' ||
-                                    selectedItem == 'MANUAL_CHECK_OUT' ||
-                                    selectedItem == 'HOURLY_LEAVE') {
-                                  return ClockBox(
-                                    title: selectedItem == 'MANUAL_CHECK_OUT'
-                                        ? 'ساعت خروج'
-                                        : 'ساعت ورود',
-                                    isEndTime: false,
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            ),
-                            ValueListenableBuilder(
-                              valueListenable:
-                                  BoxRequestType.selectedItemNotifire,
-                              builder: (context, selectedItem, child) {
-                                if (selectedItem == 'HOURLY_LEAVE') {
-                                  return Column(
-                                    children: [
-                                      SizedBox(height: 24),
-                                      ClockBox(
-                                        title: 'ساعت خروج',
-                                        isEndTime: true,
-                                      ),
-                                    ],
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            ),
-                            ValueListenableBuilder(
-                              valueListenable:
-                                  BoxRequestType.selectedItemNotifire,
-                              builder: (context, selectedItem, child) {
-                                if (selectedItem == 'MANUAL_CHECK_IN' ||
-                                    selectedItem == 'MANUAL_CHECK_OUT' ||
-                                    selectedItem == 'HOURLY_LEAVE') {
-                                  return PersianDatePicker(
-                                    initialDate: DateTime.now(),
-                                    onDateSelected: (persianDateSlash,
-                                        persianDateHyphen, englishDateIso8601) {
-                                      RequestDetailScreen.startDateNotifire
-                                          .value = englishDateIso8601;
-                                    },
-                                    padding:
-                                        EdgeInsets.only(bottom: 24, top: 24),
-                                    title: 'تاریخ',
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            ),
-                            ValueListenableBuilder(
-                              valueListenable:
-                                  BoxRequestType.selectedItemNotifire,
-                              builder: (context, selectedItem, child) {
-                                if (selectedItem == 'DAILY_LEAVE') {
-                                  return Column(
-                                    children: [
-                                      PersianDatePicker(
-                                        initialDate: DateTime.now(),
-                                        onDateSelected: (persianDateSlash,
-                                            persianDateHyphen,
-                                            englishDateIso8601) {
+                },
+                buildWhen: (previous, current) {
+                  if (current is RequestTypesCompleted ||
+                      current is RequestTypesLoading ||
+                      current is RequestTypesError) {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                },
+                builder: (context, state) {
+                  if (state is RequestTypesCompleted) {
+                    // جهت مدیریت همزمان محتوا و لودینگ
+                    return Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 24),
+                              BigDemiBold(LocaleKeys.submitARequest.tr()),
+                              SizedBox(height: 24),
+                              // باکس نوع درخواست
+                              BoxRequestType(state: state.requestTypesEntity),
+                              SizedBox(height: 24),
+                              // زمانی که نوع درخواست تردد ورود یا تردد خروج یا مرخصی ساعتی باشه
+                              // ساعت
+                              ValueListenableBuilder(
+                                valueListenable:
+                                    BoxRequestType.selectedItemNotifire,
+                                builder: (context, selectedItem, child) {
+                                  if (selectedItem == 'MANUAL_CHECK_IN' ||
+                                      selectedItem == 'MANUAL_CHECK_OUT' ||
+                                      selectedItem == 'HOURLY_LEAVE') {
+                                    return ClockPickerExample(
+                                      title: selectedItem == 'MANUAL_CHECK_OUT'
+                                          ? 'ساعت خروج'
+                                          : selectedItem == 'HOURLY_LEAVE'
+                                              ? LocaleKeys.startTime.tr()
+                                              : 'ساعت ورود',
+                                      onChange: (TimeOfDay time) {
+                                        // ذخیره ساعت و دقیقه در نوتیفایرهای جدید
+                                        RequestDetailScreen.startHourNotifire
+                                            .value = time.hour;
+                                        updateNotifier(
+                                            RequestDetailScreen
+                                                .isStartHourFilled,
+                                            true);
+                                        RequestDetailScreen.startMinuteNotifire
+                                            .value = time.minute;
+                                        updateNotifier(
+                                            RequestDetailScreen
+                                                .isStartMinuteFilled,
+                                            true);
+                                      },
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                },
+                              ),
+                              // زمانی نوع درخواست مرخصی ساعتی باشه
+                              // ساعت خروج
+                              ValueListenableBuilder(
+                                valueListenable:
+                                    BoxRequestType.selectedItemNotifire,
+                                builder: (context, selectedItem, child) {
+                                  if (selectedItem == 'HOURLY_LEAVE') {
+                                    return Column(
+                                      children: [
+                                        SizedBox(height: 24),
+                                        ClockPickerExample(
+                                          title: 'ساعت پایان',
+                                          onChange: (TimeOfDay time) {
+                                            // ذخیره ساعت و دقیقه پایان در نوتیفایرهای جدید
+                                            RequestDetailScreen.endHourNotifire
+                                                .value = time.hour;
+                                            updateNotifier(
+                                                RequestDetailScreen
+                                                    .isEndHourFilled,
+                                                true);
+                                            RequestDetailScreen
+                                                .endMinuteNotifire
+                                                .value = time.minute;
+                                            updateNotifier(
+                                                RequestDetailScreen
+                                                    .isEndMinuteFilled,
+                                                true);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                },
+                              ),
+                              // زمانی که نوع درخواست تردد ورود یا تردد خروج یا مرخصی ساعتی باشه
+                              // نمایش تاریخ
+                              ValueListenableBuilder(
+                                valueListenable:
+                                    BoxRequestType.selectedItemNotifire,
+                                builder: (context, selectedItem, child) {
+                                  if (selectedItem == 'MANUAL_CHECK_IN' ||
+                                      selectedItem == 'MANUAL_CHECK_OUT' ||
+                                      selectedItem == 'HOURLY_LEAVE') {
+                                    return PersianDatePicker(
+                                      initialDate: DateTime.now(),
+                                      onDateSelected: (persianDateSlash,
+                                          persianDateHyphen,
+                                          englishDateIso8601) {
+                                        if (englishDateIso8601 != null) {
                                           RequestDetailScreen.startDateNotifire
                                               .value = englishDateIso8601;
-                                        },
-                                        padding: EdgeInsets.only(bottom: 24),
-                                        title: 'تاریخ شروع',
-                                      ),
-                                      PersianDatePicker(
-                                        initialDate: DateTime.now(),
-                                        onDateSelected: (persianDateSlash,
-                                            persianDateHyphen,
-                                            englishDateIso8601) {
-                                          RequestDetailScreen.endDateNotifire
-                                              .value = englishDateIso8601;
-                                        },
-                                        padding: EdgeInsets.only(bottom: 24),
-                                        title: 'تاریخ پایان',
-                                      ),
-                                    ],
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            ),
-                            ValueListenableBuilder(
-                              valueListenable:
-                                  BoxRequestType.selectedItemNotifire,
-                              builder: (context, selectedItem, child) {
-                                if (selectedItem == 'SICK_LEAVE') {
-                                  return Column(
-                                    children: [
-                                      PersianDatePicker(
-                                        initialDate: DateTime.now(),
-                                        onDateSelected: (persianDateSlash,
-                                            persianDateHyphen,
-                                            englishDateIso8601) {
-                                          RequestDetailScreen.startDateNotifire
-                                              .value = englishDateIso8601;
-                                        },
-                                        padding: EdgeInsets.only(bottom: 24),
-                                        title: 'تاریخ شروع',
-                                      ),
-                                      PersianDatePicker(
-                                        initialDate: DateTime.now(),
-                                        onDateSelected: (persianDateSlash,
-                                            persianDateHyphen,
-                                            englishDateIso8601) {
-                                          RequestDetailScreen.endDateNotifire
-                                              .value = englishDateIso8601;
-                                        },
-                                        padding: EdgeInsets.only(bottom: 24),
-                                        title: 'تاریخ پایان',
-                                      ),
-                                    ],
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            ),
-                            ValueListenableBuilder(
-                              valueListenable:
-                                  BoxRequestType.selectedItemNotifire,
-                              builder: (context, value, child) {
-                                if (value != null) {
-                                  return ExplanationWidget();
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (isLoading)
-                        Container(
-                          width: context.screenWidth,
-                          height: context.screenHeight - 120,
-                          color: Colors.white.withValues(alpha: .5),
-                          child: Center(
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 10,
-                                    offset: Offset(0, 5),
-                                  ),
-                                ],
+                                          updateNotifier(
+                                              RequestDetailScreen
+                                                  .isStartDateFilled,
+                                              true);
+                                        } else {
+                                          updateNotifier(
+                                              RequestDetailScreen
+                                                  .isStartDateFilled,
+                                              false);
+                                        }
+                                      },
+                                      padding:
+                                          EdgeInsets.only(bottom: 24, top: 24),
+                                      title: LocaleKeys.date.tr(),
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                },
                               ),
-                              child: Center(
-                                child: SpinKitFadingCube(
-                                  size: 24,
-                                  color: Color(0xff670099),
-                                ),
+                              // زمانی که نوع درخواست، مرخصی روزانه باشد
+                              ValueListenableBuilder(
+                                valueListenable:
+                                    BoxRequestType.selectedItemNotifire,
+                                builder: (context, selectedItem, child) {
+                                  if (selectedItem == 'DAILY_LEAVE') {
+                                    return Column(
+                                      children: [
+                                        PersianDatePicker(
+                                          initialDate: DateTime.now(),
+                                          onDateSelected: (
+                                            persianDateSlash,
+                                            persianDateHyphen,
+                                            englishDateIso8601,
+                                          ) {
+                                            if (englishDateIso8601 != null) {
+                                              RequestDetailScreen
+                                                  .startDateNotifire
+                                                  .value = englishDateIso8601;
+                                              updateNotifier(
+                                                  RequestDetailScreen
+                                                      .isStartDateFilled,
+                                                  true);
+                                            } else {
+                                              updateNotifier(
+                                                  RequestDetailScreen
+                                                      .isStartDateFilled,
+                                                  false);
+                                            }
+                                          },
+                                          padding: EdgeInsets.only(bottom: 24),
+                                          title: LocaleKeys.startDate.tr(),
+                                        ),
+                                        PersianDatePicker(
+                                          initialDate: DateTime.now(),
+                                          onDateSelected: (
+                                            persianDateSlash,
+                                            persianDateHyphen,
+                                            englishDateIso8601,
+                                          ) {
+                                            if (englishDateIso8601 != null) {
+                                              RequestDetailScreen
+                                                  .endDateNotifire
+                                                  .value = englishDateIso8601;
+                                              updateNotifier(
+                                                  RequestDetailScreen
+                                                      .isEndDateFilled,
+                                                  true);
+                                            } else {
+                                              updateNotifier(
+                                                  RequestDetailScreen
+                                                      .isEndDateFilled,
+                                                  false);
+                                            }
+                                          },
+                                          padding: EdgeInsets.only(bottom: 24),
+                                          title: LocaleKeys.endDate.tr(),
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                },
                               ),
-                            ),
+                              // زمانی که نوع درخواست، مرخصی استعلاجی باشد
+                              ValueListenableBuilder(
+                                valueListenable:
+                                    BoxRequestType.selectedItemNotifire,
+                                builder: (context, selectedItem, child) {
+                                  if (selectedItem == 'SICK_LEAVE') {
+                                    return Column(
+                                      children: [
+                                        PersianDatePicker(
+                                          initialDate: DateTime.now(),
+                                          onDateSelected: (persianDateSlash,
+                                              persianDateHyphen,
+                                              englishDateIso8601) {
+                                            if (englishDateIso8601 != null) {
+                                              RequestDetailScreen
+                                                  .startDateNotifire
+                                                  .value = englishDateIso8601;
+                                              updateNotifier(
+                                                  RequestDetailScreen
+                                                      .isStartDateFilled,
+                                                  true);
+                                            } else {
+                                              updateNotifier(
+                                                  RequestDetailScreen
+                                                      .isStartDateFilled,
+                                                  false);
+                                            }
+                                          },
+                                          padding: EdgeInsets.only(bottom: 24),
+                                          title: LocaleKeys.startDate.tr(),
+                                        ),
+                                        PersianDatePicker(
+                                          initialDate: DateTime.now(),
+                                          onDateSelected: (persianDateSlash,
+                                              persianDateHyphen,
+                                              englishDateIso8601) {
+                                            if (englishDateIso8601 != null) {
+                                              RequestDetailScreen
+                                                  .endDateNotifire
+                                                  .value = englishDateIso8601;
+                                              updateNotifier(
+                                                  RequestDetailScreen
+                                                      .isEndDateFilled,
+                                                  true);
+                                            } else {
+                                              updateNotifier(
+                                                  RequestDetailScreen
+                                                      .isEndDateFilled,
+                                                  false);
+                                            }
+                                          },
+                                          padding: EdgeInsets.only(bottom: 24),
+                                          title: LocaleKeys.endDate.tr(),
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                },
+                              ),
+                              // نمایش تکست فیلد توضیحات
+                              ValueListenableBuilder(
+                                valueListenable:
+                                    BoxRequestType.selectedItemNotifire,
+                                builder: (context, value, child) {
+                                  if (value != null) {
+                                    return ExplanationWidget();
+                                  } else {
+                                    return Container();
+                                  }
+                                },
+                              ),
+                            ],
                           ),
                         ),
-                    ],
-                  );
-                } else if (state is RequestTypesLoading) {
-                  return Container(
-                    width: context.screenWidth,
-                    height: context.screenHeight - 120,
-                    color: Colors.white.withValues(alpha: .5),
-                    child: Center(
-                      child: Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 10,
-                              offset: Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: SpinKitFadingCube(
-                            size: 24,
-                            color: Color(0xff670099),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                } else if (state is RequestTypesError) {
-                  return SizedBox(
-                      width: context.screenWidth,
-                      height: context.screenHeight,
-                      child: Center(child: SmallRegular(state.textError)));
-                } else {
-                  return SizedBox(
-                    width: context.screenWidth,
-                    height: context.screenHeight,
-                    child: SmallRegular('Technical error'),
-                  );
-                }
-              },
+                        if (isLoading) LoadingWidget(),
+                      ],
+                    );
+                  } else if (state is RequestTypesLoading) {
+                    return LoadingWidget();
+                  } else if (state is RequestTypesError) {
+                    return ErrorUiWidget(
+                      title: state.textError,
+                      onTap: () {
+                        _bloc.add(RequestTypesEvent());
+                      },
+                    );
+                  } else {
+                    return ErrorUiWidget(
+                      title: 'Technical error',
+                      onTap: () {},
+                    );
+                  }
+                },
+              ),
             ),
           ),
         ),

@@ -1,4 +1,4 @@
-# linchpin_app
+# linchpin
 
 A new Flutter project.
 

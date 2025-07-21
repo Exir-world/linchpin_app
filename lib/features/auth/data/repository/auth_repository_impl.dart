@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:linchpin_app/core/locator/di/di.dart';
-import 'package:linchpin_app/core/resources/data_state.dart';
-import 'package:linchpin_app/core/utils/handle_error.dart';
-import 'package:linchpin_app/features/auth/data/data_source/api_auth.dart';
-import 'package:linchpin_app/features/auth/data/models/login_model.dart';
-import 'package:linchpin_app/features/auth/domain/entity/login_entity.dart';
-import 'package:linchpin_app/features/auth/domain/repository/auth_repository.dart';
+import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/core/utils/handle_error.dart';
+import 'package:linchpin/features/auth/data/data_source/api_auth.dart';
+import 'package:linchpin/features/auth/data/models/login_model.dart';
+import 'package:linchpin/features/auth/domain/entity/login_entity.dart';
+import 'package:linchpin/features/auth/domain/repository/auth_repository.dart';
 
 @Singleton(as: AuthRepository, env: [Env.prod])
 class AuthRepositoryImpl extends AuthRepository {

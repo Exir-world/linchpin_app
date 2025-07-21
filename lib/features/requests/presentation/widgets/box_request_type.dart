@@ -1,9 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/features/requests/domain/entity/request_types_entity.dart';
-import 'package:linchpin_app/features/requests/presentation/request_detail_screen.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/clock_box.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:linchpin/core/common/custom_text.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
+import 'package:linchpin/features/requests/domain/entity/request_types_entity.dart';
+import 'package:linchpin/features/requests/presentation/request_detail_screen.dart';
+import 'package:linchpin/features/requests/presentation/widgets/explanation_widget.dart';
+import 'package:linchpin/features/requests/presentation/widgets/persian_date_picker.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 
 class BoxRequestType extends StatefulWidget {
   final List<RequestTypesEntity> state;
@@ -18,11 +21,11 @@ class BoxRequestType extends StatefulWidget {
 class _BoxRequestTypeState extends State<BoxRequestType> {
   String getTypeLabel(String type) {
     final typeLabels = {
-      'SICK_LEAVE': 'مرخصی استعلاجی',
-      'HOURLY_LEAVE': 'مرخصی ساعتی',
-      'DAILY_LEAVE': 'مرخصی روزانه',
-      'MANUAL_CHECK_OUT': 'تردد دستی (خروج)',
-      'MANUAL_CHECK_IN': 'تردد دستی (ورود)',
+      'SICK_LEAVE': LocaleKeys.sickLeave.tr(),
+      'HOURLY_LEAVE': LocaleKeys.hourlyLeave.tr(),
+      'DAILY_LEAVE': LocaleKeys.dailyLeave.tr(),
+      'MANUAL_CHECK_OUT': LocaleKeys.manualAttendanceExit.tr(),
+      'MANUAL_CHECK_IN': LocaleKeys.manualAttendanceEntry.tr(),
     };
 
     return typeLabels[type] ?? '';
@@ -77,10 +80,32 @@ class _BoxRequestTypeState extends State<BoxRequestType> {
                           selecteditemName = title;
                           BoxRequestType.selectedItemNotifire.value =
                               item.requestId;
+
+                          // پاک کردن مقادیر تاریخ‌ها
                           RequestDetailScreen.startDateNotifire.value = null;
                           RequestDetailScreen.endDateNotifire.value = null;
-                          ClockBox.hourNotifireStrat.value = null;
-                          ClockBox.minuteNotifireStart.value = null;
+
+                          // پاک کردن مقدار ساعت و دقیقه
+                          RequestDetailScreen.startHourNotifire.value = null;
+                          RequestDetailScreen.startMinuteNotifire.value = null;
+                          RequestDetailScreen.endHourNotifire.value = null;
+                          RequestDetailScreen.endMinuteNotifire.value = null;
+
+                          RequestDetailScreen.isButtonEnabled.value = false;
+                          RequestDetailScreen.isEndDateFilled.value = false;
+                          RequestDetailScreen.isEndHourFilled.value = false;
+                          RequestDetailScreen.isEndMinuteFilled.value = false;
+                          RequestDetailScreen.isStartDateFilled.value = false;
+                          RequestDetailScreen.isStartHourFilled.value = false;
+                          RequestDetailScreen.isStartMinuteFilled.value = false;
+
+                          ExplanationWidget.explanationNotifire.value = "";
+                          PersianDatePicker.persianDateSlashNotifierMap
+                              .forEach((key, notifier) {
+                            notifier.value = null;
+                          });
+
+                          // بستن دراپ‌داون
                           _closeDropdown();
                         });
                       },
@@ -129,7 +154,7 @@ class _BoxRequestTypeState extends State<BoxRequestType> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          NormalMedium('نوع درخواست'),
+          NormalMedium(LocaleKeys.typeOfRequest.tr()),
           SizedBox(height: 12),
           GestureDetector(
             onTap: () => _toggleDropdown(
@@ -152,7 +177,7 @@ class _BoxRequestTypeState extends State<BoxRequestType> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   NormalRegular(
-                    selecteditemName ?? 'انتخاب کنید',
+                    selecteditemName ?? LocaleKeys.select.tr(),
                     textColorInLight: selectedItem == null
                         ? Color(0xffCAC4CF)
                         : Color(0xff540E5C),

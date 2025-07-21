@@ -1,18 +1,21 @@
-import 'dart:async';
+import 'package:geolocator/geolocator.dart';
+import 'package:linchpin/core/common/custom_text.dart';
+import 'package:linchpin/core/customui/error_ui_widget.dart';
+import 'package:linchpin/features/access_location/access_location.dart';
+import 'package:linchpin/features/time_management/presentation/widget/box_entry_exit.dart';
+import 'package:linchpin/features/time_management/presentation/widget/button_status.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:linchpin_app/core/common/colors.dart';
-import 'package:linchpin_app/core/common/dimens.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/customui/snackbar_verify.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
-import 'package:linchpin_app/core/translate/locale_keys.dart';
-import 'package:linchpin_app/features/root/presentation/root_screen.dart';
-import 'package:linchpin_app/features/time_management/presentation/bloc/time_management_bloc.dart';
-import 'package:linchpin_app/features/time_management/presentation/widget/circular_timer.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:linchpin/core/common/colors.dart';
+import 'package:linchpin/core/common/dimens.dart';
+import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
+import 'package:linchpin/features/root/presentation/root_screen.dart';
+import 'package:linchpin/features/time_management/presentation/bloc/time_management_bloc.dart';
+import 'package:linchpin/features/time_management/presentation/widget/circular_timer.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class TimeManagementScreen extends StatefulWidget {
@@ -20,40 +23,79 @@ class TimeManagementScreen extends StatefulWidget {
 
   @override
   State<TimeManagementScreen> createState() => _TimeManagementScreenState();
+  static ValueNotifier<String> nameNotifire =
+      ValueNotifier(LocaleKeys.guestUser.tr());
+  static ValueNotifier<String> phoneNotifire =
+      ValueNotifier(LocaleKeys.withoutNumber.tr());
+  static ValueNotifier<double?> latitudeNotifire = ValueNotifier(null);
+  static ValueNotifier<double?> longitudeNotifire = ValueNotifier(null);
 }
 
-class _TimeManagementScreenState extends State<TimeManagementScreen> {
-  bool _isLoading = false;
+class _TimeManagementScreenState extends State<TimeManagementScreen>
+    with WidgetsBindingObserver {
+  late TimeManagementBloc _bloc;
+  ValueNotifier<bool> isLoadingNotifire = ValueNotifier(false);
 
   String? currentStatus;
   String? nameStatus;
 
-  // این موارد فقط برای نمایش در فضای لودینگ دارند استفاده میشن و کاربرد دیگری ندارند
-  String? lv;
-  String? ls;
-  String? lkh;
-  String? lN;
+  void formatDateTime(BuildContext context, DateTime dateTime) {
+    String? language = EasyLocalization.of(context)?.locale.languageCode;
 
-  void formatDateTime(DateTime dateTime) {
-    // تبدیل تاریخ میلادی به تاریخ شمسی
-    Jalali shamsiDate = Jalali.fromDateTime(dateTime);
+    if (language == 'en') {
+      // لیست نام ماه‌های میلادی به انگلیسی
+      List<String> englishMonths = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ];
 
-    // فرمت کردن تاریخ شمسی به صورت "روز ماه" (مثلاً: ۲۲ دی)
-    String formattedDate = '${shamsiDate.day} ${shamsiDate.formatter.mN}';
+      // دریافت نام ماه از لیست
+      String monthName = englishMonths[dateTime.month - 1];
 
-    // شروع تایمر برای به روزرسانی هر ثانیه
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      // به‌روز رسانی زمان هر ثانیه
-      dateTime = dateTime
-          .add(Duration(seconds: 1)); // افزایش یک ثانیه به تاریخ و زمان فعلی
+      // ایجاد فرمت تاریخ مانند "15 March"
+      String formattedDate = '${dateTime.day} $monthName';
+      RootScreen.timeServerNotofire.value = formattedDate;
+    } else if (language == 'ar') {
+      // لیست نام ماه‌های میلادی به عربی
+      List<String> arabicMonths = [
+        "يناير",
+        "فبراير",
+        "مارس",
+        "أبريل",
+        "مايو",
+        "يونيو",
+        "يوليو",
+        "أغسطس",
+        "سبتمبر",
+        "أكتوبر",
+        "نوفمبر",
+        "ديسمبر"
+      ];
 
-      // فرمت کردن زمان (ساعت، دقیقه، ثانیه) از DateTime
-      String formattedTime =
-          '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}';
+      // دریافت نام ماه از لیست
+      String monthName = arabicMonths[dateTime.month - 1];
 
-      // ترکیب تاریخ شمسی و زمان
-      RootScreen.timeServerNotofire.value = '$formattedDate | $formattedTime';
-    });
+      // ایجاد فرمت تاریخ مانند "25 مارس"
+      String formattedDate = '${dateTime.day} $monthName';
+      RootScreen.timeServerNotofire.value = formattedDate;
+    } else {
+      // تبدیل تاریخ میلادی به تاریخ شمسی
+      Jalali shamsiDate = Jalali.fromDateTime(dateTime);
+
+      // فرمت تاریخ شمسی به صورت "روز نام ماه" (مثلاً: ۲۲ دی)
+      String formattedDate = '${shamsiDate.day} ${shamsiDate.formatter.mN}';
+      RootScreen.timeServerNotofire.value = formattedDate;
+    }
   }
 
   // تعداد کاراکتر های متن اگر بیش از حد مجاز باشه
@@ -74,434 +116,380 @@ class _TimeManagementScreenState extends State<TimeManagementScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
+
+    _bloc = getIt<TimeManagementBloc>();
     currentStatus = null;
     nameStatus = null;
-    BlocProvider.of<TimeManagementBloc>(context)
-        .add(DailyEvent(actionType: 'daily'));
-    formatDateTime(DateTime.now()); // نمایش تاریخ و زمان فرمت‌شده
+    _bloc.add(DailyEvent(
+      actionType: 'daily',
+      lat: 0,
+      lng: 0,
+    ));
+    TimeManagementScreen.latitudeNotifire.value = null;
+    TimeManagementScreen.longitudeNotifire.value = null;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      formatDateTime(context, DateTime.now());
+    });
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<TimeManagementBloc, TimeManagementState>(
-      listener: (context, state) {
-        if (state is DailyLoadingState) {
-          setState(() {
-            _isLoading = true;
-          });
-        } else if (state is DailyComplitedState) {
-          nameStatus == null
-              ? null
-              : nameStatus == 'check-in'
-                  ? ScaffoldMessenger.of(context).showSnackBar(
-                      snackBarVerify(
-                        context: context,
-                        title: 'ثبت ورود انجام شد.',
-                        desc: '',
-                        icon: Assets.icons.verify.image(),
-                      ),
-                    )
-                  : nameStatus == 'check-out'
-                      ? ScaffoldMessenger.of(context).showSnackBar(
-                          snackBarVerify(
-                            context: context,
-                            title: 'خروج شما انجام شد.',
-                            desc: '',
-                            icon: Assets.icons.verify.image(),
-                          ),
-                        )
-                      : nameStatus == 'stop-start'
-                          ? ScaffoldMessenger.of(context).showSnackBar(
-                              snackBarVerify(
-                                context: context,
-                                title: 'زمان متوقف شد.',
-                                desc: '',
-                                icon: Assets.icons.verify.image(),
-                              ),
-                            )
-                          : ScaffoldMessenger.of(context)
-                              .showSnackBar(snackBarVerify(
-                              context: context,
-                              title: 'ادامه ساعت کاری فعال شد.',
-                              desc: '',
-                              icon: Assets.icons.verify.image(),
-                            ));
-          setState(() {
-            _isLoading = false;
-          });
-        } else {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      },
-      builder: (context, state) {
-        if (state is DailyComplitedState) {
-          // فرض میکنیم که workDuration از state به دست میاد
-          int workDuration = state.dailyEntity.workDuration ??
-              0; // دریافت مدت زمان کاری به ثانیه
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _bloc.close();
+    super.dispose();
+  }
 
-          // تبدیل workDuration به فرمت ساعت و دقیقه
-          String formattedTime = convertSecondsToTime(workDuration);
-          currentStatus = state.dailyEntity.currentStatus;
-          lN = state.dailyEntity.user?.name ?? '';
-          lkh = state.dailyEntity.lastEndTime;
-          ls = formattedTime;
-          lv = state.dailyEntity.todayStartTime;
-          return Scaffold(
-            backgroundColor: BACKGROUND_LIGHT_COLOR,
-            body: SingleChildScrollView(
-              child: Column(
+  AppLifecycleState? _lastLifecycleState;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_lastLifecycleState == AppLifecycleState.paused &&
+        state == AppLifecycleState.hidden) {
+      _bloc.add(DailyEvent(
+        actionType: 'daily',
+        lat: 0,
+        lng: 0,
+      ));
+      TimeManagementScreen.latitudeNotifire.value = null;
+      TimeManagementScreen.longitudeNotifire.value = null;
+    }
+    _lastLifecycleState = state;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => _bloc,
+      child: BlocConsumer<TimeManagementBloc, TimeManagementState>(
+        listener: (context, state) {
+          if (state is DailyLoadingState) {
+            isLoadingNotifire.value = true;
+          } else if (state is DailyComplitedState) {
+            TimeManagementScreen.nameNotifire.value =
+                state.dailyEntity.user!.name!;
+            TimeManagementScreen.phoneNotifire.value =
+                state.dailyEntity.user!.phoneNumber!;
+            isLoadingNotifire.value = false;
+          } else {
+            isLoadingNotifire.value = false;
+          }
+        },
+        builder: (context, state) {
+          if (state is DailyComplitedState) {
+            // فرض میکنیم که workDuration از state به دست میاد
+            int workDuration = state.dailyEntity.workDuration ??
+                0; // دریافت مدت زمان کاری به ثانیه
+            // تبدیل workDuration به فرمت ساعت و دقیقه
+            String formattedTime = convertSecondsToTime(workDuration);
+            currentStatus = state.dailyEntity.currentStatus;
+            return Scaffold(
+              backgroundColor: BACKGROUND_LIGHT_COLOR,
+              body: Stack(
                 children: [
-                  SizedBox(height: VERTICAL_SPACING_5x),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      BigRegular(LocaleKeys.goodDay.tr()),
-                      SizedBox(width: 4),
-                      BigBold(
-                        _truncateText(state.dailyEntity.user?.name ?? '', 10),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: VERTICAL_SPACING_6x),
-                  CircularTimer(
-                    initTime: currentStatus == 'CHECKED_IN'
-                        ? 0
-                        : currentStatus == 'STOP'
-                            ? 0
-                            : null,
-                    endTime: state.dailyEntity.eachTimeDuration,
-                    openAppTime: state.dailyEntity.currentDuration!,
-                    isTimerAllowed: currentStatus == 'STOP' ? false : true,
-                    shouldReset: currentStatus ==
-                        'CHECKED_OUT', // فقط در صورت "ثبت ورود" ریست شود
-                    remainingDuration: state.dailyEntity.remainingDuration!,
-                    stopDuration: state.dailyEntity.stopDuration!,
-                  ),
-                  SizedBox(height: VERTICAL_SPACING_10x),
-                  currentStatus == 'CHECKED_OUT'
-                      ? ButtonStatus(
-                          colorBackgerand: Color(0xff58EC89),
-                          title: 'ثبت ورود',
-                          icon: Assets.icons.timerTick.svg(),
-                          onTap: () {
-                            nameStatus = 'check-in';
-                            BlocProvider.of<TimeManagementBloc>(context)
-                                .add(DailyEvent(actionType: 'check-in'));
-                          },
-                        )
-                      : currentStatus == 'CHECKED_IN'
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ButtonStatus(
-                                  colorBackgerand: Color(0xffEC5858),
-                                  title: 'ثبت خروج',
-                                  icon: Assets.icons.timerTick.svg(),
-                                  onTap: () {
-                                    nameStatus = 'check-out';
-                                    BlocProvider.of<TimeManagementBloc>(context)
-                                        .add(DailyEvent(
-                                            actionType: 'check-out'));
-                                  },
-                                ),
-                                SizedBox(width: 40),
-                                ButtonStatus(
-                                  colorBackgerand: Color(0xffFFA656),
-                                  title: 'توقف',
-                                  icon: Assets.icons.pause.svg(),
-                                  onTap: () {
-                                    nameStatus = 'stop-start';
-                                    BlocProvider.of<TimeManagementBloc>(context)
-                                        .add(DailyEvent(
-                                            actionType: 'stop-start'));
-                                  },
-                                ),
-                              ],
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ButtonStatus(
-                                  colorBackgerand: Color(0xffEC5858),
-                                  title: 'ثبت خروج',
-                                  icon: Assets.icons.timerTick.svg(),
-                                  onTap: () {
-                                    nameStatus = 'check-out';
-                                    BlocProvider.of<TimeManagementBloc>(context)
-                                        .add(DailyEvent(
-                                            actionType: 'check-out'));
-                                  },
-                                ),
-                                SizedBox(width: 40),
-                                ButtonStatus(
-                                  colorBackgerand: Color(0xff58EC89),
-                                  title: 'ادامه',
-                                  icon: Assets.icons.play.svg(height: 30),
-                                  onTap: () {
-                                    nameStatus = 'stop-end';
-                                    BlocProvider.of<TimeManagementBloc>(context)
-                                        .add(
-                                            DailyEvent(actionType: 'stop-end'));
-                                  },
-                                ),
-                              ],
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(height: VERTICAL_SPACING_5x),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            BigRegular(LocaleKeys.goodDay.tr()),
+                            SizedBox(width: 4),
+                            BigBold(
+                              _truncateText(
+                                  state.dailyEntity.user?.name ?? '', 10),
                             ),
-                  SizedBox(height: VERTICAL_SPACING_8x),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _BoxEntryExit(
-                        image: Assets.icons.timerTick2.svg(),
-                        title: 'زمان ورود',
-                        time: state.dailyEntity.todayStartTime ?? '-',
-                      ),
-                      SizedBox(width: 12),
-                      _BoxEntryExit(
-                        image: Assets.icons.timerTick3.svg(),
-                        title: 'ساعات کار',
-                        time: formattedTime == '00:00' ? '-' : formattedTime,
-                      ),
-                      SizedBox(width: 12),
-                      _BoxEntryExit(
-                        image: Assets.icons.timerTick4.svg(),
-                        title: 'زمان خروج',
-                        time: state.dailyEntity.lastEndTime ?? '-',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        } else if (state is DailyLoadingState) {
-          return Scaffold(
-            backgroundColor: BACKGROUND_LIGHT_COLOR,
-            body: SingleChildScrollView(
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      SizedBox(height: VERTICAL_SPACING_5x),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          BigRegular(LocaleKeys.goodDay.tr()),
-                          SizedBox(width: 4),
-                          BigBold(
-                            _truncateText(lN ?? '', 10),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: VERTICAL_SPACING_6x),
-                      CircularTimer(
-                        initTime: null,
-                        endTime: null,
-                        openAppTime: 0,
-                        isTimerAllowed: false,
-                        shouldReset: false,
-                        remainingDuration: 0,
-                        stopDuration: 0,
-                      ),
-                      SizedBox(height: VERTICAL_SPACING_10x),
-                      currentStatus == 'CHECKED_OUT'
-                          ? ButtonStatus(
-                              colorBackgerand: Color(0xff58EC89),
-                              title: 'ثبت ورود',
-                              icon: Assets.icons.timerTick.svg(),
-                              onTap: () {},
-                            )
-                          : currentStatus == 'CHECKED_IN'
-                              ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ButtonStatus(
-                                      colorBackgerand: Color(0xffEC5858),
-                                      title: 'ثبت خروج',
-                                      icon: Assets.icons.timerTick.svg(),
-                                      onTap: () {},
-                                    ),
-                                    SizedBox(width: 40),
-                                    ButtonStatus(
-                                      colorBackgerand: Color(0xffFFA656),
-                                      title: 'توقف',
-                                      icon: Assets.icons.pause.svg(),
-                                      onTap: () {},
-                                    ),
-                                  ],
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ButtonStatus(
-                                      colorBackgerand: Color(0xffEC5858),
-                                      title: 'ثبت خروج',
-                                      icon: Assets.icons.timerTick.svg(),
-                                      onTap: () {},
-                                    ),
-                                    SizedBox(width: 40),
-                                    ButtonStatus(
-                                      colorBackgerand: Color(0xff58EC89),
-                                      title: 'ادامه',
-                                      icon: Assets.icons.play.svg(height: 30),
-                                      onTap: () {},
-                                    ),
-                                  ],
-                                ),
-                      SizedBox(height: VERTICAL_SPACING_8x),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _BoxEntryExit(
-                            image: Assets.icons.timerTick2.svg(),
-                            title: 'زمان ورود',
-                            time: lv ?? '-',
-                          ),
-                          SizedBox(width: 12),
-                          _BoxEntryExit(
-                            image: Assets.icons.timerTick3.svg(),
-                            title: 'ساعات کار',
-                            time: ls ?? '-',
-                          ),
-                          SizedBox(width: 12),
-                          _BoxEntryExit(
-                            image: Assets.icons.timerTick4.svg(),
-                            title: 'زمان خروج',
-                            time: lkh ?? '-',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  if (_isLoading)
-                    Container(
-                      width: context.screenWidth,
-                      height: context.screenHeight - 200,
-                      color: Colors.white.withValues(alpha: .5),
-                      child: Center(
-                        child: Container(
-                          width: 70,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 10,
-                                offset: Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: SpinKitFadingCube(
-                              size: 24,
-                              color: Color(0xff670099),
-                            ),
-                          ),
+                          ],
                         ),
-                      ),
+                        SizedBox(height: VERTICAL_SPACING_6x),
+                        CircularTimer(
+                          initTime: currentStatus == 'CHECKED_IN'
+                              ? 0
+                              : currentStatus == 'STOP'
+                                  ? 0
+                                  : null,
+                          endTime: state.dailyEntity.eachTimeDuration,
+                          openAppTime: state.dailyEntity.currentDuration!,
+                          isTimerAllowed:
+                              currentStatus == 'STOP' ? false : true,
+                          shouldReset: currentStatus ==
+                              'CHECKED_OUT', // فقط در صورت "ثبت ورود" ریست شود
+                          remainingDuration:
+                              state.dailyEntity.remainingDuration!,
+                          stopDuration: state.dailyEntity.stopDuration!,
+                        ),
+                        SizedBox(height: VERTICAL_SPACING_10x),
+                        currentStatus == 'CHECKED_OUT'
+                            ? ButtonStatus(
+                                colorBackgerand: Color(0xff58EC89),
+                                title: LocaleKeys.entry.tr(),
+                                icon: Assets.icons.timerTick.svg(),
+                                onTap: () {
+                                  if (TimeManagementScreen
+                                              .latitudeNotifire.value ==
+                                          null ||
+                                      TimeManagementScreen
+                                              .longitudeNotifire.value ==
+                                          null) {
+                                    isLoadingNotifire.value = true;
+                                    _bloc.add(DailyEvent(
+                                      actionType: 'check-in',
+                                      lat: AccessLocationScreen
+                                              .latitudeNotifire.value ??
+                                          0,
+                                      lng: AccessLocationScreen
+                                              .longitudeNotifire.value ??
+                                          0,
+                                    ));
+                                  } else {
+                                    nameStatus = 'check-in';
+                                    _bloc.add(DailyEvent(
+                                      actionType: 'check-in',
+                                      lat: TimeManagementScreen
+                                          .latitudeNotifire.value!,
+                                      lng: TimeManagementScreen
+                                          .longitudeNotifire.value!,
+                                    ));
+                                  }
+                                },
+                              )
+                            : currentStatus == 'CHECKED_IN'
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ButtonStatus(
+                                        colorBackgerand: Color(0xffEC5858),
+                                        title: LocaleKeys.departure.tr(),
+                                        icon: Assets.icons.timerTick.svg(),
+                                        onTap: () {
+                                          if (TimeManagementScreen
+                                                      .latitudeNotifire.value ==
+                                                  null ||
+                                              TimeManagementScreen
+                                                      .longitudeNotifire
+                                                      .value ==
+                                                  null) {
+                                            isLoadingNotifire.value = true;
+                                            _bloc.add(DailyEvent(
+                                              actionType: 'check-out',
+                                              lat: AccessLocationScreen
+                                                      .latitudeNotifire.value ??
+                                                  0,
+                                              lng: AccessLocationScreen
+                                                      .longitudeNotifire
+                                                      .value ??
+                                                  0,
+                                            ));
+                                          } else {
+                                            nameStatus = 'check-out';
+                                            _bloc.add(DailyEvent(
+                                              actionType: 'check-out',
+                                              lat: TimeManagementScreen
+                                                  .latitudeNotifire.value!,
+                                              lng: TimeManagementScreen
+                                                  .longitudeNotifire.value!,
+                                            ));
+                                          }
+                                        },
+                                      ),
+                                      SizedBox(width: 40),
+                                      ButtonStatus(
+                                        colorBackgerand: Color(0xffFFA656),
+                                        title: LocaleKeys.halt.tr(),
+                                        icon: Assets.icons.pause.svg(),
+                                        onTap: () {
+                                          if (TimeManagementScreen
+                                                      .latitudeNotifire.value ==
+                                                  null ||
+                                              TimeManagementScreen
+                                                      .longitudeNotifire
+                                                      .value ==
+                                                  null) {
+                                            isLoadingNotifire.value = true;
+                                            _bloc.add(DailyEvent(
+                                              actionType: 'stop-start',
+                                              lat: AccessLocationScreen
+                                                      .latitudeNotifire.value ??
+                                                  0,
+                                              lng: AccessLocationScreen
+                                                      .longitudeNotifire
+                                                      .value ??
+                                                  0,
+                                            ));
+                                          } else {
+                                            nameStatus = 'stop-start';
+                                            _bloc.add(DailyEvent(
+                                                actionType: 'stop-start',
+                                                lat: TimeManagementScreen
+                                                    .latitudeNotifire.value!,
+                                                lng: TimeManagementScreen
+                                                    .longitudeNotifire.value!));
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ButtonStatus(
+                                        colorBackgerand: Color(0xffEC5858),
+                                        title: LocaleKeys.departure.tr(),
+                                        icon: Assets.icons.timerTick.svg(),
+                                        onTap: () {
+                                          if (TimeManagementScreen
+                                                      .latitudeNotifire.value ==
+                                                  null ||
+                                              TimeManagementScreen
+                                                      .longitudeNotifire
+                                                      .value ==
+                                                  null) {
+                                            isLoadingNotifire.value = true;
+                                            _bloc.add(DailyEvent(
+                                              actionType: 'check-out',
+                                              lat: AccessLocationScreen
+                                                      .latitudeNotifire.value ??
+                                                  0,
+                                              lng: AccessLocationScreen
+                                                      .longitudeNotifire
+                                                      .value ??
+                                                  0,
+                                            ));
+                                          } else {
+                                            nameStatus = 'check-out';
+                                            _bloc.add(DailyEvent(
+                                                actionType: 'check-out',
+                                                lat: TimeManagementScreen
+                                                    .latitudeNotifire.value!,
+                                                lng: TimeManagementScreen
+                                                    .longitudeNotifire.value!));
+                                          }
+                                        },
+                                      ),
+                                      SizedBox(width: 40),
+                                      ButtonStatus(
+                                        colorBackgerand: Color(0xff58EC89),
+                                        title: LocaleKeys.continuation.tr(),
+                                        icon: Assets.icons.play.svg(height: 30),
+                                        onTap: () {
+                                          if (TimeManagementScreen
+                                                      .latitudeNotifire.value ==
+                                                  null ||
+                                              TimeManagementScreen
+                                                      .longitudeNotifire
+                                                      .value ==
+                                                  null) {
+                                            isLoadingNotifire.value = true;
+                                            _bloc.add(DailyEvent(
+                                              actionType: 'stop-end',
+                                              lat: AccessLocationScreen
+                                                      .latitudeNotifire.value ??
+                                                  0,
+                                              lng: AccessLocationScreen
+                                                      .longitudeNotifire
+                                                      .value ??
+                                                  0,
+                                            ));
+                                          } else {
+                                            nameStatus = 'stop-end';
+                                            _bloc.add(DailyEvent(
+                                              actionType: 'stop-end',
+                                              lat: TimeManagementScreen
+                                                  .latitudeNotifire.value!,
+                                              lng: TimeManagementScreen
+                                                  .longitudeNotifire.value!,
+                                            ));
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                        SizedBox(height: VERTICAL_SPACING_11x),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            BoxEntryExit(
+                              image: Assets.icons.timerTick2.svg(),
+                              title: LocaleKeys.timeOfEntry.tr(),
+                              time: state.dailyEntity.todayStartTime ?? '-',
+                            ),
+                            SizedBox(width: 12),
+                            BoxEntryExit(
+                              image: Assets.icons.timerTick3.svg(),
+                              title: LocaleKeys.workingHours.tr(),
+                              time: formattedTime == '00:00'
+                                  ? '-'
+                                  : formattedTime,
+                            ),
+                            SizedBox(width: 12),
+                            BoxEntryExit(
+                              image: Assets.icons.timerTick4.svg(),
+                              title: LocaleKeys.exitTime.tr(),
+                              time: state.dailyEntity.lastEndTime ?? '-',
+                            ),
+                          ],
+                        ),
+                        ValueListenableBuilder(
+                          valueListenable: isLoadingNotifire,
+                          builder: (context, value, child) {
+                            return value ? LoadingWidget() : SizedBox.shrink();
+                          },
+                        ),
+                      ],
                     ),
+                  ),
                 ],
               ),
-            ),
-          );
-        } else if (state is DailyErrorState) {
-          return Scaffold(
-            body: Center(child: Text(state.errorText)),
-          );
-        } else {
-          return Scaffold(
-            body: Center(child: Text('data')),
-          );
-        }
-      },
-    );
-  }
-}
-
-class ButtonStatus extends StatelessWidget {
-  final Color colorBackgerand;
-  final String title;
-  final Widget icon;
-  final Function() onTap;
-  const ButtonStatus({
-    super.key,
-    required this.colorBackgerand,
-    required this.title,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            height: 60,
-            width: 60,
-            decoration: BoxDecoration(
-                color: colorBackgerand,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: colorBackgerand.withValues(alpha: .5),
-                    blurRadius: 20.0,
-                    offset: Offset(0, 4),
-                  ),
-                ]),
-            alignment: Alignment.center,
-            child: icon,
-          ),
-          SizedBox(height: VERTICAL_SPACING_3x),
-          NormalDemiBold(
-            title,
-            textColorInLight: colorBackgerand,
-          ),
-        ],
+            );
+          } else if (state is DailyLoadingState) {
+            return LoadingWidget();
+          } else if (state is DailyErrorState) {
+            return ErrorUiWidget(
+                title: state.errorText,
+                onTap: () {
+                  getLocation();
+                  _bloc
+                      .add(DailyEvent(actionType: "daily", lat: 0.0, lng: 0.0));
+                });
+          } else {
+            return Scaffold(
+              body: Center(child: NormalMedium('data')),
+            );
+          }
+        },
       ),
     );
   }
-}
 
-class _BoxEntryExit extends StatelessWidget {
-  final Widget image;
-  final String title;
-  final String time;
-  const _BoxEntryExit({
-    required this.image,
-    required this.title,
-    required this.time,
-  });
+  Future<Position?> _getLocationPosition() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return null;
+    }
+    try {
+      return await Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      width: 100,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 30,
-            offset: Offset(0, 3),
-            color: Color(0xff828282).withValues(alpha: .05),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          image,
-          SmallMedium(title),
-          SmallBold(time),
-        ],
-      ),
-    );
+  Future<void> getLocation() async {
+    final position = await _getLocationPosition();
+    if (!mounted) return;
+    if (position == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AccessLocationScreen(isFirstApp: false),
+        ),
+      );
+    } else {
+      AccessLocationScreen.latitudeNotifire.value = position.latitude;
+      AccessLocationScreen.longitudeNotifire.value = position.longitude;
+    }
   }
 }

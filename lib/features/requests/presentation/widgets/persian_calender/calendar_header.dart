@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/persian_calender/box_increase_decrease.dart';
-import 'package:linchpin_app/features/requests/presentation/widgets/persian_calender/persian_calendar.dart';
+import 'package:linchpin/core/common/custom_text.dart';
+import 'package:linchpin/features/requests/presentation/widgets/persian_calender/box_increase_decrease.dart';
+import 'package:linchpin/features/requests/presentation/widgets/persian_calender/persian_calendar.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 /// ویجت CalendarHeader که مسئول نمایش هدر تقویم است.
@@ -84,7 +84,7 @@ class _CalendarHeaderState extends State<CalendarHeader> {
               children: [
                 BoxIncreaseDecrease(
                   onTap: () => _changeMonth(1), // افزایش ماه.
-                  icon: Icons.add, // آیکون افزودن.
+                  icon: Icons.arrow_back_ios_new_rounded, // آیکون افزودن.
                 ),
                 // نمایش تاریخ شمسی جاری.
                 ValueListenableBuilder<String>(
@@ -109,7 +109,7 @@ class _CalendarHeaderState extends State<CalendarHeader> {
                 ),
                 BoxIncreaseDecrease(
                   onTap: () => _changeMonth(-1), // کاهش ماه.
-                  icon: Icons.remove, // آیکون حذف.
+                  icon: Icons.arrow_forward_ios_rounded, // آیکون حذف.
                 ),
               ],
             )
@@ -146,7 +146,7 @@ class _CalendarHeaderState extends State<CalendarHeader> {
                   children: [
                     BoxIncreaseDecrease(
                       onTap: () => _changeYear(1), // افزایش سال.
-                      icon: Icons.add, // آیکون افزودن.
+                      icon: Icons.arrow_back_ios_new_rounded, // آیکون افزودن.
                     ),
                     // نمایش سال جاری.
                     ValueListenableBuilder<String>(
@@ -163,9 +163,9 @@ class _CalendarHeaderState extends State<CalendarHeader> {
                       },
                     ),
                     BoxIncreaseDecrease(
-                      onTap: () => _changeYear(-1), // کاهش سال.
-                      icon: Icons.remove, // آیکون حذف.
-                    ),
+                        onTap: () => _changeYear(-1), // کاهش سال.
+                        icon: Icons.arrow_forward_ios_rounded // آیکون حذف.
+                        ),
                   ],
                 ),
     );

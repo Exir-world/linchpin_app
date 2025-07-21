@@ -31,19 +31,21 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
+
+android/app/.cxx/
+# نادیده گرفتن تمام پوشه‌ها و فایل‌های داخل build
 /build/
 /linux/flutter/
 /linux/Flutter/
 /macos/Flutter/
 /windows/flutter/
 
+# اجازه دادن فقط به build/web
+# !build/web/
+# !build/web/**
+
 # Symbolication related
 app.*.symbols
 
 # Obfuscation related
 app.*.map.json
-
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release

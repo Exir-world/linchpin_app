@@ -1,6 +1,6 @@
+import 'package:calendar_pro_farhad/core/text_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/common/dimens.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
+import 'package:linchpin/core/common/dimens.dart';
 
 // نمایش پیغام موفقیت آمیز از پایین صفحه
 SnackBar snackBarVerify({

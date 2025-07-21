@@ -1,11 +1,15 @@
-import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linchpin_app/core/common/dimens.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
-import 'package:linchpin_app/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:linchpin/core/common/custom_text.dart';
+import 'package:linchpin/core/common/dimens.dart';
+import 'package:linchpin/core/customui/error_ui_widget.dart';
+import 'package:linchpin/core/customui/loading_widget.dart';
+import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
+import 'package:linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
+import 'package:linchpin/features/performance_report/presentation/monthly_report_screen.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class LastQuarterReportScreen extends StatefulWidget {
@@ -23,35 +27,71 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
     super.initState();
   }
 
-  String formatWorkMinutes(int workMinutes) {
-    if (workMinutes < 60) {
-      // اگر زیر یک ساعت باشد
-      return '$workMinutes دقیقه';
+  @override
+  void dispose() {
+    BlocProvider.of<LastQuarterReportBloc>(context).close();
+    super.dispose();
+  }
+
+  String getFormattedDate(Jalali dateTitle) {
+    // بررسی زبان جاری
+    String currentLocale = EasyLocalization.of(context)!.locale.languageCode;
+    // تبدیل فقط ماه و سال به میلادی
+    Gregorian gregorianDate =
+        Jalali(dateTitle.year, dateTitle.month, 1).toGregorian();
+    // لیست ماه‌های میلادی به عربی
+    List<String> arabicMonths = [
+      "يناير",
+      "فبراير",
+      "مارس",
+      "أبريل",
+      "مايو",
+      "يونيو",
+      "يوليو",
+      "أغسطس",
+      "سبتمبر",
+      "أكتوبر",
+      "نوفمبر",
+      "ديسمبر"
+    ];
+
+    if (currentLocale == 'fa') {
+      // نمایش تاریخ به شمسی
+      return '${dateTitle.formatter.mN} ${dateTitle.formatter.y}';
+    } else if (currentLocale == 'ar') {
+      // نمایش تاریخ میلادی در زبان عربی
+      return '${arabicMonths[gregorianDate.month - 1]} ${gregorianDate.year}';
     } else {
-      // اگر بالای یک ساعت باشد
-      int hours = workMinutes ~/ 60; // تقسیم صحیح (ساعت)
-      return '$hours ساعت';
+      // تبدیل تاریخ شمسی به میلادی
+      Gregorian gregorianDate = dateTitle.toGregorian();
+      return '${DateFormat.MMMM('en_US').format(gregorianDate.toDateTime())} ${gregorianDate.year}';
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFAFAFF),
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: padding_Horizantalx),
-            child: BlocBuilder<LastQuarterReportBloc, LastQuarterReportState>(
-              builder: (context, state) {
-                if (state is MonthsCompletedState) {
-                  return Column(
+        child: BlocBuilder<LastQuarterReportBloc, LastQuarterReportState>(
+          buildWhen: (previous, current) {
+            if (current is MonthsCompletedState ||
+                current is MonthsLoadingState ||
+                current is MonthsErrorState) {
+              return true;
+            } else {
+              return false;
+            }
+          },
+          builder: (context, state) {
+            if (state is MonthsCompletedState) {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: VERTICAL_SPACING_6x),
-                      LargeDemiBold("گزارش عملکرد"),
+                      SizedBox(height: VERTICAL_SPACING_4x),
+                      BigDemiBold(LocaleKeys.performanceReport.tr()),
                       SizedBox(height: VERTICAL_SPACING_6x),
                       state.monthsEntity.isEmpty
                           ? Column(
@@ -61,7 +101,7 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                                 ),
                                 Center(
                                   child: NormalRegular(
-                                    'عملکردی ثبت نشده',
+                                    LocaleKeys.noRecorded.tr(),
                                     textColorInLight: Color(0xffCAC4CF),
                                   ),
                                 ),
@@ -74,167 +114,88 @@ class _LastQuarterReportScreenState extends State<LastQuarterReportScreen> {
                               itemBuilder: (context, index) {
                                 final data = state.monthsEntity[index];
                                 final dateTitle =
-                                    Jalali.fromDateTime(data.date!);
-                                final String workTime =
-                                    formatWorkMinutes(data.workMinutes!);
-
-                                // کسری
-                                final String lessTime =
-                                    formatWorkMinutes(data.lessDuration!);
-
-                                // اضافه کار
-                                final String overTime =
-                                    formatWorkMinutes(data.overDuration!);
-
-                                // مرخصی
-                                final String leaveTime =
-                                    formatWorkMinutes(data.leaveDuration!);
-
-                                // کل حضور
-                                final String sumTime = formatWorkMinutes(
-                                    data.workMinutes! + data.overDuration!);
-
-                                return Container(
-                                  height: 100,
-                                  margin: EdgeInsets.only(bottom: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 16),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if (data.month! >= 1 && data.month! <= 3)
-                                        Assets.icons.spring.svg(),
-                                      if (data.month! >= 4 && data.month! <= 6)
-                                        Assets.icons.summer.svg(),
-                                      if (data.month! >= 7 && data.month! <= 9)
-                                        Assets.icons.autumn.svg(),
-                                      if (data.month! >= 10 &&
-                                          data.month! <= 12)
-                                        Assets.icons.winter.svg(),
-                                      SizedBox(width: 8),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                NormalMedium(
-                                                    'ساعات کاری ${dateTitle.formatter.mN} ${dateTitle.formatter.y}'),
-                                                SmallMedium(sumTime),
-                                              ],
-                                            ),
-                                            SizedBox(height: 12),
-                                            Row(
-                                              children: [
-                                                _BoxTime(
-                                                  time: 'مفید: $workTime',
-                                                  colorBox: Color(0xffF5EEFC),
-                                                  colorTitle: Color(0xff9B51E0),
-                                                  isWidth: true,
-                                                ),
-                                                data.lessDuration! == 0 &&
-                                                        data.overDuration! ==
-                                                            0 &&
-                                                        data.leaveDuration! == 0
-                                                    ? Container()
-                                                    : SizedBox(width: 8),
-                                                data.lessDuration! == 0 &&
-                                                        data.overDuration! ==
-                                                            0 &&
-                                                        data.leaveDuration! == 0
-                                                    ? Container()
-                                                    : data.lessDuration! > 0
-                                                        ? _BoxTime(
-                                                            time:
-                                                                'کسری: $lessTime',
-                                                            colorBox: Color(
-                                                                0xffFFEFF1),
-                                                            colorTitle: Color(
-                                                                0xffFD5B71),
-                                                            isWidth: false,
-                                                          )
-                                                        : data.overDuration! > 0
-                                                            ? _BoxTime(
-                                                                time:
-                                                                    'اضافه کار: $overTime',
-                                                                colorBox: Color(
-                                                                    0xffE6FCF4),
-                                                                colorTitle: Color(
-                                                                    0xff07E092),
-                                                                isWidth: false,
-                                                              )
-                                                            : data.leaveDuration! >
-                                                                    0
-                                                                ? _BoxTime(
-                                                                    time:
-                                                                        'مرخصی: $leaveTime',
-                                                                    colorBox: Color(
-                                                                        0xffFFA656),
-                                                                    colorTitle:
-                                                                        Color(
-                                                                            0xffFEF5ED),
-                                                                    isWidth:
-                                                                        false,
-                                                                  )
-                                                                : Container(),
-                                              ],
-                                            ),
-                                          ],
+                                    Jalali.fromDateTime(data.startOfMonth!);
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              MonthlyReportScreen(
+                                            title:
+                                                '${LocaleKeys.reportPerformance.tr()} ${dateTitle.formatter.mN} ${dateTitle.formatter.y}',
+                                            startDate:
+                                                data.startOfMonth.toString(),
+                                            endDate: data.endOfMonth.toString(),
+                                          ),
+                                        ));
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          offset: Offset(0, 3),
+                                          blurRadius: 30,
+                                          color: Color(0xff828282)
+                                              .withValues(alpha: 0.04),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 16),
+                                    alignment: Alignment.center,
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        if (data.month! >= 1 &&
+                                            data.month! <= 3)
+                                          Assets.icons.spring.svg(),
+                                        if (data.month! >= 4 &&
+                                            data.month! <= 6)
+                                          Assets.icons.summer.svg(),
+                                        if (data.month! >= 7 &&
+                                            data.month! <= 9)
+                                          Assets.icons.autumn.svg(),
+                                        if (data.month! >= 10 &&
+                                            data.month! <= 12)
+                                          Assets.icons.winter.svg(),
+                                        SizedBox(width: 8),
+                                        NormalMedium(
+                                            '${LocaleKeys.workingHours.tr()} ${getFormattedDate(dateTitle)}'),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          color: Color(0xffDADADA),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 );
                               },
                             ),
                     ],
-                  );
-                } else {
-                  return CupertinoActivityIndicator();
-                }
-              },
-            ),
-          ),
+                  ),
+                ),
+              );
+            } else if (state is MonthsLoadingState) {
+              return LoadingWidget();
+            } else if (state is MonthsErrorState) {
+              return ErrorUiWidget(
+                title: state.errorText,
+                onTap: () {
+                  BlocProvider.of<LastQuarterReportBloc>(context)
+                      .add(MonthsEvent());
+                },
+              );
+            } else {
+              return Center(child: NormalMedium("data"));
+            }
+          },
         ),
-      ),
-    );
-  }
-}
-
-class _BoxTime extends StatelessWidget {
-  final String time;
-  final Color colorBox;
-  final Color colorTitle;
-  final bool isWidth;
-  const _BoxTime({
-    required this.time,
-    required this.colorBox,
-    required this.colorTitle,
-    required this.isWidth,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 120,
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        color: colorBox,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      alignment: Alignment.center,
-      child: SmallRegular(
-        time,
-        textColorInLight: colorTitle,
       ),
     );
   }

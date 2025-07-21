@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:linchpin_app/features/time_management/data/models/daily_model/user.dart';
+import 'package:linchpin/features/time_management/data/models/daily_model/user.dart';
 
 class DailyEntity extends Equatable {
   final String? nowDatetime; // تایم فعلی سرور

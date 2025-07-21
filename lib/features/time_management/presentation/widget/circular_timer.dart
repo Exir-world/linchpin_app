@@ -1,10 +1,10 @@
 import 'dart:async';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:linchpin_app/core/common/colors.dart';
-import 'package:linchpin_app/core/common/text_widgets.dart';
-import 'package:linchpin_app/core/extension/context_extension.dart';
-import 'package:linchpin_app/gen/assets.gen.dart';
+import 'package:linchpin/core/common/colors.dart';
+import 'package:linchpin/core/common/custom_text.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
+import 'package:linchpin/gen/assets.gen.dart';
 
 class CircularTimer extends StatefulWidget {
   final int? initTime; // مقدار زمان شروع (TimeStamp بر حسب میلی‌ثانیه)
@@ -106,9 +106,9 @@ class _CircularTimerState extends State<CircularTimer> {
     int minutes = totalMinutes % 60;
 
     if (hours > 0) {
-      return '$hours ساعت، $minutes دقیقه';
+      return '$hours ${LocaleKeys.hour.tr()}، $minutes ${LocaleKeys.minute.tr()}';
     } else {
-      return '$minutes دقیقه';
+      return '$minutes ${LocaleKeys.minute.tr()}';
     }
   }
 
@@ -120,11 +120,11 @@ class _CircularTimerState extends State<CircularTimer> {
     int seconds = remainingSeconds % 60;
 
     if (remainingSeconds < 60) {
-      return '$seconds ثانیه';
+      return '$seconds ${LocaleKeys.second.tr()}';
     } else if (hours > 0) {
-      return '$hours ساعت، $minutes دقیقه';
+      return '$hours ${LocaleKeys.hour.tr()}، $minutes ${LocaleKeys.minute.tr()}';
     } else {
-      return '$minutes دقیقه';
+      return '$minutes ${LocaleKeys.minute.tr()}';
     }
   }
 
@@ -212,11 +212,15 @@ class _CircularTimerState extends State<CircularTimer> {
 
   @override
   Widget build(BuildContext context) {
+    double effectiveScreenWidth =
+        MediaQuery.of(context).size.width.clamp(0, 500);
     return Stack(
-      alignment: Alignment.topCenter, // مرکز چین کردن تمام ویجت‌های داخل Stack
+      alignment: Alignment.center,
       children: [
+        // دایره تایمر
         SizedBox(
-          width: context.screenWidth * 0.7,
+          width: effectiveScreenWidth * 0.7,
+          height: effectiveScreenWidth * 0.7,
           child: CustomPaint(
             painter: SegmentedCircularPainter(
               segments: segments,
@@ -226,34 +230,36 @@ class _CircularTimerState extends State<CircularTimer> {
             ),
           ),
         ),
-        SizedBox(
-          height: context.screenWidth * 0.7,
+
+        // محتویات درون تایمر
+        Transform.scale(
+          scale: effectiveScreenWidth * 0.0025, // مقیاس متناسب
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Assets.icons.ringing.svg(),
                   SizedBox(width: 5),
-                  NormalRegular('صدا: روشن'),
+                  NormalRegular(
+                      '${LocaleKeys.sound.tr()}: ${LocaleKeys.bright.tr()}'),
                 ],
               ),
               SizedBox(height: 8),
               MegaBold(
-                _formatDuration(elapsedDuration), // به جای مقدار ثابت
+                _formatDuration(elapsedDuration),
                 textColorInLight: TEXT_LIGHT_CHRONOMETER_COLOR,
               ),
               NormalRegular(
-                  '${_formatRemainingTime(remainingTime)} باقی مانده'),
-              !widget.isTimerAllowed ? SizedBox(height: 12) : Container(),
-              !widget.isTimerAllowed
-                  ? SmallRegular(
-                      _formatStopDurationTime(stopDuration),
-                      textColorInLight: Color(0xffFF912E),
-                    )
-                  : Container(),
+                  '${_formatRemainingTime(remainingTime)} ${LocaleKeys.remainder.tr()}'),
+              if (!widget.isTimerAllowed) ...[
+                SizedBox(height: 12),
+                SmallRegular(
+                  _formatStopDurationTime(stopDuration),
+                  textColorInLight: Color(0xffFF912E),
+                ),
+              ],
             ],
           ),
         ),
@@ -263,7 +269,7 @@ class _CircularTimerState extends State<CircularTimer> {
 
   @override
   void dispose() {
-    _timer.cancel(); // متوقف کردن تایمر هنگام بسته شدن ویجت
+    _timer.cancel();
     super.dispose();
   }
 }

@@ -1,0 +1,97 @@
+import 'dart:async';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/features/growth/domain/entity/sub_items_entity.dart';
+import 'package:linchpin/features/growth/domain/entity/user_improvement_entity.dart';
+import 'package:linchpin/features/growth/domain/entity/user_self_entity.dart';
+import 'package:linchpin/features/growth/domain/use_case/growth_usecase.dart';
+
+part 'growth_event.dart';
+part 'growth_state.dart';
+
+@injectable
+class GrowthBloc extends Bloc<GrowthEvent, GrowthState> {
+  final GrowthUsecase growthUsecase;
+  GrowthBloc(this.growthUsecase) : super(GrowthInitial()) {
+    // on<UserSelfEvent>(_userSelfEvent);
+    on<UserImprovementEvent>(_userImprovementEvent);
+    on<UserSelfAddEvent>(_userSelfAddEvent);
+    on<SubitemsEvent>(_subitemsEvent);
+    on<SubitemsScoreEvent>(_subitemsScoreEvent);
+  }
+
+  // FutureOr<void> _userSelfEvent(
+  //     UserSelfEvent event, Emitter<GrowthState> emit) async {
+  //   emit(UserSelfLoadingState());
+  //   DataState dataState = await growthUsecase.userSelf();
+
+  //   if (dataState is DataSuccess) {
+  //     emit(UserSelfCompletedState(dataState.data));
+  //   }
+
+  //   if (dataState is DataFailed) {
+  //     emit(UserSelfErrorState(dataState.error!));
+  //   }
+  // }
+
+  FutureOr<void> _userImprovementEvent(
+      UserImprovementEvent event, Emitter<GrowthState> emit) async {
+    emit(UserImprovementLoadingState());
+    DataState dataState =
+        await growthUsecase.userImprovementParameters(parentId: event.parentId);
+
+    if (dataState is DataSuccess) {
+      emit(UserImprovementCompletedState(dataState.data));
+    }
+
+    if (dataState is DataFailed) {
+      emit(UserImprovementErrorState(dataState.error!));
+    }
+  }
+
+  FutureOr<void> _userSelfAddEvent(
+      UserSelfAddEvent event, Emitter<GrowthState> emit) async {
+    emit(UserSelfAddLoadingState());
+    DataState dataState =
+        await growthUsecase.userSelfAdd(event.improvementId, event.description);
+
+    if (dataState is DataSuccess) {
+      emit(UserSelfAddCompletedState(dataState.data));
+    }
+
+    if (dataState is DataFailed) {
+      emit(UserSelfAddErrorState(dataState.error!));
+    }
+  }
+
+  FutureOr<void> _subitemsEvent(
+      SubitemsEvent event, Emitter<GrowthState> emit) async {
+    emit(SubitemsLoadingState());
+    DataState dataState =
+        await growthUsecase.userImprovementParameters(parentId: event.parentId);
+
+    if (dataState is DataSuccess) {
+      emit(SubitemsCompletedState(dataState.data));
+    }
+
+    if (dataState is DataFailed) {
+      emit(SubitemsErrorState(dataState.error!));
+    }
+  }
+
+  FutureOr<void> _subitemsScoreEvent(
+      SubitemsScoreEvent event, Emitter<GrowthState> emit) async {
+    emit(SubitemsScoreLoadingState());
+    DataState dataState = await growthUsecase.subitemsScore(
+        event.itemId, event.subItemId, event.userScore);
+
+    if (dataState is DataSuccess) {
+      emit(SubitemsScoreCompletedState(dataState.data));
+    }
+
+    if (dataState is DataFailed) {
+      emit(SubitemsScoreErrorState(dataState.error!));
+    }
+  }
+}

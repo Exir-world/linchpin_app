@@ -1,5 +1,5 @@
-name: linchpin_app
-description: "A new Flutter project."
+name: linchpin
+description: "A human resources module and employee growth platform designed to help organizations manage talent development, performance evaluation, and career progression efficiently and intelligently."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.1+2
+version: 1.0.0+1
 
 environment:
   sdk: ^3.6.0
@@ -34,7 +34,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  flutter_bloc: ^8.1.6
+  flutter_bloc: ^9.1.0
   dio: ^5.7.0
   equatable: ^2.0.7
   get_it: ^8.0.3
@@ -46,6 +46,17 @@ dependencies:
   shamsi_date: ^1.0.4
   calendar_pro_farhad: ^0.0.3
   flutter_spinkit: ^5.2.1
+  path_provider: ^2.1.5
+  open_file: ^3.5.10
+  geolocator: ^13.0.2
+  location: ^8.0.0
+  rxdart: ^0.28.0
+  multiple_stream_builder: ^3.0.0
+  flutter_map: ^8.1.1
+  latlong2: ^0.9.1
+  image_picker: ^1.1.2
+  flutter_image_compress: ^2.4.0
+  device_info_plus: ^11.5.0
 
 dev_dependencies:
   flutter_test:
@@ -101,6 +112,18 @@ flutter:
     - family: IRANSansXFA-Bold
       fonts:
         - asset: assets/fonts/IRANSansXFaNum-Bold.ttf
+    - family: ProductSans-Regular
+      fonts:
+        - asset: assets/fonts/ProductSans-Regular.ttf
+    - family: ProductSans-Medium
+      fonts:
+        - asset: assets/fonts/ProductSans-Medium.ttf
+    - family: ProductSans-DemiBold
+      fonts:
+        - asset: assets/fonts/POPPINS-SEMIBOLD.ttf
+    - family: ProductSans-Bold
+      fonts:
+        - asset: assets/fonts/ProductSans-Bold.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:
