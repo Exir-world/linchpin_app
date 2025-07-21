@@ -4,7 +4,7 @@ import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin/core/utils/max_width_wrapper.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
-import 'package:linchpin/features/auth/presentation/auth_screen.dart';
+import 'package:linchpin/features/auth/presentation/pages/auth_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

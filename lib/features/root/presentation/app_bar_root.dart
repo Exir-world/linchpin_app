@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
-import 'package:linchpin/features/auth/presentation/auth_screen.dart';
+import 'package:linchpin/features/auth/presentation/pages/auth_screen.dart';
 import 'package:linchpin/features/requests/presentation/requests_screen.dart';
 import 'package:linchpin/features/root/presentation/root_screen.dart';
 import 'package:linchpin/gen/assets.gen.dart';

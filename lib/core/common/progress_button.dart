@@ -72,7 +72,7 @@ class ProgressButton extends StatelessWidget {
                     : MainAxisAlignment.center,
                 children: [
                   widgetText ??
-                      NormalBold(
+                      SmallBold(
                         label,
                         textColorInLight: !isEnabled && textColor == null
                             ? CupertinoColors.label
@@ -89,4 +89,3 @@ class ProgressButton extends StatelessWidget {
     );
   }
 }
-

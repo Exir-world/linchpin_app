@@ -4,7 +4,7 @@ import 'package:linchpin/features/growth/presentation/growth_screen.dart';
 import 'package:linchpin/features/performance_report/presentation/last_quarter_report_screen.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
 import 'package:linchpin/features/time_management/presentation/time_management_screen.dart';
-import 'package:linchpin/features/visitor/presentation/visitor_screen.dart';
+import 'package:linchpin/features/visitor/presentation/pages/visitor_screen.dart';
 import 'package:linchpin/gen/assets.gen.dart';
 
 class RootScreen extends StatefulWidget {

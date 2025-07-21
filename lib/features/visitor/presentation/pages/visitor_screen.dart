@@ -42,8 +42,9 @@ class _VisitorScreenState extends State<VisitorScreen> {
       return;
     }
     setState(() {
-      final lat = LatLng(35.6892, 51.3890);
-      // final lat = LatLng(position.latitude, position.longitude);
+      // final lat = LatLng(35.6892, 51.3890);
+      final lat =
+          LatLng(position?.latitude ?? 35.6892, position?.longitude ?? 51.3890);
       mapController.move(lat, 16);
       _positions.add(lat);
       // mapController.move(mapCenter, 16);
@@ -87,13 +88,13 @@ class _VisitorScreenState extends State<VisitorScreen> {
                     // ),
 
                     ProgressButton(
-                      width: 130,
+                      width: context.screenWidth * .34,
                       height: 40,
                       label: 'ثبت موقعیت',
                       onTap: _getLocationAndShowMarker,
                     ),
                     ProgressButton(
-                      width: 130,
+                      width: context.screenWidth * .34,
                       height: 40,
                       label: 'اضافه کردن عکس',
                       onTap: () async {
@@ -105,7 +106,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                       },
                     ),
                     ProgressButton(
-                      width: 130,
+                      width: context.screenWidth * .25,
                       height: 40,
                       isEnabled: photo != null && photos.isNotEmpty,
                       label: 'ارسال',
@@ -210,11 +211,11 @@ class _VisitorScreenState extends State<VisitorScreen> {
                         (entry) => Marker(
                           point: entry.value,
                           width: 40,
-                          height: 40,
+                          height: 50,
                           child: Column(
                             children: [
                               Icon(Icons.location_on,
-                                  color: Colors.red, size: 36),
+                                  color: Colors.red, size: 30),
                               Text(
                                 '${entry.key + 1}',
                                 style: TextStyle(
