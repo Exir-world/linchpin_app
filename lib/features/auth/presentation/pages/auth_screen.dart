@@ -14,7 +14,6 @@ import 'package:linchpin/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:linchpin/features/root/presentation/root_screen.dart';
 import 'package:linchpin/gen/assets.gen.dart';
 import 'package:linchpin/gen/fonts.gen.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});

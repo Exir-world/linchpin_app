@@ -10,6 +10,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:linchpin/core/resources/data_state.dart';
 import 'package:linchpin/features/visitor/domain/entity/visitor_entity.dart';
 import 'package:linchpin/features/visitor/domain/use_case/upload_usecase.dart';
+import 'package:rxdart/subjects.dart';
 
 part 'visitor_event.dart';
 part 'visitor_state.dart';
@@ -24,6 +25,15 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   List<MultipartFile> multipartImages = [];
   FormData? formData;
   List<VisitorEntity>? visitors = [];
+  LatLng? currentLocation;
+  final List<LatLng> visitTargets = [
+    // LatLng(36.2978512, 59.5906702),
+    LatLng(36.2977532, 59.5986680),
+    LatLng(36.2977832, 59.5926712),
+    LatLng(36.2977532, 59.5945702),
+  ];
+  final desc = BehaviorSubject<String?>.seeded('');
+
   VisitorBloc(this.uploadUsecase) : super(VisitorInitial()) {
     on<SaveLocationEvent>(_saveLocationEvent);
     on<UploadImage>(_uploadImage);
@@ -62,5 +72,13 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
     } catch (e) {
       emit(SaveLocationFailure(error: e.toString()));
     }
+  }
+
+  void checkTextField(String txt) {
+    desc.sink.add(txt);
+  }
+
+  dispose() async {
+    desc.close();
   }
 }

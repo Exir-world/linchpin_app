@@ -6,6 +6,11 @@ sealed class AuthEvent {}
 class LoginEvent extends AuthEvent {
   final String phoneNumber;
   final String password;
+  final String? deviceInfo;
 
-  LoginEvent({required this.phoneNumber, required this.password});
+  LoginEvent({
+    required this.phoneNumber,
+    required this.password,
+    this.deviceInfo,
+  });
 }

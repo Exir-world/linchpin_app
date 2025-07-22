@@ -1,12 +1,9 @@
-import 'dart:io';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:linchpin/core/common/constants.dart';
-import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/common/progress_button.dart';
 import 'package:linchpin/core/common/spacing_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
@@ -14,6 +11,9 @@ import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
+import 'package:linchpin/features/visitor/presentation/widgets/show_image.dart';
+import 'package:linchpin/features/visitor/presentation/widgets/show_map.dart';
+import 'package:linchpin/features/visitor/presentation/widgets/text_field.dart';
 
 class VisitorScreen extends StatefulWidget {
   const VisitorScreen({super.key});
@@ -54,11 +54,35 @@ class _VisitorScreenState extends State<VisitorScreen> {
     });
   }
 
+//! محدوده مجاز
+  bool isNear(LatLng current, LatLng target) {
+    final distance = Geolocator.distanceBetween(
+      current.latitude,
+      current.longitude,
+      target.latitude,
+      target.longitude,
+    );
+    return distance < 50; // متر
+  }
+
   //! نمایش پیام خطا
   void _showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
+  }
+
+  bool isEnableSendButton() {
+    bool result = false;
+    for (final target in bloc.visitTargets) {
+      if (bloc.currentLocation != null &&
+          isNear(bloc.currentLocation!, target)) {
+        result = true;
+      } else {
+        result = false;
+      }
+    }
+    return result;
   }
 
   @override
@@ -85,8 +109,12 @@ class _VisitorScreenState extends State<VisitorScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    _showMap(),
-                    VerticalSpace(50),
+                    ShowMap(
+                      context: context,
+                      mapController: mapController,
+                      positions: _positions,
+                    ),
+                    VerticalSpace(25),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -104,65 +132,71 @@ class _VisitorScreenState extends State<VisitorScreen> {
                             label:
                                 photos.isEmpty ? 'گرفتن عکس' : 'اضافه کردن عکس',
                             onTap: () async {
-                              photo = await picker.pickImage(
-                                  source: ImageSource.camera);
-                              setState(() {
-                                photos.add(photo);
-                              });
+                              if (!isEnableSendButton()) {
+                                photo = await picker.pickImage(
+                                    source: ImageSource.camera);
+                                setState(() {
+                                  photos.add(photo);
+                                });
+                              } else {
+                                _showSnackbar('موقعیت غیر مجاز');
+                              }
                             },
                           ),
                           ProgressButton(
                             width: context.screenWidth * .25,
                             height: 40,
-                            isEnabled: photo != null && photos.isNotEmpty,
+                            isEnabled: photo != null &&
+                                photos.isNotEmpty &&
+                                isEnableSendButton(),
                             label: 'ارسال',
-                            onTap: () {
-                              setState(() {
-                                bloc.add(SaveLocationEvent(
-                                  position: _positions.isNotEmpty
-                                      ? _positions.last
-                                      : LatLng(
-                                          AccessLocationScreen
-                                                  .latitudeNotifire.value ??
-                                              35.6892,
-                                          AccessLocationScreen
-                                                  .longitudeNotifire.value ??
-                                              51.3890,
-                                        ),
-                                  // img: photos.isNotEmpty ? photos : null,
-                                ));
-                                photo = null;
-                                photos.clear();
-                              });
+                            onTap: () async {
+                              if (isEnableSendButton()) {
+                                List<MultipartFile> imageFiles = [];
+                                for (var photo in photos) {
+                                  if (photo != null) {
+                                    imageFiles.add(
+                                      await MultipartFile.fromFile(
+                                        photo.path,
+                                        filename: photo.name,
+                                      ),
+                                    );
+                                  }
+                                }
+                                final formData = FormData.fromMap({
+                                  "images":
+                                      imageFiles, // این اسم باید با انتظارات سرور هماهنگ باشه
+                                  // می‌تونی سایر فیلدها رو هم اضافه کنی
+                                  "user_id": "123",
+                                });
+                                setState(() {
+                                  bloc.add(SaveLocationEvent(
+                                    position: LatLng(
+                                      AccessLocationScreen
+                                              .latitudeNotifire.value ??
+                                          35.6892,
+                                      AccessLocationScreen
+                                              .longitudeNotifire.value ??
+                                          51.3890,
+                                    ),
+                                    img: formData,
+                                  ));
+                                  photo = null;
+                                  photos.clear();
+                                });
+                                // ثبت در دیتابیس یا تغییر UI
+                              } else {
+                                _showSnackbar('محدوه غیر مجاز');
+                              }
                             },
                           ),
                         ],
                       ),
                     ),
                     VerticalSpace(40),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: photos.length,
-                      itemBuilder: (context, index) {
-                        final photo = photos[index];
-                        if (photo == null) return SizedBox();
-                        return ListTile(
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              File(photo.path),
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          title: SmallMedium(
-                            'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ',
-                          ),
-                        );
-                      },
-                    ),
+                    ShowImage(photos: photos),
+                    VerticalSpace(20),
+                    TextFieldWedget(photos: photos),
                     VerticalSpace(20),
                   ],
                 ),
@@ -170,106 +204,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  //!  نمایش نقشه و دکمه
-  Widget _showMap() {
-    return Stack(
-      children: [
-        _map(),
-        _iconMap(),
-      ],
-    );
-  }
-
-  //! نقشه
-  Widget _map() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: context.screenWidth * 0.9,
-          height: context.screenHeight * 0.45,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: FlutterMap(
-              mapController: mapController,
-              options: MapOptions(
-                initialCenter: _positions.isNotEmpty
-                    ? _positions.last
-                    : LatLng(
-                        AccessLocationScreen.latitudeNotifire.value ?? 35.6892,
-                        AccessLocationScreen.longitudeNotifire.value ?? 51.3890,
-                      ),
-                initialZoom: 16,
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate:
-                      'https://api.neshan.org/v2/static?key=${Constants.API_KY_MAP}&type=neshan&zoom=15&center=${AccessLocationScreen.latitudeNotifire.value},${AccessLocationScreen.longitudeNotifire.value}&width=500&height=500&marker=red',
-                  // urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.linchpinx.app.linchpinx',
-                ),
-                MarkerLayer(
-                  markers: _positions
-                      .asMap()
-                      .entries
-                      .map(
-                        (entry) => Marker(
-                          point: entry.value,
-                          width: 40,
-                          height: 50,
-                          child: Column(
-                            children: [
-                              Icon(Icons.location_on,
-                                  color: Colors.red, size: 30),
-                              Text(
-                                '${entry.key + 1}',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-//! دکمه روی نقشه
-  Widget _iconMap() {
-    return Positioned(
-      bottom: 5,
-      right: 10,
-      child: IconButton(
-        onPressed: () {
-          mapController.move(
-            LatLng(
-              double.parse(
-                '36.29608',
-              ),
-              double.parse(
-                '59.57204',
-              ),
-            ),
-            16.5,
-          );
-        },
-        icon: const Icon(
-          Icons.my_location_rounded,
-          color: Colors.blue,
-          size: 40,
-        ),
       ),
     );
   }

@@ -10,7 +10,12 @@ abstract class AuthUsecase {
   AuthUsecase(this.authRepository);
 
   // ورود کاربر
-  Future<DataState<LoginEntity>> login(String phoneNumber, String password);
+  Future<DataState<LoginEntity>> login(
+    String phoneNumber,
+    String password,
+    String deviceUniqueCode,
+    String firebase,
+  );
 }
 
 @Singleton(as: AuthUsecase, env: [Env.prod])
@@ -19,9 +24,17 @@ class AuthUsecaseImpl extends AuthUsecase {
 
   @override
   Future<DataState<LoginEntity>> login(
-      String phoneNumber, String password) async {
-    DataState<LoginEntity> dataState =
-        await authRepository.login(phoneNumber, password);
+    String phoneNumber,
+    String password,
+    String deviceUniqueCode,
+    String firebase,
+  ) async {
+    DataState<LoginEntity> dataState = await authRepository.login(
+      phoneNumber,
+      password,
+      deviceUniqueCode,
+      firebase,
+    );
     return dataState;
   }
 }

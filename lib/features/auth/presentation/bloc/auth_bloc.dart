@@ -17,14 +17,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _loginEvent(LoginEvent event, Emitter<AuthState> emit) async {
+    final device_info = await deviceInfo.deviceInfo();
     emit(LoginLoadingState());
 
-    DataState dataState =
-        await authUsecase.login(event.phoneNumber, event.password);
+    DataState dataState = await authUsecase.login(
+      event.phoneNumber,
+      event.password,
+      device_info.id ?? '',
+      '',
+    );
 
     if (dataState is DataSuccess) {
-      final device_info = await deviceInfo.deviceInfo();
-
       emit(LoginCompletedState(dataState.data));
     }
 

@@ -15,9 +15,18 @@ class AuthRepositoryImpl extends AuthRepository {
   AuthRepositoryImpl(this.apiAuth);
   @override
   Future<DataState<LoginEntity>> login(
-      String phoneNumber, String password) async {
+    String phoneNumber,
+    String password,
+    String deviceUniqueCode,
+    String firebase,
+  ) async {
     try {
-      Response response = await apiAuth.login(phoneNumber, password);
+      Response response = await apiAuth.login(
+        phoneNumber,
+        password,
+        deviceUniqueCode,
+        firebase,
+      );
       LoginEntity loginEntity = LoginModel.fromJson(response.data);
       return DataSuccess(loginEntity);
     } on DioException catch (e) {
