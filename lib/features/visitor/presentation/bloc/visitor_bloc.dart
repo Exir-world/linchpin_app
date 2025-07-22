@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/features/visitor/domain/entity/set_location_entity.dart';
 import 'package:linchpin/features/visitor/domain/entity/visitor_entity.dart';
 import 'package:linchpin/features/visitor/domain/use_case/upload_usecase.dart';
 import 'package:rxdart/subjects.dart';
@@ -61,7 +62,8 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
       UploadImage event, Emitter<VisitorState> emit) async {
     try {
       emit(UploadImageLoading());
-      DataState dataState = await uploadUsecase.visitorRepository.uploadImage();
+      DataState dataState = await uploadUsecase.visitorRepository
+          .uploadImage(event.upload ?? SetLocationEntity());
       if (dataState is DataSuccess) {
         emit(UploadImageSuccess());
       }

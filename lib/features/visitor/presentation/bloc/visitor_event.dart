@@ -8,7 +8,7 @@ sealed class VisitorEvent extends Equatable {
 }
 
 class UploadImage extends VisitorEvent {
-  final List<String>? upload;
+  final SetLocationEntity? upload;
 
   const UploadImage({this.upload});
 }

@@ -10,6 +10,7 @@ import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:linchpin/features/visitor/domain/entity/set_location_entity.dart';
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_image.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_map.dart';
@@ -170,17 +171,18 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                   "user_id": "123",
                                 });
                                 setState(() {
-                                  bloc.add(SaveLocationEvent(
-                                    position: LatLng(
-                                      AccessLocationScreen
-                                              .latitudeNotifire.value ??
-                                          35.6892,
-                                      AccessLocationScreen
-                                              .longitudeNotifire.value ??
-                                          51.3890,
+                                  bloc.add(
+                                    UploadImage(
+                                      upload: SetLocationEntity(
+                                        attachments: [],
+                                        checkPointId: 0,
+                                        lat: 0,
+                                        lng: 0,
+                                        report: true,
+                                        userId: 0,
+                                      ),
                                     ),
-                                    img: formData,
-                                  ));
+                                  );
                                   photo = null;
                                   photos.clear();
                                 });

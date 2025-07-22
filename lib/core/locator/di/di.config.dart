@@ -189,14 +189,14 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i152.DutiesRepositoryImpl(gh<_i96.ApiDuties>()),
       registerFor: {_prod},
     );
-    gh.singleton<_i1051.VisitorRepository>(
-      () => _i989.VisitorRepositoryImpl(),
-      registerFor: {_prod},
-    );
     gh.factoryAsync<_i361.Response<dynamic>>(
         () => dioProvider.refresh(gh<String>()));
     gh.singleton<_i761.PropertyUsecase>(
       () => _i761.PropertyUsecaseImpl(gh<_i474.PropertyRepository>()),
+      registerFor: {_prod},
+    );
+    gh.singleton<_i1051.VisitorRepository>(
+      () => _i989.VisitorRepositoryImpl(gh<_i361.Dio>()),
       registerFor: {_prod},
     );
     gh.factory<_i658.TimeManagementBloc>(
