@@ -17,6 +17,10 @@ class UploadImageLoading extends VisitorState {}
 
 class UploadImageSuccess extends VisitorState {}
 
+class GetLocationLoading extends VisitorState {}
+
+class GetLocationSuccess extends VisitorState {}
+
 class SetLocationFailure extends VisitorState {
   final String? error;
 

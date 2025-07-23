@@ -10,7 +10,6 @@ class ApiVisitor {
 //
   Future<dynamic> myVisitor(SetLocationRequest params) async {
     final response = await httpclient.post('user-check-points', data: {
-      "userId": params.userId,
       "checkPointId": params.checkPointId,
       "lat": params.lat,
       "lng": params.lng,

@@ -104,11 +104,16 @@ import 'package:linchpin/features/time_management/domain/use_case/time_managemen
     as _i436;
 import 'package:linchpin/features/time_management/presentation/bloc/time_management_bloc.dart'
     as _i658;
-import 'package:linchpin/features/visitor/data/api_visitor.dart' as _i547;
+import 'package:linchpin/features/visitor/data/datasource/api_getLocation.dart'
+    as _i639;
+import 'package:linchpin/features/visitor/data/datasource/api_visitor.dart'
+    as _i406;
 import 'package:linchpin/features/visitor/data/repository/visitor_repository_impl.dart'
     as _i1040;
 import 'package:linchpin/features/visitor/domain/repository/visitor_repository.dart'
     as _i1051;
+import 'package:linchpin/features/visitor/domain/use_case/getlocation_usecase.dart'
+    as _i231;
 import 'package:linchpin/features/visitor/domain/use_case/setlocation_usecase.dart'
     as _i122;
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart'
@@ -141,7 +146,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i554.ApiRequest>(() => _i554.ApiRequest(gh<_i361.Dio>()));
     gh.singleton<_i864.ApiTimeMamagement>(
         () => _i864.ApiTimeMamagement(gh<_i361.Dio>()));
-    gh.singleton<_i547.ApiVisitor>(() => _i547.ApiVisitor(gh<_i361.Dio>()));
+    gh.singleton<_i639.ApiGetlocation>(
+        () => _i639.ApiGetlocation(gh<_i361.Dio>()));
+    gh.singleton<_i406.ApiVisitor>(() => _i406.ApiVisitor(gh<_i361.Dio>()));
     gh.lazySingleton<_i363.DeviceInfo>(() => _i363.DeviceInfoImpl());
     gh.singleton<_i246.TimeManagementRepository>(
       () => _i762.TimeManagementRepositoryImpl(gh<_i864.ApiTimeMamagement>()),
@@ -168,6 +175,13 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i629.RequestRepositoryImpl(gh<_i554.ApiRequest>()),
       registerFor: {_prod},
     );
+    gh.singleton<_i1051.VisitorRepository>(
+      () => _i1040.VisitorRepositoryImpl(
+        gh<_i406.ApiVisitor>(),
+        gh<_i639.ApiGetlocation>(),
+      ),
+      registerFor: {_prod},
+    );
     gh.singleton<_i375.PaySlipUsecase>(
       () => _i375.AuthUsecaseImpl(gh<_i703.PaySlipRepository>()),
       registerFor: {_prod},
@@ -189,6 +203,14 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i152.DutiesRepositoryImpl(gh<_i96.ApiDuties>()),
       registerFor: {_prod},
     );
+    gh.singleton<_i231.GetlocationUsecase>(
+      () => _i231.GetLocationUseCaseImpl(gh<_i1051.VisitorRepository>()),
+      registerFor: {_prod},
+    );
+    gh.singleton<_i122.SetLocationUseCase>(
+      () => _i122.UploadImageImpl(gh<_i1051.VisitorRepository>()),
+      registerFor: {_prod},
+    );
     gh.factoryAsync<_i361.Response<dynamic>>(
         () => dioProvider.refresh(gh<String>()));
     gh.singleton<_i761.PropertyUsecase>(
@@ -197,10 +219,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i658.TimeManagementBloc>(
         () => _i658.TimeManagementBloc(gh<_i436.TimeManagementUsecase>()));
-    gh.singleton<_i1051.VisitorRepository>(
-      () => _i1040.VisitorRepositoryImpl(gh<_i547.ApiVisitor>()),
-      registerFor: {_prod},
-    );
     gh.factory<_i616.PropertyBloc>(
         () => _i616.PropertyBloc(gh<_i761.PropertyUsecase>()));
     gh.factory<_i12.PaySlipBloc>(
@@ -209,6 +227,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i817.AuthUsecaseImpl(gh<_i278.AuthRepository>()),
       registerFor: {_prod},
     );
+    gh.factory<_i573.VisitorBloc>(() => _i573.VisitorBloc(
+          gh<_i122.SetLocationUseCase>(),
+          gh<_i231.GetlocationUsecase>(),
+        ));
     gh.singleton<_i954.DutiesUsecase>(
       () => _i954.DutiesUsecaseImpl(gh<_i479.DutiesRepository>()),
       registerFor: {_prod},
@@ -238,12 +260,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i4.LastQuarterReportBloc>(
         () => _i4.LastQuarterReportBloc(gh<_i46.LastQuarterReportUsecase>()));
-    gh.singleton<_i122.SetLocationUseCase>(
-      () => _i122.UploadImageImpl(gh<_i1051.VisitorRepository>()),
-      registerFor: {_prod},
-    );
-    gh.factory<_i573.VisitorBloc>(
-        () => _i573.VisitorBloc(gh<_i122.SetLocationUseCase>()));
     gh.factory<_i501.GrowthBloc>(
         () => _i501.GrowthBloc(gh<_i71.GrowthUsecase>()));
     gh.factory<_i785.RequestsBloc>(

@@ -9,6 +9,8 @@ sealed class VisitorEvent extends Equatable {
 
 class UploadImage extends VisitorEvent {}
 
+class GetLocation extends VisitorEvent {}
+
 class SetLocationEvent extends VisitorEvent {
   final SetLocationRequest? setLocationRequest;
 

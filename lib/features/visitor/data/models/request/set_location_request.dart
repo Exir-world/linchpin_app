@@ -1,5 +1,4 @@
 class SetLocationRequest {
-  int? userId;
   int? checkPointId;
   double? lat;
   double? lng;
@@ -7,15 +6,9 @@ class SetLocationRequest {
   List<Attachments>? attachments;
 
   SetLocationRequest(
-      {this.userId,
-      this.checkPointId,
-      this.lat,
-      this.lng,
-      this.report,
-      this.attachments});
+      {this.checkPointId, this.lat, this.lng, this.report, this.attachments});
 
   SetLocationRequest.fromJson(Map<String, dynamic> json) {
-    userId = json['userId'];
     checkPointId = json['checkPointId'];
     lat = json['lat'];
     lng = json['lng'];
@@ -30,7 +23,6 @@ class SetLocationRequest {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['userId'] = userId;
     data['checkPointId'] = checkPointId;
     data['lat'] = lat;
     data['lng'] = lng;

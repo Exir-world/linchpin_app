@@ -3,17 +3,20 @@ import 'package:injectable/injectable.dart';
 import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/core/resources/data_state.dart';
 import 'package:linchpin/core/utils/handle_error.dart';
-import 'package:linchpin/features/visitor/data/api_visitor.dart';
+import 'package:linchpin/features/visitor/data/datasource/api_getLocation.dart';
+import 'package:linchpin/features/visitor/data/datasource/api_visitor.dart';
 import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
 import 'package:linchpin/features/visitor/data/models/response/set_location_response.dart';
+import 'package:linchpin/features/visitor/domain/entity/get_location_entity.dart';
 import 'package:linchpin/features/visitor/domain/entity/set_location_entity.dart';
 import 'package:linchpin/features/visitor/domain/repository/visitor_repository.dart';
 
 @Singleton(as: VisitorRepository, env: [Env.prod])
 class VisitorRepositoryImpl extends VisitorRepository {
   final ApiVisitor apiVisitor;
+  final ApiGetlocation apiGetlocation;
 
-  VisitorRepositoryImpl(this.apiVisitor);
+  VisitorRepositoryImpl(this.apiVisitor, this.apiGetlocation);
   @override
   Future<DataState<bool>> myVisitor() async {
     // TODO: implement myVisitor
@@ -27,8 +30,18 @@ class VisitorRepositoryImpl extends VisitorRepository {
       Response response = await apiVisitor.myVisitor(params);
       SetLocationEntity setLocationEntity =
           SetLocationResponse.fromJson(response.data);
-
       return DataSuccess(setLocationEntity);
+    } on DioException catch (e) {
+      return await handleError(e);
+    }
+  }
+
+  @override
+  Future<DataState<List<GetLocationEntity>>> getLocation() async {
+    try {
+      Response response = await apiGetlocation.getLocation();
+
+      return DataSuccess(response.data);
     } on DioException catch (e) {
       return await handleError(e);
     }

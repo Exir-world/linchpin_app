@@ -10,7 +10,6 @@ import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
-import 'package:linchpin/features/visitor/domain/entity/set_location_entity.dart';
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_image.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_map.dart';
@@ -88,7 +87,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
 
   @override
   void initState() {
-    bloc = getIt<VisitorBloc>();
+    bloc = getIt<VisitorBloc>()..add(GetLocation());
     super.initState();
   }
 
@@ -182,7 +181,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                         lng: AccessLocationScreen
                                             .longitudeNotifire.value,
                                         report: true,
-                                        userId: 0,
                                       ),
                                     ),
                                   );

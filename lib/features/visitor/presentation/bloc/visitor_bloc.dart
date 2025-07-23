@@ -10,8 +10,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:linchpin/core/resources/data_state.dart';
 import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
 import 'package:linchpin/features/visitor/data/models/response/set_location_response.dart';
-import 'package:linchpin/features/visitor/domain/entity/set_location_entity.dart';
-import 'package:linchpin/features/visitor/domain/entity/visitor_entity.dart';
+import 'package:linchpin/features/visitor/domain/use_case/getlocation_usecase.dart';
 import 'package:linchpin/features/visitor/domain/use_case/setlocation_usecase.dart';
 import 'package:rxdart/subjects.dart';
 
@@ -21,6 +20,7 @@ part 'visitor_state.dart';
 @injectable
 class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   final SetLocationUseCase setLocationUseCase;
+  final GetlocationUsecase getlocationUsecase;
 
   bool isDeleted = false;
   XFile? photo;
@@ -37,9 +37,11 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   ];
   final desc = BehaviorSubject<String?>.seeded('');
 
-  VisitorBloc(this.setLocationUseCase) : super(VisitorInitial()) {
+  VisitorBloc(this.setLocationUseCase, this.getlocationUsecase)
+      : super(VisitorInitial()) {
     on<SetLocationEvent>(_saveLocationEvent);
     on<UploadImage>(_uploadImage);
+    on<GetLocation>(_getLocation);
   }
 
   FutureOr<void> _saveLocationEvent(
@@ -53,6 +55,23 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
       if (dataState is DataSuccess) {
         visitors = dataState.data;
         emit(SetLocationSuccess());
+      }
+
+      if (dataState is DataFailed) {
+        emit(SetLocationFailure(error: dataState.error));
+      }
+    } catch (e) {
+      emit(SetLocationFailure(error: e.toString()));
+    }
+  }
+
+  FutureOr<void> _getLocation(
+      GetLocation event, Emitter<VisitorState> emit) async {
+    try {
+      emit(GetLocationLoading());
+      DataState dataState = await getlocationUsecase.getLocation();
+      if (dataState is DataSuccess) {
+        emit(GetLocationSuccess());
       }
 
       if (dataState is DataFailed) {

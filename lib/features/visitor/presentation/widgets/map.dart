@@ -31,19 +31,7 @@ class _MapScreenState extends State<MapScreen> {
       AccessLocationScreen.longitudeNotifire.value ?? 0.0,
     );
     bloc.currentLocation = loc;
-    // setState(() {
-    //   currentLocation = loc;
-    //   // widget._positions.add(loc); // اگر می‌خوای جزو لیست باشه
-    //   // widget.mapController.move(loc, 16); // حرکت دوربین به موقعیت فعلی
-    // });
   }
-
-  // final List<LatLng> visitTargets = [
-  //   // LatLng(36.2978512, 59.5906702),
-  //   LatLng(36.2977532, 59.5986680),
-  //   LatLng(36.2977832, 59.5926712),
-  //   LatLng(36.2977532, 59.5945702),
-  // ];
 
   @override
   void initState() {
@@ -94,24 +82,24 @@ class _MapScreenState extends State<MapScreen> {
                 ]),
                 MarkerLayer(
                   markers: bloc.visitTargets
-                      // .asMap()
-                      // .entries
+                      .asMap()
+                      .entries
                       .map(
                         (entry) => Marker(
-                          point: entry,
+                          point: entry.value,
                           width: 40,
                           height: 50,
                           child: Column(
                             children: [
                               Icon(Icons.location_on,
                                   color: Colors.red, size: 30),
-                              // Text(
-                              //   '${entry.key + 1}',
-                              //   style: TextStyle(
-                              //       fontSize: 12,
-                              //       color: Colors.black,
-                              //       fontWeight: FontWeight.bold),
-                              // ),
+                              Text(
+                                '${entry.key + 1}',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ],
                           ),
                         ),
