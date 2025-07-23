@@ -9,16 +9,16 @@ sealed class VisitorState extends Equatable {
 
 final class VisitorInitial extends VisitorState {}
 
-class SaveLocationLoading extends VisitorState {}
+class SetLocationLoading extends VisitorState {}
 
-class SaveLocationSuccess extends VisitorState {}
+class SetLocationSuccess extends VisitorState {}
 
 class UploadImageLoading extends VisitorState {}
 
 class UploadImageSuccess extends VisitorState {}
 
-class SaveLocationFailure extends VisitorState {
+class SetLocationFailure extends VisitorState {
   final String? error;
 
-  const SaveLocationFailure({this.error});
+  const SetLocationFailure({this.error});
 }

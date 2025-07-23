@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -10,6 +9,7 @@ import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
 import 'package:linchpin/features/visitor/domain/entity/set_location_entity.dart';
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_image.dart';
@@ -149,35 +149,38 @@ class _VisitorScreenState extends State<VisitorScreen> {
                             height: 40,
                             isEnabled: photo != null &&
                                 photos.isNotEmpty &&
-                                isEnableSendButton(),
+                                !isEnableSendButton(),
                             label: 'ارسال',
                             onTap: () async {
-                              if (isEnableSendButton()) {
-                                List<MultipartFile> imageFiles = [];
+                              if (!isEnableSendButton()) {
+                                List<Attachments>? imageFiles = [];
                                 for (var photo in photos) {
                                   if (photo != null) {
                                     imageFiles.add(
-                                      await MultipartFile.fromFile(
-                                        photo.path,
+                                      Attachments(
                                         filename: photo.name,
+                                        fileUrl: photo.path,
+                                        fileType: photo.mimeType,
                                       ),
                                     );
                                   }
                                 }
-                                final formData = FormData.fromMap({
-                                  "images":
-                                      imageFiles, // این اسم باید با انتظارات سرور هماهنگ باشه
-                                  // می‌تونی سایر فیلدها رو هم اضافه کنی
-                                  "user_id": "123",
-                                });
+                                // final formData = FormData.fromMap({
+                                //   "images":
+                                //       imageFiles, // این اسم باید با انتظارات سرور هماهنگ باشه
+                                //   // می‌تونی سایر فیلدها رو هم اضافه کنی
+                                //   "user_id": "123",
+                                // });
                                 setState(() {
                                   bloc.add(
-                                    UploadImage(
-                                      upload: SetLocationEntity(
-                                        attachments: [],
+                                    SetLocationEvent(
+                                      setLocationRequest: SetLocationRequest(
+                                        attachments: imageFiles,
                                         checkPointId: 0,
-                                        lat: 0,
-                                        lng: 0,
+                                        lat: AccessLocationScreen
+                                            .latitudeNotifire.value,
+                                        lng: AccessLocationScreen
+                                            .longitudeNotifire.value,
                                         report: true,
                                         userId: 0,
                                       ),

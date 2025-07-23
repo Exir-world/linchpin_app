@@ -7,18 +7,13 @@ sealed class VisitorEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class UploadImage extends VisitorEvent {
-  final SetLocationEntity? upload;
+class UploadImage extends VisitorEvent {}
 
-  const UploadImage({this.upload});
-}
+class SetLocationEvent extends VisitorEvent {
+  final SetLocationRequest? setLocationRequest;
 
-class SaveLocationEvent extends VisitorEvent {
-  final LatLng? position;
-  final FormData? img;
-
-  const SaveLocationEvent({this.position, this.img});
+  const SetLocationEvent({this.setLocationRequest});
 
   @override
-  List<Object> get props => [position ?? Object()];
+  List<Object> get props => [];
 }

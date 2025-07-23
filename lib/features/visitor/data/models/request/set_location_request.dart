@@ -1,8 +1,8 @@
 class SetLocationRequest {
   int? userId;
   int? checkPointId;
-  int? lat;
-  int? lng;
+  double? lat;
+  double? lng;
   bool? report;
   List<Attachments>? attachments;
 

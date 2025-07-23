@@ -8,9 +8,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:linchpin/core/resources/data_state.dart';
+import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
+import 'package:linchpin/features/visitor/data/models/response/set_location_response.dart';
 import 'package:linchpin/features/visitor/domain/entity/set_location_entity.dart';
 import 'package:linchpin/features/visitor/domain/entity/visitor_entity.dart';
-import 'package:linchpin/features/visitor/domain/use_case/upload_usecase.dart';
+import 'package:linchpin/features/visitor/domain/use_case/setlocation_usecase.dart';
 import 'package:rxdart/subjects.dart';
 
 part 'visitor_event.dart';
@@ -18,14 +20,14 @@ part 'visitor_state.dart';
 
 @injectable
 class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
-  final UploadUsecase uploadUsecase;
+  final SetLocationUseCase setLocationUseCase;
 
   bool isDeleted = false;
   XFile? photo;
   List<File> capturedImages = [];
   List<MultipartFile> multipartImages = [];
   FormData? formData;
-  List<VisitorEntity>? visitors = [];
+  SetLocationResponse visitors = SetLocationResponse();
   LatLng? currentLocation;
   final List<LatLng> visitTargets = [
     // LatLng(36.2978512, 59.5906702),
@@ -35,45 +37,37 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   ];
   final desc = BehaviorSubject<String?>.seeded('');
 
-  VisitorBloc(this.uploadUsecase) : super(VisitorInitial()) {
-    on<SaveLocationEvent>(_saveLocationEvent);
+  VisitorBloc(this.setLocationUseCase) : super(VisitorInitial()) {
+    on<SetLocationEvent>(_saveLocationEvent);
     on<UploadImage>(_uploadImage);
   }
 
   FutureOr<void> _saveLocationEvent(
-      SaveLocationEvent event, Emitter<VisitorState> emit) async {
-    // try {
-    //   emit(SaveLocationLoading());
-    //   DataState dataState = await visitorUsecase.myVisitor();
-    //   if (dataState is DataSuccess) {
-    //     visitors = dataState.data;
-    //     emit(SaveLocationSuccess());
-    //   }
+      SetLocationEvent event, Emitter<VisitorState> emit) async {
+    try {
+      emit(SetLocationLoading());
+      DataState dataState = await setLocationUseCase.setLocation(
+        event.setLocationRequest ?? SetLocationRequest(),
+        // event.setLocationEntity ?? SetLocationEntity(),
+      );
+      if (dataState is DataSuccess) {
+        visitors = dataState.data;
+        emit(SetLocationSuccess());
+      }
 
-    //   if (dataState is DataFailed) {
-    //     emit(SaveLocationFailure(error: dataState.error));
-    //   }
-    // } catch (e) {
-    //   emit(SaveLocationFailure(error: e.toString()));
-    // }
+      if (dataState is DataFailed) {
+        emit(SetLocationFailure(error: dataState.error));
+      }
+    } catch (e) {
+      emit(SetLocationFailure(error: e.toString()));
+    }
   }
 
   FutureOr<void> _uploadImage(
       UploadImage event, Emitter<VisitorState> emit) async {
     try {
       emit(UploadImageLoading());
-      DataState dataState = await uploadUsecase.visitorRepository
-          .uploadImage(event.upload ?? SetLocationEntity());
-      if (dataState is DataSuccess) {
-        emit(UploadImageSuccess());
-      }
-
-      if (dataState is DataFailed) {
-        emit(SaveLocationFailure(error: dataState.error!));
-      }
-    } catch (e) {
-      emit(SaveLocationFailure(error: e.toString()));
-    }
+    } catch (e) {}
   }
 
   void checkTextField(String txt) {
