@@ -10,6 +10,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:linchpin/core/resources/data_state.dart';
 import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
 import 'package:linchpin/features/visitor/data/models/response/set_location_response.dart';
+import 'package:linchpin/features/visitor/domain/entity/current_location_entity.dart';
 import 'package:linchpin/features/visitor/domain/use_case/getlocation_usecase.dart';
 import 'package:linchpin/features/visitor/domain/use_case/setlocation_usecase.dart';
 import 'package:rxdart/subjects.dart';
@@ -36,6 +37,8 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
     // LatLng(36.2977532, 59.5945702),
   ];
   final desc = BehaviorSubject<String?>.seeded('');
+  final selectedValue = BehaviorSubject<CurrentLocationEntity>.seeded(
+      CurrentLocationEntity(name: 'انتخاب موقعیت'));
 
   VisitorBloc(this.setLocationUseCase, this.getlocationUsecase)
       : super(VisitorInitial()) {

@@ -10,7 +10,9 @@ import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
+import 'package:linchpin/features/visitor/domain/entity/current_location_entity.dart';
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
+import 'package:linchpin/features/visitor/presentation/widgets/selected_location.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_image.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_map.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/text_field.dart';
@@ -31,6 +33,9 @@ class _VisitorScreenState extends State<VisitorScreen> {
   Position? position;
   List<XFile?> photos = [];
   final List<LatLng> _positions = []; // لیست موقعیت‌ها
+  List<CurrentLocationEntity>? options = [
+    CurrentLocationEntity(name: 'انتخاب موقعیت', lat: '1.23', lng: '1.32'),
+  ];
   final mapCenter = LatLng(
       AccessLocationScreen.latitudeNotifire.value ?? 35.6892,
       AccessLocationScreen.longitudeNotifire.value ?? 51.3890);
@@ -44,13 +49,10 @@ class _VisitorScreenState extends State<VisitorScreen> {
       return;
     }
     setState(() {
-      // final lat = LatLng(35.6892, 51.3890);
       final lat =
           LatLng(position?.latitude ?? 35.6892, position?.longitude ?? 51.3890);
       mapController.move(lat, 16);
       _positions.add(lat);
-      // mapController.move(mapCenter, 16);
-      // _positions.add(mapCenter); // اضافه کردن موقعیت جدید به لیست
     });
   }
 
@@ -102,7 +104,20 @@ class _VisitorScreenState extends State<VisitorScreen> {
     return BlocProvider(
       create: (context) => bloc,
       child: BlocConsumer<VisitorBloc, VisitorState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is GetLocationSuccess) {
+            int count = 1;
+            for (var element in bloc.visitTargets) {
+              options?.add(
+                CurrentLocationEntity(
+                  lat: element.latitude.toString(),
+                  lng: element.longitude.toString(),
+                  name: '${count++} موقعیت',
+                ),
+              );
+            }
+          }
+        },
         builder: (context, state) {
           return Scaffold(
             body: SafeArea(
@@ -115,6 +130,11 @@ class _VisitorScreenState extends State<VisitorScreen> {
                       positions: _positions,
                     ),
                     VerticalSpace(25),
+                    SelectedLocations(
+                      options: options ?? [],
+                      mapController: mapController,
+                    ),
+                    VerticalSpace(15),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -164,12 +184,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                     );
                                   }
                                 }
-                                // final formData = FormData.fromMap({
-                                //   "images":
-                                //       imageFiles, // این اسم باید با انتظارات سرور هماهنگ باشه
-                                //   // می‌تونی سایر فیلدها رو هم اضافه کنی
-                                //   "user_id": "123",
-                                // });
                                 setState(() {
                                   bloc.add(
                                     SetLocationEvent(
