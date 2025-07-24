@@ -117,6 +117,9 @@ class _VisitorScreenState extends State<VisitorScreen> {
               );
             }
           }
+          if (state is SetLocationSuccess) {
+            _showSnackbar('عملیات با موفقیت انجام شد.');
+          }
         },
         builder: (context, state) {
           return Scaffold(
@@ -141,13 +144,13 @@ class _VisitorScreenState extends State<VisitorScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           ProgressButton(
-                            width: context.screenWidth * .34,
+                            width: context.screenWidth * .32,
                             height: 40,
                             label: 'ثبت موقعیت',
                             onTap: _getLocationAndShowMarker,
                           ),
                           ProgressButton(
-                            width: context.screenWidth * .34,
+                            width: context.screenWidth * .32,
                             height: 40,
                             label:
                                 photos.isEmpty ? 'گرفتن عکس' : 'اضافه کردن عکس',
@@ -194,7 +197,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                             .latitudeNotifire.value,
                                         lng: AccessLocationScreen
                                             .longitudeNotifire.value,
-                                        report: true,
+                                        report: bloc.desc.value,
                                       ),
                                     ),
                                   );

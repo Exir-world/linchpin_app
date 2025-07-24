@@ -29,9 +29,9 @@ class SelectedLocations extends StatelessWidget {
       width: context.screenWidth * .9,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Colors.grey.shade300,
+        color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(VERTICAL_SPACING_1x),
-        border: Border.all(width: .5, color: Colors.grey),
+        border: Border.all(width: .5, color: Colors.grey.shade300),
       ),
       child: StreamBuilder<CurrentLocationEntity>(
         stream: bloc.selectedValue.stream,

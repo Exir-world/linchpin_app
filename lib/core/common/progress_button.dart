@@ -56,7 +56,7 @@ class ProgressButton extends StatelessWidget {
 
         decoration: BoxDecoration(
           boxShadow: boxShadow,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           color: buttonColor,
         ),
         child: isLoading

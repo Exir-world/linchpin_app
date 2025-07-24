@@ -2,7 +2,7 @@ class SetLocationEntity {
   int? userId;
   double? lat;
   double? lng;
-  bool? report;
+  String? report;
   int? checkPointId;
   int? id;
   String? createdAt;

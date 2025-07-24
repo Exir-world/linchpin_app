@@ -2,7 +2,7 @@ class SetLocationRequest {
   int? checkPointId;
   double? lat;
   double? lng;
-  bool? report;
+  String? report;
   List<Attachments>? attachments;
 
   SetLocationRequest(

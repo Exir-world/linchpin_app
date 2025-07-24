@@ -79,9 +79,7 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
               (e) => visitTargets.add(
                 LatLng(
                   double.parse(e.lat.toString()),
-                  double.parse(
-                    e.lng.toString(),
-                  ),
+                  double.parse(e.lng.toString()),
                 ),
               ),
             )
