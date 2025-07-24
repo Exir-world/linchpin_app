@@ -1,28 +1,30 @@
+import 'package:linchpin/features/visitor/data/models/response/get_location_response.dart';
+
 class GetLocationEntity {
-  final List<ItemsEntity> itemsEntity;
+  final List<Items> itemsEntity;
 
   GetLocationEntity({required this.itemsEntity});
 }
 
-class ItemsEntity {
-  int? id;
-  String? lat;
-  String? lng;
-  int? radius;
-  bool? needReport;
-  int? checkPointId;
-  UserCheckPoints? userCheckPoints;
+// class Items {
+//   int? id;
+//   String? lat;
+//   String? lng;
+//   int? radius;
+//   bool? needReport;
+//   int? checkPointId;
+//   UserCheckPoints? userCheckPoints;
 
-  ItemsEntity({
-    this.id,
-    this.lat,
-    this.lng,
-    this.radius,
-    this.needReport,
-    this.checkPointId,
-    this.userCheckPoints,
-  });
-}
+//   Items({
+//     this.id,
+//     this.lat,
+//     this.lng,
+//     this.radius,
+//     this.needReport,
+//     this.checkPointId,
+//     this.userCheckPoints,
+//   });
+// }
 
 class UserCheckPoints {
   int? id;

@@ -1,11 +1,7 @@
-class GetLocationEntity {
-  final List<Items> items;
-
-  GetLocationEntity({required this.items});
-}
+import 'package:linchpin/features/visitor/domain/entity/get_location_entity.dart';
 
 class GetLocationImpl extends GetLocationEntity {
-  GetLocationImpl({required super.items});
+  GetLocationImpl({required super.itemsEntity});
 
   factory GetLocationImpl.fromJson(Map<String, dynamic> json) {
     List<Items> parsedItems = [];
@@ -13,12 +9,12 @@ class GetLocationImpl extends GetLocationEntity {
       parsedItems =
           (json['items'] as List).map((v) => Items.fromJson(v)).toList();
     }
-    return GetLocationImpl(items: parsedItems);
+    return GetLocationImpl(itemsEntity: parsedItems);
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'items': items.map((v) => v.toJson()).toList(),
+      'items': itemsEntity.map((v) => v.toJson()).toList(),
     };
   }
 }

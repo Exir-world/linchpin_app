@@ -29,11 +29,11 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   FormData? formData;
   SetLocationResponse visitors = SetLocationResponse();
   LatLng? currentLocation;
-  final List<LatLng> visitTargets = [
+  List<LatLng> visitTargets = [
     // LatLng(36.2978512, 59.5906702),
-    LatLng(36.2977532, 59.5986680),
-    LatLng(36.2977832, 59.5926712),
-    LatLng(36.2977532, 59.5945702),
+    // LatLng(36.2977532, 59.5986680),
+    // LatLng(36.2977832, 59.5926712),
+    // LatLng(36.2977532, 59.5945702),
   ];
   final desc = BehaviorSubject<String?>.seeded('');
 
@@ -71,6 +71,18 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
       emit(GetLocationLoading());
       DataState dataState = await getlocationUsecase.getLocation();
       if (dataState is DataSuccess) {
+        dataState.data
+            .map(
+              (e) => visitTargets.add(
+                LatLng(
+                  double.parse(e.lat.toString()),
+                  double.parse(
+                    e.lng.toString(),
+                  ),
+                ),
+              ),
+            )
+            .toList();
         emit(GetLocationSuccess());
       }
 
