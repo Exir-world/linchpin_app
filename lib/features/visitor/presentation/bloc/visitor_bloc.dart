@@ -9,6 +9,7 @@ import 'package:injectable/injectable.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:linchpin/core/resources/data_state.dart';
 import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
+import 'package:linchpin/features/visitor/data/models/response/get_location_response.dart';
 import 'package:linchpin/features/visitor/data/models/response/set_location_response.dart';
 import 'package:linchpin/features/visitor/domain/entity/current_location_entity.dart';
 import 'package:linchpin/features/visitor/domain/use_case/getlocation_usecase.dart';
@@ -39,6 +40,7 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   final desc = BehaviorSubject<String?>.seeded('');
   final selectedValue = BehaviorSubject<CurrentLocationEntity>.seeded(
       CurrentLocationEntity(name: 'انتخاب موقعیت'));
+  List<Items> items = [];
 
   VisitorBloc(this.setLocationUseCase, this.getlocationUsecase)
       : super(VisitorInitial()) {
@@ -80,6 +82,21 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
                 LatLng(
                   double.parse(e.lat.toString()),
                   double.parse(e.lng.toString()),
+                ),
+              ),
+            )
+            .toList();
+        dataState.data
+            .map(
+              (e) => items.add(
+                Items(
+                  id: e.id,
+                  lat: e.lat,
+                  lng: e.lng,
+                  checkPointId: e.checkPointId,
+                  needReport: e.needReport,
+                  radius: e.radius,
+                  userCheckPoints: e.userCheckPoints,
                 ),
               ),
             )
