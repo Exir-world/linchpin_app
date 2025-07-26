@@ -33,8 +33,8 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   LatLng? currentLocation;
   List<CurrentLocationEntity> visitTargets = [];
   final desc = BehaviorSubject<String?>.seeded('');
-  final selectedValue = BehaviorSubject<CurrentLocationEntity>.seeded(
-      CurrentLocationEntity(name: 'انتخاب موقعیت'));
+  final selectedValue =
+      BehaviorSubject<CurrentLocationEntity>.seeded(CurrentLocationEntity());
   List<Items> items = [];
 
   VisitorBloc(this.setLocationUseCase, this.getlocationUsecase)

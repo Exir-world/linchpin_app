@@ -1,7 +1,7 @@
 import 'package:latlong2/latlong.dart';
 
 class CurrentLocationEntity {
-  final String? name;
+  String? name;
   final String? lat;
   final String? lng;
   final int? id;

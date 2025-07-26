@@ -1,10 +1,10 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/common/dimens.dart';
 import 'package:linchpin/core/common/empty_container.dart';
@@ -87,26 +87,21 @@ class _SelectedLocationsState extends State<SelectedLocations> {
       child: StreamBuilder<CurrentLocationEntity>(
         stream: bloc.selectedValue.stream,
         builder: (context, asyncSnapshot) {
-          return DropdownButton<String>(
-            menuWidth: context.screenWidth * .93,
-            borderRadius: BorderRadius.circular(8),
-            dropdownColor: Colors.grey.shade100,
+          return DropdownButton2<String>(
             underline: const EmptyContainer(),
             isExpanded: true,
-            value: asyncSnapshot.data?.name != null &&
-                    asyncSnapshot.data!.name!.isEmpty
-                ? 'انتخاب موقعیت'
-                : asyncSnapshot.data?.name,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: TEXT_DARK_COLOR,
+            hint: const Text(
+              'انتخاب موقعیت',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
-            icon: const Icon(
-              Icons.keyboard_arrow_down_sharp,
-              color: ICON_COLOR,
-            ),
-            onChanged: (String? newValue) async {
+            value: asyncSnapshot.data?.name,
+            items: widget.options?.map<DropdownMenuItem<String>>((item) {
+              return DropdownMenuItem<String>(
+                value: item.name ?? '',
+                child: SmallBold(item.name ?? ''),
+              );
+            }).toList(),
+            onChanged: (newValue) async {
               CurrentLocationEntity? currentLocation;
               bloc.selectedValue.value = CurrentLocationEntity(
                 name: newValue,
@@ -140,12 +135,24 @@ class _SelectedLocationsState extends State<SelectedLocations> {
                 showModal(context, currentLocation);
               }
             },
-            items: widget.options?.map<DropdownMenuItem<String>>((item) {
-              return DropdownMenuItem<String>(
-                value: item.name ?? '',
-                child: SmallBold(item.name ?? ''),
-              );
-            }).toList(),
+            buttonStyleData: ButtonStyleData(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              // decoration: BoxDecoration(
+              //   borderRadius: BorderRadius.circular(8),
+              //   border: Border.all(color: Colors.grey),
+              //   color: Colors.white,
+              // ),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.white,
+              ),
+            ),
+            iconStyleData: const IconStyleData(
+              icon: Icon(Icons.keyboard_arrow_down, color: Colors.black),
+            ),
           );
         },
       ),

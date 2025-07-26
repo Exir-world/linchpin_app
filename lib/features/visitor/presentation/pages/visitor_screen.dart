@@ -35,9 +35,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
   List<XFile?> photos = [];
   Position? position;
   final List<LatLng> _positions = []; // لیست موقعیت‌ها
-  List<CurrentLocationEntity>? options = [
-    CurrentLocationEntity(name: 'انتخاب موقعیت', lat: '1.23', lng: '1.32'),
-  ];
+  List<CurrentLocationEntity>? options = [];
   List<Items> items = [];
   final mapCenter = LatLng(
       AccessLocationScreen.latitudeNotifire.value ?? 35.6892,
@@ -125,6 +123,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
           if (state is SetLocationSuccess) {
             bloc.add(GetLocation());
             options?.clear();
+            bloc.selectedValue.value.name = null;
             _showSnackbar('عملیات با موفقیت انجام شد.');
           }
         },
