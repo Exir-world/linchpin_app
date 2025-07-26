@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/common/custom_text.dart';
@@ -10,12 +9,13 @@ import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
 class TextFieldWedget extends StatelessWidget {
   const TextFieldWedget({
     required this.photos,
+    required this.bloc,
     super.key,
   });
   final List<XFile?> photos;
+  final VisitorBloc bloc;
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<VisitorBloc>();
     return photos.isNotEmpty
         ? SizedBox(
             width: context.screenWidth * .9,
@@ -36,6 +36,10 @@ class TextFieldWedget extends StatelessWidget {
                   borderSide: BorderSide(
                     color: Colors.grey.shade300,
                   ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: ICON_COLOR, width: 1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
             ),

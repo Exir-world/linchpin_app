@@ -75,7 +75,12 @@ class _MapScreenState extends State<MapScreen> {
                 ),
                 MarkerLayer(markers: [
                   Marker(
-                    point: bloc.currentLocation ?? LatLng(39.222, 59.32),
+                    point: bloc.currentLocation ??
+                        LatLng(
+                            AccessLocationScreen.latitudeNotifire.value ??
+                                39.222,
+                            AccessLocationScreen.longitudeNotifire.value ??
+                                59.32),
                     child:
                         Icon(Icons.location_on, color: Colors.blue, size: 30),
                   )
@@ -86,7 +91,7 @@ class _MapScreenState extends State<MapScreen> {
                       .entries
                       .map(
                         (entry) => Marker(
-                          point: entry.value,
+                          point: entry.value.latLng ?? LatLng(0.0, 0.0),
                           width: 40,
                           height: 50,
                           child: Column(

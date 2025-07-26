@@ -17,9 +17,7 @@ import 'package:linchpin/features/visitor/data/models/response/get_location_resp
 import 'package:linchpin/features/visitor/domain/entity/current_location_entity.dart';
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/selected_location.dart';
-import 'package:linchpin/features/visitor/presentation/widgets/show_image.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_map.dart';
-import 'package:linchpin/features/visitor/presentation/widgets/text_field.dart';
 
 class VisitorScreen extends StatefulWidget {
   const VisitorScreen({super.key});
@@ -34,8 +32,8 @@ class _VisitorScreenState extends State<VisitorScreen> {
   final ImagePicker picker = ImagePicker();
   late VisitorBloc bloc;
   XFile? photo;
-  Position? position;
   List<XFile?> photos = [];
+  Position? position;
   final List<LatLng> _positions = []; // لیست موقعیت‌ها
   List<CurrentLocationEntity>? options = [
     CurrentLocationEntity(name: 'انتخاب موقعیت', lat: '1.23', lng: '1.32'),
@@ -83,7 +81,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
     bool result = false;
     for (final target in bloc.visitTargets) {
       if (bloc.currentLocation != null &&
-          isNear(bloc.currentLocation!, target)) {
+          isNear(bloc.currentLocation!, target.latLng ?? LatLng(0.0, 0.0))) {
         result = true;
       } else {
         result = false;
@@ -116,14 +114,17 @@ class _VisitorScreenState extends State<VisitorScreen> {
             for (var element in bloc.visitTargets) {
               options?.add(
                 CurrentLocationEntity(
-                  lat: element.latitude.toString(),
-                  lng: element.longitude.toString(),
+                  lat: element.lat.toString(),
+                  lng: element.lng.toString(),
                   name: '${count++} موقعیت',
+                  id: element.id,
                 ),
               );
             }
           }
           if (state is SetLocationSuccess) {
+            bloc.add(GetLocation());
+            options?.clear();
             _showSnackbar('عملیات با موفقیت انجام شد.');
           }
         },
@@ -142,14 +143,15 @@ class _VisitorScreenState extends State<VisitorScreen> {
                     SelectedLocations(
                       options: options ?? [],
                       mapController: mapController,
+                      bloc: bloc,
                     ),
                     VerticalSpace(15),
-                    buttonWidgets(context),
-                    VerticalSpace(40),
-                    ShowImage(photos: photos),
-                    VerticalSpace(20),
-                    TextFieldWedget(photos: photos),
-                    VerticalSpace(20),
+                    // buttonWidgets(context),
+                    // VerticalSpace(40),
+                    // ShowImage(photos: photos),
+                    // VerticalSpace(20),
+                    // TextFieldWedget(photos: photos),
+                    // VerticalSpace(20),
                     ListView.builder(
                       itemCount: items.length,
                       physics: BouncingScrollPhysics(),
