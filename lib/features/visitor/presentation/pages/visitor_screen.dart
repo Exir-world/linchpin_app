@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:calendar_pro_farhad/core/text_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +20,7 @@ import 'package:linchpin/features/visitor/domain/entity/current_location_entity.
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/selected_location.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_map.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 
 class VisitorScreen extends StatefulWidget {
   const VisitorScreen({super.key});
@@ -145,12 +148,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
                       bloc: bloc,
                     ),
                     VerticalSpace(15),
-                    // buttonWidgets(context),
-                    // VerticalSpace(40),
-                    // ShowImage(photos: photos),
-                    // VerticalSpace(20),
-                    // TextFieldWedget(photos: photos),
-                    // VerticalSpace(20),
                     ListView.builder(
                       itemCount: items.length,
                       physics: BouncingScrollPhysics(),
@@ -158,9 +155,37 @@ class _VisitorScreenState extends State<VisitorScreen> {
                       itemBuilder: (context, index) {
                         final data = items[index];
                         return data.userCheckPoints != null
-                            ? ListTile(
-                                title: SmallBold(
-                                    data.userCheckPoints?.createdAt ?? ''),
+                            ? Container(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade200,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: ListTile(
+                                  onTap: () {
+                                    showModal(context, data);
+                                  },
+                                  leading: ClipRRect(
+                                    borderRadius: BorderRadius.circular(4),
+                                    child: Image.file(
+                                      File(
+                                        data.userCheckPoints?.attachments?.first
+                                                .fileUrl ??
+                                            '',
+                                      ),
+                                      width: 40,
+                                      height: 40,
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                  title: SmallBold(data
+                                          .userCheckPoints?.createdAt
+                                          ?.toPersianDate() ??
+                                      ''),
+                                ),
                               )
                             : EmptyContainer();
                       },
@@ -173,6 +198,69 @@ class _VisitorScreenState extends State<VisitorScreen> {
           );
         },
       ),
+    );
+  }
+
+  Future<dynamic> showModal(BuildContext context, Items data) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: false,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+      ),
+      builder: (context) {
+        return SizedBox(
+          height: context.screenHeight,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                VerticalSpace(40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        photo = null;
+                        photos.clear();
+                      },
+                      icon: const Icon(Icons.close, size: 28),
+                    ),
+                  ],
+                ),
+                ...data.userCheckPoints!.attachments!.map((element) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                    ),
+                    margin: EdgeInsets.all(8),
+                    padding: EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: Image.file(
+                            File(element.fileUrl ?? ''),
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+                VerticalSpace(10),
+                SmallBold(data.userCheckPoints?.report ?? '')
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

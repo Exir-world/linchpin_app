@@ -137,11 +137,6 @@ class _SelectedLocationsState extends State<SelectedLocations> {
             },
             buttonStyleData: ButtonStyleData(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              // decoration: BoxDecoration(
-              //   borderRadius: BorderRadius.circular(8),
-              //   border: Border.all(color: Colors.grey),
-              //   color: Colors.white,
-              // ),
             ),
             dropdownStyleData: DropdownStyleData(
               maxHeight: 200,
