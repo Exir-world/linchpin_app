@@ -12,6 +12,8 @@ import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/features/duties/presentation/bloc/duties_bloc.dart';
 import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:linchpin/features/notifications/presentation/notificationService.dart';
+import 'package:linchpin/features/notifications/presentation/sse_service.dart';
 import 'package:linchpin/features/pay_slip/presentation/bloc/pay_slip_bloc.dart';
 import 'package:linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
 import 'package:linchpin/features/property/presentation/bloc/property_bloc.dart';
@@ -31,6 +33,9 @@ void main() async {
   // تعیین زبان پیش‌فرض بر اساس مقدار ذخیره‌شده
   Locale initialLocale = _getLocaleFromLanguage(savedLanguage);
   // await FontHelper.loadLanguage(); // مقداردهی اولیه زبان
+
+  await NotificationService.initialize();
+
   runApp(
     EasyLocalization(
       supportedLocales: [Locale('en'), Locale('fa'), Locale('ar')],
@@ -65,17 +70,59 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late Future<Widget> _homePageFuture;
+  late PushNotificationService _pushNotificationService;
+  String? token = '';
+  getToken() async {
+    PrefService prefService = PrefService();
+    token = await prefService.readCacheString(SharedKey.jwtToken);
+    // تنظیم سرویس نوتیفیکیشن
+    _pushNotificationService = PushNotificationService(
+      baseUrl: 'http://192.168.x.x:3000',
+      userId: '',
+      jwtToken: token,
+    );
+
+    // ثبت دستگاه
+    _pushNotificationService.registerDevice().then((_) {
+      print('Device registered successfully');
+    }).catchError((error) {
+      print('Error registering device: $error');
+    });
+
+    // اتصال به SSE و گوش دادن به نوتیفیکیشن‌ها
+    _pushNotificationService.connectToSSE();
+    _pushNotificationService.notificationStream.listen(
+      (message) {
+        // نمایش نوتیفیکیشن
+        NotificationService.showNotification(
+          message['title'] ?? 'Notification',
+          message['message'] ?? 'New message received',
+        );
+      },
+      onError: (error) {
+        print('Notification stream error: $error');
+      },
+    );
+    
+  }
 
   @override
   void initState() {
     super.initState();
     _homePageFuture = _getHomePage();
+    getToken();
   }
 
   // این متد بررسی موقعیت مکانی و تعیین صفحه خانگی را انجام می دهد
   Future<Widget> _getHomePage() async {
     LocationService locationService = LocationService();
     return await locationService.checkLocationPermission();
+  }
+
+  @override
+  void dispose() {
+    _pushNotificationService.dispose();
+    super.dispose();
   }
 
   @override

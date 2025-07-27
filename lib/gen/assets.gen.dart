@@ -141,6 +141,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/logout.svg
   SvgGenImage get logout => const SvgGenImage('assets/icons/logout.svg');
 
+  /// File path: assets/icons/map.svg
+  SvgGenImage get map => const SvgGenImage('assets/icons/map.svg');
+
   /// File path: assets/icons/notification-s.svg
   SvgGenImage get notificationS =>
       const SvgGenImage('assets/icons/notification-s.svg');
@@ -260,6 +263,7 @@ class $AssetsIconsGen {
     leavesOff,
     location,
     logout,
+    map,
     notificationS,
     notification,
     pause,

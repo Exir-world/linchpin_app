@@ -139,8 +139,9 @@ class _RootScreenState extends State<RootScreen> with WidgetsBindingObserver {
                           ),
                           BottomNavigationBarItem(
                             icon: value == 4
-                                ? Assets.icons.leaves.svg()
-                                : Assets.icons.leavesOff.svg(),
+                                ? Assets.icons.map.svg(color: Color(0xFF861C8C))
+                                : Assets.icons.map.svg(
+                                    color: Color.fromARGB(255, 180, 180, 184)),
                             label: "",
                           ),
                         ]
