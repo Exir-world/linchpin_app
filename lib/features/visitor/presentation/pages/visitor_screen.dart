@@ -244,9 +244,28 @@ class _VisitorScreenState extends State<VisitorScreen> {
                   ),
                   title: SmallBold(
                       data.userCheckPoints?.createdAt?.toPersianDate() ?? ''),
-                  // trailing: Text(_getAddress(double.parse(data.lat.toString()),
-                  //         double.parse(data.lng.toString()))
-                  //     .toString()),
+                  trailing: FutureBuilder<String?>(
+                    future: _getAddress(
+                      double.parse(data.lat.toString()),
+                      double.parse(data.lng.toString()),
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text("خطا");
+                      } else {
+                        return ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxWidth: 150,
+                          ),
+                          child: Text(
+                            snapshot.data ?? "آدرس یافت نشد",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ),
               )
             : EmptyContainer();
