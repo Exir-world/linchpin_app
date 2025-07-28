@@ -27,6 +27,7 @@ class Items {
   bool? needReport;
   int? checkPointId;
   UserCheckPoints? userCheckPoints;
+  String? address;
 
   Items({
     this.id,
@@ -36,6 +37,7 @@ class Items {
     this.needReport,
     this.checkPointId,
     this.userCheckPoints,
+    this.address,
   });
 
   factory Items.fromJson(Map<String, dynamic> json) {

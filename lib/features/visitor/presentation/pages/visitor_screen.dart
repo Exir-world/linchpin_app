@@ -40,7 +40,9 @@ class _VisitorScreenState extends State<VisitorScreen> {
   final ImagePicker picker = ImagePicker();
   late VisitorBloc bloc;
   XFile? photo;
+  Map<String, String> result = {};
   List<XFile?> photos = [];
+  List<Text> address = [];
   Position? position;
   final List<LatLng> _positions = []; // لیست موقعیت‌ها
   List<CurrentLocationEntity>? options = [];
@@ -96,8 +98,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
     return result;
   }
 
-  String address = "آدرس مشخص نشده";
-  Future<String?> _getAddress(double lat, double lng) async {
+  Future<void> _getAddress(double lat, double lng) async {
     final url =
         Uri.parse('https://api.neshan.org/v5/reverse?lat=$lat&lng=$lng');
 
@@ -111,21 +112,12 @@ class _VisitorScreenState extends State<VisitorScreen> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        setState(() {
-          address = data['formatted_address'] ?? 'آدرس یافت نشد';
-        });
-        return address;
+        bloc.address.sink.add(data['formatted_address'] ?? 'آدرس یافت نشد');
       } else {
-        setState(() {
-          address = "خطا در دریافت آدرس";
-        });
-        return address;
+        bloc.address.sink.add("خطا در دریافت آدرس");
       }
     } catch (e) {
-      setState(() {
-        address = "خطا: $e";
-      });
-      return address;
+      bloc.address.sink.add("خطا: $e");
     }
   }
 
@@ -146,9 +138,35 @@ class _VisitorScreenState extends State<VisitorScreen> {
     return BlocProvider(
       create: (context) => bloc,
       child: BlocConsumer<VisitorBloc, VisitorState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is GetLocationSuccess) {
             items = bloc.items;
+            for (var element in items) {
+              var isOk = await bloc.isLatLngInMap(
+                double.parse(element.lat.toString()),
+                double.parse(
+                  element.lng.toString(),
+                ),
+              );
+              if (isOk) {
+                result = await bloc.loadLatLngMap();
+              } else {
+                await _getAddress(
+                  double.parse(element.lat.toString()),
+                  double.parse(
+                    element.lng.toString(),
+                  ),
+                );
+                Map<String, String> oldMap = await bloc.loadLatLngMap();
+                oldMap['${element.lat},${element.lng}'] =
+                    bloc.address.value ?? '';
+                await bloc.saveLatLngMap(oldMap);
+              }
+              result = await bloc.loadLatLngMap();
+              address =
+                  result.entries.map((entry) => Text(entry.value)).toList();
+            }
+
             int count = 1;
             for (var element in bloc.visitTargets) {
               options?.add(
@@ -227,46 +245,36 @@ class _VisitorScreenState extends State<VisitorScreen> {
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: ListTile(
-                  onTap: () {
-                    showModal(context, data);
-                  },
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: Image.file(
-                      File(
-                        data.userCheckPoints?.attachments?.first.fileUrl ?? '',
-                      ),
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  title: SmallBold(
-                      data.userCheckPoints?.createdAt?.toPersianDate() ?? ''),
-                  trailing: FutureBuilder<String?>(
-                    future: _getAddress(
-                      double.parse(data.lat.toString()),
-                      double.parse(data.lng.toString()),
-                    ),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text("خطا");
-                      } else {
-                        return ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            maxWidth: 150,
+                child: StreamBuilder<String?>(
+                    stream: bloc.address.stream,
+                    builder: (context, asyncSnapshot) {
+                      return ListTile(
+                        onTap: () {
+                          showModal(context, data, asyncSnapshot.data ?? '');
+                        },
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: Image.file(
+                            File(
+                              data.userCheckPoints?.attachments?.first
+                                      .fileUrl ??
+                                  '',
+                            ),
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.fill,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                  Icons.broken_image); // یا یک تصویر پیش‌فرض
+                            },
                           ),
-                          child: Text(
-                            snapshot.data ?? "آدرس یافت نشد",
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
+                        ),
+                        title: SmallBold(
+                            data.userCheckPoints?.createdAt?.toPersianDate() ??
+                                ''),
+                        trailing: address[index],
+                      );
+                    }),
               )
             : EmptyContainer();
       },
@@ -274,7 +282,8 @@ class _VisitorScreenState extends State<VisitorScreen> {
   }
 
 //! جزئیات موقعیت بازدید شده
-  Future<dynamic> showModal(BuildContext context, Items data) {
+  Future<dynamic> showModal(
+      BuildContext context, Items data, String locationName) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -347,6 +356,11 @@ class _VisitorScreenState extends State<VisitorScreen> {
                             ),
                           ),
                         ),
+                        StreamBuilder<String?>(
+                            stream: bloc.address.stream,
+                            builder: (context, asyncSnapshot) {
+                              return NormalBold(asyncSnapshot.data ?? '');
+                            }),
                       ],
                     ),
                   );

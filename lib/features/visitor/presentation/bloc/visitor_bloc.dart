@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -15,6 +16,7 @@ import 'package:linchpin/features/visitor/domain/entity/current_location_entity.
 import 'package:linchpin/features/visitor/domain/use_case/getlocation_usecase.dart';
 import 'package:linchpin/features/visitor/domain/use_case/setlocation_usecase.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'visitor_event.dart';
 part 'visitor_state.dart';
@@ -33,6 +35,7 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   LatLng? currentLocation;
   List<CurrentLocationEntity> visitTargets = [];
   final desc = BehaviorSubject<String?>.seeded('');
+  final address = BehaviorSubject<String?>.seeded("آدرس مشخص نشده");
   final selectedValue =
       BehaviorSubject<CurrentLocationEntity>.seeded(CurrentLocationEntity());
   List<Items> items = [];
@@ -125,7 +128,33 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
     desc.sink.add(txt);
   }
 
+  Future<void> saveLatLngMap(Map<String, String> map) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = jsonEncode(map);
+    prefs.setString('latlng_map', jsonString);
+  }
+
+  Future<Map<String, String>> loadLatLngMap() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('latlng_map');
+
+    if (jsonString != null) {
+      final Map<String, dynamic> decoded = jsonDecode(jsonString);
+      return decoded.map((key, value) => MapEntry(key, value.toString()));
+    }
+
+    return {};
+  }
+
+  Future<bool> isLatLngInMap(double lat, double lng) async {
+    final key = '$lat,$lng';
+    final map = await loadLatLngMap();
+    return map.containsKey(key);
+  }
+
   dispose() async {
     desc.close();
+    address.close();
+    selectedValue.close();
   }
 }

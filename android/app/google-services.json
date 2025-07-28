@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1057112917403",
+    "project_id": "linchpin-369",
+    "storage_bucket": "linchpin-369.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057112917403:android:a97609948a4ec24f2d0d3e",
+        "android_client_info": {
+          "package_name": "com.linchpinx.app.linchpinx"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2NAmzkTLj6yykuiluuIFWFslgvZPGS-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

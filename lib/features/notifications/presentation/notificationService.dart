@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
@@ -8,45 +9,31 @@ class NotificationService {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const InitializationSettings initializationSettings = InitializationSettings(
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
       android: initializationSettingsAndroid,
     );
 
     await _notificationsPlugin.initialize(initializationSettings);
-
-    // ایجاد کانال نوتیفیکیشن برای اندروید
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'push_notification_channel',
-      'Push Notifications',
-      description: 'Channel for push notifications',
-      importance: Importance.max,
-    );
-
-    await _notificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
   }
 
-  static Future<void> showNotification(String title, String message) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'push_notification_channel',
-      'Push Notifications',
-      channelDescription: 'Channel for push notifications',
+  static Future<void> showNotification(RemoteMessage message) async {
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'channel_id',
+      'channel_name',
       importance: Importance.max,
       priority: Priority.high,
-      showWhen: true,
     );
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+    );
 
     await _notificationsPlugin.show(
-      0, // ID نوتیفیکیشن
-      title,
-      message,
-      platformChannelSpecifics,
+      message.hashCode,
+      message.notification?.title ?? '',
+      message.notification?.body ?? '',
+      platformDetails,
     );
   }
 }

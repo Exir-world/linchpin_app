@@ -1,3 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
@@ -18,6 +21,7 @@ import 'package:linchpin/features/pay_slip/presentation/bloc/pay_slip_bloc.dart'
 import 'package:linchpin/features/performance_report/presentation/bloc/last_quarter_report_bloc.dart';
 import 'package:linchpin/features/property/presentation/bloc/property_bloc.dart';
 import 'package:linchpin/features/root/presentation/root_screen.dart';
+import 'package:linchpin/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +39,25 @@ void main() async {
   // await FontHelper.loadLanguage(); // مقداردهی اولیه زبان
 
   await NotificationService.initialize();
+  //!  مقداردهی اولیه Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  //! گرفتن مجوز نوتیفیکیشن
+  await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  //! هندل نوتیف در فورگراند
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Foreground message received: ${message.notification?.title}');
+    if (message.notification != null) {
+      NotificationService.showNotification(message);
+    }
+  });
+  //! گرفتن توکن FCM
+  FirebaseMessaging.instance.getToken().then((token) {
+    print("📱 FCM Token: $token");
+  });
 
   runApp(
     EasyLocalization(
@@ -71,46 +94,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late Future<Widget> _homePageFuture;
   late PushNotificationService _pushNotificationService;
-  String? token = '';
-  getToken() async {
-    PrefService prefService = PrefService();
-    token = await prefService.readCacheString(SharedKey.jwtToken);
-    // تنظیم سرویس نوتیفیکیشن
-    _pushNotificationService = PushNotificationService(
-      baseUrl: 'http://192.168.x.x:3000',
-      userId: '',
-      jwtToken: token,
-    );
-
-    // ثبت دستگاه
-    _pushNotificationService.registerDevice().then((_) {
-      print('Device registered successfully');
-    }).catchError((error) {
-      print('Error registering device: $error');
-    });
-
-    // اتصال به SSE و گوش دادن به نوتیفیکیشن‌ها
-    _pushNotificationService.connectToSSE();
-    _pushNotificationService.notificationStream.listen(
-      (message) {
-        // نمایش نوتیفیکیشن
-        NotificationService.showNotification(
-          message['title'] ?? 'Notification',
-          message['message'] ?? 'New message received',
-        );
-      },
-      onError: (error) {
-        print('Notification stream error: $error');
-      },
-    );
-    
-  }
 
   @override
   void initState() {
     super.initState();
+
     _homePageFuture = _getHomePage();
-    getToken();
   }
 
   // این متد بررسی موقعیت مکانی و تعیین صفحه خانگی را انجام می دهد
