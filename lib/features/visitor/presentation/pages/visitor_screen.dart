@@ -26,6 +26,7 @@ import 'package:linchpin/features/visitor/domain/entity/current_location_entity.
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/selected_location.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_map.dart';
+import 'package:linchpin/features/visitor/presentation/widgets/show_text.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 
 class VisitorScreen extends StatefulWidget {
@@ -258,7 +259,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                     builder: (context, asyncSnapshot) {
                       return ListTile(
                         onTap: () {
-                          showModal(context, data, asyncSnapshot.data ?? '');
+                          showModal(context, data, address[index]);
                         },
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(4),
@@ -302,116 +303,77 @@ class _VisitorScreenState extends State<VisitorScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
       ),
       builder: (context) {
-        return Container(
+        return SizedBox(
           height: context.screenHeight,
-          decoration: BoxDecoration(color: BACKGROUND_LIGHT_COLOR),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  VerticalSpace(40),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          photo = null;
-                          photos.clear();
-                        },
-                        icon: const Icon(Icons.close, size: 28),
-                      ),
-                    ],
-                  ),
-                  ...data.userCheckPoints!.attachments!.map((element) {
-                    return Container(
-                      height: context.screenHeight * .3,
-                      width: context.screenWidth,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 30,
-                            offset: Offset(0, 3),
-                            color: Color(0xff828282).withValues(alpha: .05),
-                          ),
-                        ],
-                      ),
-                      margin: EdgeInsets.all(8),
-                      padding: EdgeInsets.all(8),
-                      child: Column(
-                        spacing: 10,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              showCupertinoModalPopup(
-                                context: context,
-                                builder: (context) {
-                                  return SizedBox(
-                                    height: context.screenHeight,
-                                    width: context.screenWidth,
-                                    child: InteractiveViewer(
-                                      panEnabled: true, // امکان کشیدن تصویر
-                                      minScale: 1,
-                                      maxScale: 4,
-                                      child: Image.file(
-                                        File(
-                                          element.fileUrl ?? '',
-                                        ),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  );
-                                },
+            child: Column(
+              children: [
+                VerticalSpace(40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        photo = null;
+                        photos.clear();
+                      },
+                      icon: const Icon(Icons.close, size: 28),
+                    ),
+                  ],
+                ),
+                ShowText(text: SmallRegular(locationName)),
+                if (data.userCheckPoints?.report?.isNotEmpty ?? false)
+                  ShowText(text: SmallRegular(data.userCheckPoints!.report!)),
+                VerticalSpace(10),
+                Expanded(
+                  child: GridView.builder(
+                    padding: EdgeInsets.all(8),
+                    itemCount: data.userCheckPoints?.attachments?.length ?? 0,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3, // سه ستون
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 1,
+                    ),
+                    itemBuilder: (context, index) {
+                      final element = data.userCheckPoints!.attachments![index];
+                      return GestureDetector(
+                        onTap: () {
+                          showCupertinoModalPopup(
+                            context: context,
+                            builder: (context) {
+                              return SizedBox(
+                                height: context.screenHeight,
+                                width: context.screenWidth,
+                                child: InteractiveViewer(
+                                  panEnabled: true,
+                                  minScale: 1,
+                                  maxScale: 4,
+                                  child: Image.file(
+                                    File(element.fileUrl ?? ''),
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
                               );
                             },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: Image.file(
-                                File(element.fileUrl ?? ''),
-                                width: context.screenWidth,
-                                height: context.screenHeight * .2,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                          );
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            File(element.fileUrl ?? ''),
+                            fit: BoxFit.cover,
                           ),
-                          VerticalSpace(10),
-                          StreamBuilder<String?>(
-                              stream: bloc.address.stream,
-                              builder: (context, asyncSnapshot) {
-                                return SmallMedium(asyncSnapshot.data ?? '');
-                              }),
-                        ],
-                      ),
-                    );
-                  }),
-                  VerticalSpace(10),
-                  data.userCheckPoints?.report != null &&
-                          data.userCheckPoints!.report!.isNotEmpty
-                      ? Container(
-                          width: context.screenWidth,
-                          padding: EdgeInsets.all(8),
-                          margin: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 30,
-                                offset: Offset(0, 3),
-                                color: Color(0xff828282).withValues(alpha: .05),
-                              ),
-                            ],
-                          ),
-                          child:
-                              SmallRegular(data.userCheckPoints?.report ?? ''))
-                      : EmptyContainer(),
-                  VerticalSpace(20),
-                ],
-              ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                VerticalSpace(20),
+              ],
             ),
           ),
         );
