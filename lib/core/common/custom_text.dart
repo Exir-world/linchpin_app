@@ -155,6 +155,7 @@ class SmallMedium extends CustomText {
       super.textColorInLight,
       super.textColorInDark,
       super.decoration,
+      super.maxLines,
       super.overflow})
       : super(
           size: TEXT_SIZE_SMALL,
@@ -168,6 +169,7 @@ class SmallDemiBold extends CustomText {
       super.textColorInLight,
       super.textColorInDark,
       super.decoration,
+      super.maxLines,
       super.overflow})
       : super(
           size: TEXT_SIZE_SMALL,

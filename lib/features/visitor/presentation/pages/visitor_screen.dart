@@ -99,6 +99,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
     return result;
   }
 
+//! گرفتن آدرس از نشان
   Future<void> _getAddress(double lat, double lng) async {
     final url =
         Uri.parse('https://api.neshan.org/v5/reverse?lat=$lat&lng=$lng');
@@ -167,13 +168,14 @@ class _VisitorScreenState extends State<VisitorScreen> {
               address = result.entries.map((entry) => entry.value).toList();
             }
 
-            int count = 1;
-            for (var element in bloc.visitTargets) {
+            for (var i = 0; i < bloc.visitTargets.length; i++) {
+              final element = bloc.visitTargets[i];
+              final name = i < address.length ? address[i] : 'آدرس مشخص نشده';
               options?.add(
                 CurrentLocationEntity(
                   lat: element.lat.toString(),
                   lng: element.lng.toString(),
-                  name: '${count++} موقعیت',
+                  name: '${i + 1} - $name',
                   id: element.id,
                 ),
               );
@@ -366,11 +368,14 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                 },
                               );
                             },
-                            child: Image.file(
-                              File(element.fileUrl ?? ''),
-                              width: context.screenWidth,
-                              height: context.screenHeight * .2,
-                              fit: BoxFit.cover,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: Image.file(
+                                File(element.fileUrl ?? ''),
+                                width: context.screenWidth,
+                                height: context.screenHeight * .2,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                           VerticalSpace(10),

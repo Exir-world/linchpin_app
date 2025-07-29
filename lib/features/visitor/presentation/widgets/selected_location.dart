@@ -98,7 +98,11 @@ class _SelectedLocationsState extends State<SelectedLocations> {
             items: widget.options?.map<DropdownMenuItem<String>>((item) {
               return DropdownMenuItem<String>(
                 value: item.name ?? '',
-                child: SmallBold(item.name ?? ''),
+                child: SmallMedium(
+                  item.name ?? '',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
               );
             }).toList(),
             onChanged: (newValue) async {
@@ -228,13 +232,6 @@ class _SelectedLocationsState extends State<SelectedLocations> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          // ProgressButton(
-          //   width: context.screenWidth * .32,
-          //   height: 40,
-          //   label: 'ثبت موقعیت',
-          //   onTap: _getLocationAndShowMarker,
-          // ),
-
           ProgressButton(
             width: context.screenWidth * .45,
             height: 40,

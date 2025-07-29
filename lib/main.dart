@@ -55,10 +55,10 @@ void main() async {
     }
   });
   //! گرفتن توکن FCM
-  FirebaseMessaging.instance.getToken().then((token) {
-    print("📱 FCM Token: $token");
-    prefService.createCacheString(SharedKey.firebaseToken, token ?? '');
-  });
+  // FirebaseMessaging.instance.getToken().then((token) {
+  //   print("📱 FCM Token: $token");
+  //   prefService.createCacheString(SharedKey.firebaseToken, token ?? '');
+  // });
 
   runApp(
     EasyLocalization(
