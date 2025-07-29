@@ -80,9 +80,9 @@ class _SelectedLocationsState extends State<SelectedLocations> {
       width: context.screenWidth * .9,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(VERTICAL_SPACING_1x),
-        border: Border.all(width: .5, color: Colors.grey.shade300),
+        border: Border.all(width: .5, color: Colors.grey.shade100),
       ),
       child: StreamBuilder<CurrentLocationEntity>(
         stream: bloc.selectedValue.stream,

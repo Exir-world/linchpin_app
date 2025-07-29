@@ -9,6 +9,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/common/constants.dart';
 import 'package:linchpin/core/common/empty_container.dart';
 import 'package:linchpin/core/common/progress_button.dart';
@@ -42,7 +43,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
   XFile? photo;
   Map<String, String> result = {};
   List<XFile?> photos = [];
-  List<Text> address = [];
+  List<String> address = [];
   Position? position;
   final List<LatLng> _positions = []; // لیست موقعیت‌ها
   List<CurrentLocationEntity>? options = [];
@@ -163,8 +164,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                 await bloc.saveLatLngMap(oldMap);
               }
               result = await bloc.loadLatLngMap();
-              address =
-                  result.entries.map((entry) => Text(entry.value)).toList();
+              address = result.entries.map((entry) => entry.value).toList();
             }
 
             int count = 1;
@@ -181,7 +181,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
           }
           if (state is SetLocationSuccess) {
             bloc.add(GetLocation());
-            options?.clear();
             bloc.selectedValue.value.name = null;
             _showSnackbar('عملیات با موفقیت انجام شد.');
           }
@@ -242,8 +241,15 @@ class _VisitorScreenState extends State<VisitorScreen> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(4),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 30,
+                      offset: Offset(0, 3),
+                      color: Color(0xff828282).withValues(alpha: .05),
+                    ),
+                  ],
                 ),
                 child: StreamBuilder<String?>(
                     stream: bloc.address.stream,
@@ -260,19 +266,20 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                       .fileUrl ??
                                   '',
                             ),
-                            width: 40,
-                            height: 40,
+                            width: 60,
+                            // height: 40,
                             fit: BoxFit.fill,
                             errorBuilder: (context, error, stackTrace) {
                               return Icon(
-                                  Icons.broken_image); // یا یک تصویر پیش‌فرض
+                                Icons.broken_image,
+                              ); // یا یک تصویر پیش‌فرض
                             },
                           ),
                         ),
                         title: SmallBold(
                             data.userCheckPoints?.createdAt?.toPersianDate() ??
                                 ''),
-                        trailing: address[index],
+                        subtitle: SmallRegular(address[index]),
                       );
                     }),
               )
@@ -293,39 +300,50 @@ class _VisitorScreenState extends State<VisitorScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
       ),
       builder: (context) {
-        return SizedBox(
+        return Container(
           height: context.screenHeight,
+          decoration: BoxDecoration(color: BACKGROUND_LIGHT_COLOR),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                VerticalSpace(40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        photo = null;
-                        photos.clear();
-                      },
-                      icon: const Icon(Icons.close, size: 28),
-                    ),
-                  ],
-                ),
-                ...data.userCheckPoints!.attachments!.map((element) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                    ),
-                    margin: EdgeInsets.all(8),
-                    padding: EdgeInsets.all(8),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: GestureDetector(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  VerticalSpace(40),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          photo = null;
+                          photos.clear();
+                        },
+                        icon: const Icon(Icons.close, size: 28),
+                      ),
+                    ],
+                  ),
+                  ...data.userCheckPoints!.attachments!.map((element) {
+                    return Container(
+                      height: context.screenHeight * .3,
+                      width: context.screenWidth,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 30,
+                            offset: Offset(0, 3),
+                            color: Color(0xff828282).withValues(alpha: .05),
+                          ),
+                        ],
+                      ),
+                      margin: EdgeInsets.all(8),
+                      padding: EdgeInsets.all(8),
+                      child: Column(
+                        spacing: 10,
+                        children: [
+                          GestureDetector(
                             onTap: () {
                               showCupertinoModalPopup(
                                 context: context,
@@ -350,24 +368,45 @@ class _VisitorScreenState extends State<VisitorScreen> {
                             },
                             child: Image.file(
                               File(element.fileUrl ?? ''),
-                              width: 40,
-                              height: 40,
-                              fit: BoxFit.fill,
+                              width: context.screenWidth,
+                              height: context.screenHeight * .2,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ),
-                        StreamBuilder<String?>(
-                            stream: bloc.address.stream,
-                            builder: (context, asyncSnapshot) {
-                              return NormalBold(asyncSnapshot.data ?? '');
-                            }),
-                      ],
-                    ),
-                  );
-                }),
-                VerticalSpace(10),
-                SmallBold(data.userCheckPoints?.report ?? '')
-              ],
+                          VerticalSpace(10),
+                          StreamBuilder<String?>(
+                              stream: bloc.address.stream,
+                              builder: (context, asyncSnapshot) {
+                                return SmallMedium(asyncSnapshot.data ?? '');
+                              }),
+                        ],
+                      ),
+                    );
+                  }),
+                  VerticalSpace(10),
+                  data.userCheckPoints?.report != null &&
+                          data.userCheckPoints!.report!.isNotEmpty
+                      ? Container(
+                          width: context.screenWidth,
+                          padding: EdgeInsets.all(8),
+                          margin: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                blurRadius: 30,
+                                offset: Offset(0, 3),
+                                color: Color(0xff828282).withValues(alpha: .05),
+                              ),
+                            ],
+                          ),
+                          child:
+                              SmallRegular(data.userCheckPoints?.report ?? ''))
+                      : EmptyContainer(),
+                  VerticalSpace(20),
+                ],
+              ),
             ),
           ),
         );
