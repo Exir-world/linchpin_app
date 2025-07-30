@@ -15,6 +15,7 @@ import 'package:linchpin/features/visitor/data/models/response/set_location_resp
 import 'package:linchpin/features/visitor/domain/entity/current_location_entity.dart';
 import 'package:linchpin/features/visitor/domain/use_case/getlocation_usecase.dart';
 import 'package:linchpin/features/visitor/domain/use_case/setlocation_usecase.dart';
+import 'package:linchpin/features/visitor/domain/use_case/upload_image_usecase.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,6 +26,7 @@ part 'visitor_state.dart';
 class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   final SetLocationUseCase setLocationUseCase;
   final GetlocationUsecase getlocationUsecase;
+  final UploadImageUsecase uploadImageUsecase;
 
   bool isDeleted = false;
   XFile? photo;
@@ -40,8 +42,11 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
       BehaviorSubject<CurrentLocationEntity>.seeded(CurrentLocationEntity());
   List<Items> items = [];
 
-  VisitorBloc(this.setLocationUseCase, this.getlocationUsecase)
-      : super(VisitorInitial()) {
+  VisitorBloc(
+    this.setLocationUseCase,
+    this.getlocationUsecase,
+    this.uploadImageUsecase,
+  ) : super(VisitorInitial()) {
     on<SetLocationEvent>(_saveLocationEvent);
     on<UploadImage>(_uploadImage);
     on<GetLocation>(_getLocation);
@@ -61,10 +66,10 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
       }
 
       if (dataState is DataFailed) {
-        emit(SetLocationFailure(error: dataState.error));
+        emit(ErrorData(error: dataState.error));
       }
     } catch (e) {
-      emit(SetLocationFailure(error: e.toString()));
+      emit(ErrorData(error: e.toString()));
     }
   }
 
@@ -110,10 +115,10 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
       }
 
       if (dataState is DataFailed) {
-        emit(SetLocationFailure(error: dataState.error));
+        emit(ErrorData(error: dataState.error));
       }
     } catch (e) {
-      emit(SetLocationFailure(error: e.toString()));
+      emit(ErrorData(error: e.toString()));
     }
   }
 
@@ -121,7 +126,15 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
       UploadImage event, Emitter<VisitorState> emit) async {
     try {
       emit(UploadImageLoading());
-    } catch (e) {}
+      DataState dataState =
+          await uploadImageUsecase.uploadImage(event.filePath);
+      if (dataState is DataSuccess) {}
+      if (dataState is DataFailed) {
+        emit(ErrorData(error: dataState.error));
+      }
+    } catch (e) {
+      emit(ErrorData(error: e.toString()));
+    }
   }
 
   void checkTextField(String txt) {

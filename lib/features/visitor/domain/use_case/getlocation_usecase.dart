@@ -2,7 +2,6 @@ import 'package:injectable/injectable.dart';
 import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/core/resources/data_state.dart';
 import 'package:linchpin/features/visitor/data/models/response/get_location_response.dart';
-import 'package:linchpin/features/visitor/domain/entity/get_location_entity.dart';
 import 'package:linchpin/features/visitor/domain/repository/visitor_repository.dart';
 
 abstract class GetlocationUsecase {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:calendar_pro_farhad/core/text_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -166,7 +167,18 @@ class _VisitorScreenState extends State<VisitorScreen> {
                 await bloc.saveLatLngMap(oldMap);
               }
               result = await bloc.loadLatLngMap();
-              address = result.entries.map((entry) => entry.value).toList();
+              // address = result.entries.map((entry) => entry.value).toList();
+              try {
+                address = result.entries.map((entry) {
+                  if (entry.value.contains('خطا')) {
+                    return "آدرسی یافت نشد";
+                  } else {
+                    return entry.value;
+                  }
+                }).toList();
+              } catch (e) {
+                address = ["آدرسی یافت نشد"];
+              }
             }
 
             for (var i = 0; i < bloc.visitTargets.length; i++) {
@@ -187,7 +199,10 @@ class _VisitorScreenState extends State<VisitorScreen> {
             bloc.selectedValue.value.name = null;
             _showSnackbar('عملیات با موفقیت انجام شد.');
           }
-          if (state is SetLocationFailure) {
+          if(state is UploadImageSuccess){
+            
+          }
+          if (state is ErrorData) {
             ErrorUiWidget(
               title: state.error ?? '',
               onTap: () {
@@ -261,24 +276,36 @@ class _VisitorScreenState extends State<VisitorScreen> {
                         onTap: () {
                           showModal(context, data, address[index]);
                         },
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: Image.file(
-                            File(
-                              data.userCheckPoints?.attachments?.first
-                                      .fileUrl ??
-                                  '',
-                            ),
-                            width: 60,
-                            // height: 40,
-                            fit: BoxFit.fill,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Icon(
-                                Icons.broken_image,
-                              ); // یا یک تصویر پیش‌فرض
-                            },
+                        leading: CachedNetworkImage(
+                          imageUrl: data.userCheckPoints?.attachments?.first
+                                  .fileUrl ??
+                              '',
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => Icon(
+                            Icons.broken_image,
+                            size: 40,
                           ),
                         ),
+                        // leading: ClipRRect(
+                        //   borderRadius: BorderRadius.circular(4),
+                        //   child: Image.file(
+                        //     File(
+                        //       data.userCheckPoints?.attachments?.first
+                        //               .fileUrl ??
+                        //           '',
+                        //     ),
+                        //     width: 60,
+                        //     // height: 40,
+                        //     fit: BoxFit.fill,
+                        //     errorBuilder: (context, error, stackTrace) {
+                        //       return Icon(
+                        //         Icons.broken_image,
+                        //       ); // یا یک تصویر پیش‌فرض
+                        //     },
+                        //   ),
+                        // ),
+
                         title: SmallBold(
                             data.userCheckPoints?.createdAt?.toPersianDate() ??
                                 ''),
@@ -352,9 +379,14 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                   panEnabled: true,
                                   minScale: 1,
                                   maxScale: 4,
-                                  child: Image.file(
-                                    File(element.fileUrl ?? ''),
-                                    fit: BoxFit.contain,
+                                  child: CachedNetworkImage(
+                                    imageUrl: element.fileUrl ?? '',
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) => Icon(
+                                      Icons.broken_image,
+                                      size: 40,
+                                    ),
                                   ),
                                 ),
                               );

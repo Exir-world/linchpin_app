@@ -21,8 +21,8 @@ class GetLocationLoading extends VisitorState {}
 
 class GetLocationSuccess extends VisitorState {}
 
-class SetLocationFailure extends VisitorState {
+class ErrorData extends VisitorState {
   final String? error;
 
-  const SetLocationFailure({this.error});
+  const ErrorData({this.error});
 }

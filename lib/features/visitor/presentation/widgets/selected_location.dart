@@ -256,8 +256,10 @@ class _SelectedLocationsState extends State<SelectedLocations> {
             onTap: () async {
               if (!isEnableSendButton()) {
                 List<Attachments>? imageFiles = [];
+                List<String>? fileName = [];
                 for (var photo in photos) {
                   if (photo != null) {
+                    fileName.add(photo.path);
                     imageFiles.add(
                       Attachments(
                         filename: photo.name,
@@ -267,6 +269,7 @@ class _SelectedLocationsState extends State<SelectedLocations> {
                     );
                   }
                 }
+                widget.bloc.add(UploadImage(fileName));
                 setState(() {
                   widget.bloc.add(
                     SetLocationEvent(

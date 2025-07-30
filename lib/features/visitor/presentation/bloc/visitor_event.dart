@@ -7,7 +7,11 @@ sealed class VisitorEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class UploadImage extends VisitorEvent {}
+class UploadImage extends VisitorEvent {
+  final List<String>? filePath;
+
+  const UploadImage(this.filePath);
+}
 
 class GetLocation extends VisitorEvent {}
 

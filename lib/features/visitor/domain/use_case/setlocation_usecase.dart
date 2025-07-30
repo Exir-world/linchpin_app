@@ -13,8 +13,8 @@ abstract class SetLocationUseCase {
 }
 
 @Singleton(as: SetLocationUseCase, env: [Env.prod])
-class UploadImageImpl extends SetLocationUseCase {
-  UploadImageImpl(super.visitorRepository);
+class SetLocationImpl extends SetLocationUseCase {
+  SetLocationImpl(super.visitorRepository);
 
   @override
   Future<DataState<SetLocationEntity>> setLocation(
