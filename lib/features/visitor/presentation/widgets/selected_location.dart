@@ -243,7 +243,10 @@ class _SelectedLocationsState extends State<SelectedLocations> {
             label: photos.isEmpty ? 'گرفتن عکس' : 'اضافه کردن عکس',
             onTap: () async {
               if (isEnableSendButton()) {
-                photo = await picker.pickImage(source: ImageSource.camera);
+                photo = await picker.pickImage(
+                  source: ImageSource.camera,
+                  imageQuality: 30,
+                );
                 setState(() {
                   photos.add(photo);
                 });
