@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -109,6 +112,9 @@ class _SelectedLocationsState extends State<SelectedLocations> {
               CurrentLocationEntity? currentLocation;
               bloc.selectedValue.value = CurrentLocationEntity(
                 name: newValue,
+              );
+              bloc.current_Location = widget.options?.firstWhere(
+                (element) => element.name == newValue,
               );
               currentLocation = widget.options?.firstWhere(
                 (element) => element.name == newValue,
@@ -255,38 +261,27 @@ class _SelectedLocationsState extends State<SelectedLocations> {
             label: 'ارسال',
             onTap: () async {
               if (!isEnableSendButton()) {
-                List<Attachments>? imageFiles = [];
-                List<String>? fileName = [];
-                for (var photo in photos) {
-                  if (photo != null) {
-                    fileName.add(photo.path);
-                    imageFiles.add(
-                      Attachments(
-                        filename: photo.name,
-                        fileUrl: photo.path,
-                        fileType: photo.mimeType,
+                FormData formData = FormData();
+
+                for (XFile? image in photos) {
+                  if (image != null) {
+                    formData.files.add(
+                      MapEntry(
+                        "files",
+                        await MultipartFile.fromFile(
+                          image.path,
+                          filename: image.path.split('/').last,
+                        ),
                       ),
                     );
                   }
                 }
-                widget.bloc.add(UploadImage(fileName));
-                setState(() {
-                  widget.bloc.add(
-                    SetLocationEvent(
-                      setLocationRequest: SetLocationRequest(
-                        attachments: imageFiles,
-                        checkPointId: currentLocation?.id ?? 0,
-                        lat: AccessLocationScreen.latitudeNotifire.value,
-                        lng: AccessLocationScreen.longitudeNotifire.value,
-                        report: widget.bloc.desc.value,
-                      ),
-                    ),
-                  );
-                  photo = null;
-                  photos.clear();
-                  Navigator.pop(context);
-                });
-                // ثبت در دیتابیس یا تغییر UI
+
+                widget.bloc.add(UploadImage(formData));
+                photo = null;
+                photos.clear();
+                Navigator.pop(context);
+                //! ثبت در دیتابیس یا تغییر UI
               } else {
                 _showSnackbar('محدوه غیر مجاز');
               }

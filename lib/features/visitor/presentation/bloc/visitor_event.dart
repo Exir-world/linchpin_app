@@ -8,7 +8,7 @@ sealed class VisitorEvent extends Equatable {
 }
 
 class UploadImage extends VisitorEvent {
-  final List<String>? filePath;
+  final FormData? filePath;
 
   const UploadImage(this.filePath);
 }

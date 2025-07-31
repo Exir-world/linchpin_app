@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
@@ -7,9 +9,14 @@ class ApiUploadimage {
 
   ApiUploadimage(this.httpclient);
 
-  Future<dynamic> uploadImage(List<String>? files) async {
-    final response = await httpclient
-        .post('https://files.ex.pro/files/upload', data: {"files": files});
+  Future<dynamic> uploadImage(FormData? files) async {
+    final response = await Dio().post(
+      'https://files.ex.pro/files/upload',
+      data: files,
+      options: Options(headers: {
+        'Content-Type': 'multipart/form-data',
+      }),
+    );
     return response;
   }
 }

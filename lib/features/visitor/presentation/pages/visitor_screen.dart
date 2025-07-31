@@ -24,6 +24,7 @@ import 'package:linchpin/features/visitor/data/models/request/set_location_reque
 import 'package:linchpin/features/visitor/data/models/response/get_location_response.dart'
     hide Attachments;
 import 'package:linchpin/features/visitor/domain/entity/current_location_entity.dart';
+import 'package:linchpin/features/visitor/domain/entity/upload_image_entity.dart';
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/selected_location.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_map.dart';
@@ -50,6 +51,8 @@ class _VisitorScreenState extends State<VisitorScreen> {
   final List<LatLng> _positions = []; // لیست موقعیت‌ها
   List<CurrentLocationEntity>? options = [];
   List<Items> items = [];
+  List<UploadImageEntity> uploadImage = [];
+  // List<Attachments>? attachments = [];
   final mapCenter = LatLng(
       AccessLocationScreen.latitudeNotifire.value ?? 35.6892,
       AccessLocationScreen.longitudeNotifire.value ?? 51.3890);
@@ -180,7 +183,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                 address = ["آدرسی یافت نشد"];
               }
             }
-
+            options?.clear();
             for (var i = 0; i < bloc.visitTargets.length; i++) {
               final element = bloc.visitTargets[i];
               final name = i < address.length ? address[i] : 'آدرس مشخص نشده';
@@ -199,8 +202,27 @@ class _VisitorScreenState extends State<VisitorScreen> {
             bloc.selectedValue.value.name = null;
             _showSnackbar('عملیات با موفقیت انجام شد.');
           }
-          if(state is UploadImageSuccess){
-            
+          bloc.attachments?.clear();
+          if (state is UploadImageSuccess) {
+            uploadImage = bloc.uploadImage;
+            for (var element in uploadImage) {
+              bloc.attachments?.add(Attachments(
+                fileUrl: element.url,
+                filename: element.originalName,
+              ));
+            }
+            bloc.add(
+              SetLocationEvent(
+                setLocationRequest: SetLocationRequest(
+                  attachments: bloc.attachments,
+                  checkPointId: bloc.current_Location?.id ?? 0,
+                  lat: AccessLocationScreen.latitudeNotifire.value,
+                  lng: AccessLocationScreen.longitudeNotifire.value,
+                  report: bloc.desc.value,
+                ),
+              ),
+            );
+            bloc.desc.value = null;
           }
           if (state is ErrorData) {
             ErrorUiWidget(
@@ -252,7 +274,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
       shrinkWrap: true,
       itemBuilder: (context, index) {
         final data = items[index];
-        return data.userCheckPoints != null
+        return data.userCheckPoints?.attachments != null
             ? Container(
                 margin: EdgeInsets.symmetric(
                   horizontal: 20,
@@ -269,50 +291,31 @@ class _VisitorScreenState extends State<VisitorScreen> {
                     ),
                   ],
                 ),
-                child: StreamBuilder<String?>(
-                    stream: bloc.address.stream,
-                    builder: (context, asyncSnapshot) {
-                      return ListTile(
-                        onTap: () {
-                          showModal(context, data, address[index]);
-                        },
-                        leading: CachedNetworkImage(
-                          imageUrl: data.userCheckPoints?.attachments?.first
-                                  .fileUrl ??
-                              '',
-                          placeholder: (context, url) =>
-                              CircularProgressIndicator(),
-                          errorWidget: (context, url, error) => Icon(
-                            Icons.broken_image,
-                            size: 40,
-                          ),
-                        ),
-                        // leading: ClipRRect(
-                        //   borderRadius: BorderRadius.circular(4),
-                        //   child: Image.file(
-                        //     File(
-                        //       data.userCheckPoints?.attachments?.first
-                        //               .fileUrl ??
-                        //           '',
-                        //     ),
-                        //     width: 60,
-                        //     // height: 40,
-                        //     fit: BoxFit.fill,
-                        //     errorBuilder: (context, error, stackTrace) {
-                        //       return Icon(
-                        //         Icons.broken_image,
-                        //       ); // یا یک تصویر پیش‌فرض
-                        //     },
-                        //   ),
-                        // ),
-
-                        title: SmallBold(
-                            data.userCheckPoints?.createdAt?.toPersianDate() ??
-                                ''),
-                        subtitle: SmallRegular(address[index]),
-                      );
-                    }),
-              )
+                child: ListTile(
+                  onTap: () {
+                    showModal(context, data, address[index]);
+                  },
+                  subtitle: SmallRegular(address[index]),
+                  title: SmallBold(
+                      data.userCheckPoints?.createdAt?.toPersianDate() ?? ''),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: data.userCheckPoints!.attachments!.isNotEmpty
+                          ? data.userCheckPoints!.attachments!.first.fileUrl ??
+                              ''
+                          : '',
+                      width: 60,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          CupertinoActivityIndicator(),
+                      errorWidget: (context, url, error) => Icon(
+                        Icons.broken_image,
+                        size: 60,
+                      ),
+                    ),
+                  ),
+                ))
             : EmptyContainer();
       },
     );
@@ -395,9 +398,15 @@ class _VisitorScreenState extends State<VisitorScreen> {
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(element.fileUrl ?? ''),
+                          child: CachedNetworkImage(
                             fit: BoxFit.cover,
+                            imageUrl: element.fileUrl ?? '',
+                            placeholder: (context, url) =>
+                                CupertinoActivityIndicator(),
+                            errorWidget: (context, url, error) => Icon(
+                              Icons.broken_image,
+                              size: 40,
+                            ),
                           ),
                         ),
                       );
@@ -410,80 +419,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
           ),
         );
       },
-    );
-  }
-
-//! دکمه ها
-  Padding buttonWidgets(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          ProgressButton(
-            width: context.screenWidth * .32,
-            height: 40,
-            label: 'ثبت موقعیت',
-            onTap: _getLocationAndShowMarker,
-          ),
-          ProgressButton(
-            width: context.screenWidth * .32,
-            height: 40,
-            label: photos.isEmpty ? 'گرفتن عکس' : 'اضافه کردن عکس',
-            onTap: () async {
-              if (!isEnableSendButton()) {
-                photo = await picker.pickImage(source: ImageSource.camera);
-                setState(() {
-                  photos.add(photo);
-                });
-              } else {
-                _showSnackbar('موقعیت غیر مجاز');
-              }
-            },
-          ),
-          ProgressButton(
-            width: context.screenWidth * .25,
-            height: 40,
-            isEnabled:
-                photo != null && photos.isNotEmpty && !isEnableSendButton(),
-            label: 'ارسال',
-            onTap: () async {
-              if (!isEnableSendButton()) {
-                List<Attachments>? imageFiles = [];
-                for (var photo in photos) {
-                  if (photo != null) {
-                    imageFiles.add(
-                      Attachments(
-                        filename: photo.name,
-                        fileUrl: photo.path,
-                        fileType: photo.mimeType,
-                      ),
-                    );
-                  }
-                }
-                setState(() {
-                  bloc.add(
-                    SetLocationEvent(
-                      setLocationRequest: SetLocationRequest(
-                        attachments: imageFiles,
-                        checkPointId: 0,
-                        lat: AccessLocationScreen.latitudeNotifire.value,
-                        lng: AccessLocationScreen.longitudeNotifire.value,
-                        report: bloc.desc.value,
-                      ),
-                    ),
-                  );
-                  photo = null;
-                  photos.clear();
-                });
-                // ثبت در دیتابیس یا تغییر UI
-              } else {
-                _showSnackbar('محدوه غیر مجاز');
-              }
-            },
-          ),
-        ],
-      ),
     );
   }
 }

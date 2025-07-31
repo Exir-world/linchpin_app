@@ -10,9 +10,12 @@ import 'package:injectable/injectable.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:linchpin/core/resources/data_state.dart';
 import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
-import 'package:linchpin/features/visitor/data/models/response/get_location_response.dart';
-import 'package:linchpin/features/visitor/data/models/response/set_location_response.dart';
+import 'package:linchpin/features/visitor/data/models/response/get_location_response.dart'
+    hide Attachments;
+import 'package:linchpin/features/visitor/data/models/response/set_location_response.dart'
+    hide Attachments;
 import 'package:linchpin/features/visitor/domain/entity/current_location_entity.dart';
+import 'package:linchpin/features/visitor/domain/entity/upload_image_entity.dart';
 import 'package:linchpin/features/visitor/domain/use_case/getlocation_usecase.dart';
 import 'package:linchpin/features/visitor/domain/use_case/setlocation_usecase.dart';
 import 'package:linchpin/features/visitor/domain/use_case/upload_image_usecase.dart';
@@ -32,7 +35,9 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   XFile? photo;
   List<File> capturedImages = [];
   List<MultipartFile> multipartImages = [];
-  FormData? formData;
+  List<UploadImageEntity> uploadImage = [];
+  List<Attachments>? attachments = [];
+  CurrentLocationEntity? current_Location;
   SetLocationResponse visitors = SetLocationResponse();
   LatLng? currentLocation;
   List<CurrentLocationEntity> visitTargets = [];
@@ -41,6 +46,7 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   final selectedValue =
       BehaviorSubject<CurrentLocationEntity>.seeded(CurrentLocationEntity());
   List<Items> items = [];
+  FormData formData = FormData();
 
   VisitorBloc(
     this.setLocationUseCase,
@@ -128,7 +134,11 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
       emit(UploadImageLoading());
       DataState dataState =
           await uploadImageUsecase.uploadImage(event.filePath);
-      if (dataState is DataSuccess) {}
+      if (dataState is DataSuccess) {
+        uploadImage.clear();
+        uploadImage.addAll(dataState.data);
+        emit(UploadImageSuccess());
+      }
       if (dataState is DataFailed) {
         emit(ErrorData(error: dataState.error));
       }

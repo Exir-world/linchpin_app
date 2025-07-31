@@ -58,9 +58,17 @@ class VisitorRepositoryImpl extends VisitorRepository {
 
   @override
   Future<DataState<List<UploadImageEntity>>> uploadImage(
-      List<String>? files) async {
+      FormData? files) async {
     Response response = await apiUploadimage.uploadImage(files);
     final uploadImage = <UploadImageEntity>[];
+
+    for (var element in response.data) {
+      uploadImage.add(UploadImageEntity(
+        originalName: element['originalName'],
+        url: element['url'],
+      ));
+    }
+
     return DataSuccess(uploadImage);
   }
 }
