@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:calendar_pro_farhad/core/text_widgets.dart';
@@ -10,10 +9,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
-import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/common/constants.dart';
 import 'package:linchpin/core/common/empty_container.dart';
-import 'package:linchpin/core/common/progress_button.dart';
 import 'package:linchpin/core/common/spacing_widget.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
@@ -56,22 +53,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
   final mapCenter = LatLng(
       AccessLocationScreen.latitudeNotifire.value ?? 35.6892,
       AccessLocationScreen.longitudeNotifire.value ?? 51.3890);
-  Future<void> _getLocationAndShowMarker() async {
-    LocationService locationService = LocationService();
-    position = await locationService.getUserLocation();
-    if (!mounted) return;
-    if (position == null) {
-      isLoadingNotifire.value = false;
-      _showSnackbar("خطا در دریافت موقعیت مکانی یا دسترسی رد شده است.");
-      return;
-    }
-    setState(() {
-      final lat =
-          LatLng(position?.latitude ?? 35.6892, position?.longitude ?? 51.3890);
-      mapController.move(lat, 16);
-      _positions.add(lat);
-    });
-  }
 
 //! محدوده مجاز
   bool isNear(LatLng current, LatLng target) {
@@ -113,7 +94,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
       final response = await http.get(
         url,
         headers: {
-          "Api-Key": Constants.API_KY_MAP, // API Key خودت رو اینجا بذار
+          "Api-Key": Constants.API_KY_MAP,
         },
       );
 

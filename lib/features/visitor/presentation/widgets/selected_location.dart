@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +12,6 @@ import 'package:linchpin/core/common/empty_container.dart';
 import 'package:linchpin/core/common/progress_button.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
-import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
 import 'package:linchpin/features/visitor/domain/entity/current_location_entity.dart';
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
 import 'package:linchpin/features/visitor/presentation/widgets/show_image.dart';
@@ -132,7 +129,7 @@ class _SelectedLocationsState extends State<SelectedLocations> {
                     16.5,
                   );
                 }
-              } else if (currentLocation != null) {
+              } else if (currentLocation != null && isEnableSendButton()) {
                 AccessLocationScreen.latitudeNotifire.value =
                     double.parse(currentLocation.lat.toString());
                 AccessLocationScreen.longitudeNotifire.value =
@@ -143,6 +140,8 @@ class _SelectedLocationsState extends State<SelectedLocations> {
                   16.5,
                 );
                 showModal(context, currentLocation);
+              } else {
+                _showSnackbar('موقعیت غیر مجاز');
               }
             },
             buttonStyleData: ButtonStyleData(
@@ -243,12 +242,13 @@ class _SelectedLocationsState extends State<SelectedLocations> {
             height: 40,
             label: photos.isEmpty ? 'گرفتن عکس' : 'اضافه کردن عکس',
             onTap: () async {
-              if (!isEnableSendButton()) {
+              if (isEnableSendButton()) {
                 photo = await picker.pickImage(source: ImageSource.camera);
                 setState(() {
                   photos.add(photo);
                 });
               } else {
+                Navigator.of(context).pop();
                 _showSnackbar('موقعیت غیر مجاز');
               }
             },
@@ -257,10 +257,10 @@ class _SelectedLocationsState extends State<SelectedLocations> {
             width: context.screenWidth * .25,
             height: 40,
             isEnabled:
-                photo != null && photos.isNotEmpty && !isEnableSendButton(),
+                photo != null && photos.isNotEmpty && isEnableSendButton(),
             label: 'ارسال',
             onTap: () async {
-              if (!isEnableSendButton()) {
+              if (isEnableSendButton()) {
                 FormData formData = FormData();
 
                 for (XFile? image in photos) {
