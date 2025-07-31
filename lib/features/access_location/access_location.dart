@@ -104,7 +104,7 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
     );
   }
 
-  /// تابع اصلی برای کنترل دسترسی به موقعیت مکانی و هدایت صفحه
+  //! تابع اصلی برای کنترل دسترسی به موقعیت مکانی و هدایت صفحه
   void _handleLocationAccess() async {
     isLoadingNotifire.value = true;
     LocationService locationService = LocationService();
@@ -145,7 +145,7 @@ class _AccessLocationScreenState extends State<AccessLocationScreen> {
     );
   }
 
-  /// نمایش پیام خطا
+  //! نمایش پیام خطا
   void _showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
