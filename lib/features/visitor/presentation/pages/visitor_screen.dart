@@ -215,33 +215,40 @@ class _VisitorScreenState extends State<VisitorScreen> {
           }
         },
         builder: (context, state) {
-          return Scaffold(
-            body: SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    //! نمایش نقشه
-                    ShowMap(
-                      context: context,
-                      mapController: mapController,
-                      positions: _positions,
+          return state is ErrorData
+              ? ErrorUiWidget(
+                  title: state.error ?? '',
+                  onTap: () {
+                    BlocProvider.of<VisitorBloc>(context).add(GetLocation());
+                  },
+                )
+              : Scaffold(
+                  body: SafeArea(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          //! نمایش نقشه
+                          ShowMap(
+                            context: context,
+                            mapController: mapController,
+                            positions: _positions,
+                          ),
+                          VerticalSpace(25),
+                          //! انتخاب موقعیت
+                          SelectedLocations(
+                            options: options ?? [],
+                            mapController: mapController,
+                            bloc: bloc,
+                          ),
+                          VerticalSpace(15),
+                          //! موقعیت های بازدید شده
+                          placesSeen(),
+                          VerticalSpace(20),
+                        ],
+                      ),
                     ),
-                    VerticalSpace(25),
-                    //! انتخاب موقعیت
-                    SelectedLocations(
-                      options: options ?? [],
-                      mapController: mapController,
-                      bloc: bloc,
-                    ),
-                    VerticalSpace(15),
-                    //! موقعیت های بازدید شده
-                    placesSeen(),
-                    VerticalSpace(20),
-                  ],
-                ),
-              ),
-            ),
-          );
+                  ),
+                );
         },
       ),
     );
