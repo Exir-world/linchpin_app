@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 
 class ShowText extends StatelessWidget {
@@ -11,10 +12,10 @@ class ShowText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: context.screenWidth,
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.all(16),
       margin: EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TEXT_LIGHT_CHRONOMETER_COLOR.withAlpha(10),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(

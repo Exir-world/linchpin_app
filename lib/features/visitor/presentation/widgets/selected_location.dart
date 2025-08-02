@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/common/dimens.dart';
 import 'package:linchpin/core/common/empty_container.dart';
@@ -92,7 +93,8 @@ class _SelectedLocationsState extends State<SelectedLocations> {
             isExpanded: true,
             hint: const Text(
               'انتخاب موقعیت',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              style:
+                  TextStyle(fontSize: 14, color: TEXT_LIGHT_CHRONOMETER_COLOR),
             ),
             value: asyncSnapshot.data?.name,
             items: widget.options?.map<DropdownMenuItem<String>>((item) {
@@ -102,6 +104,7 @@ class _SelectedLocationsState extends State<SelectedLocations> {
                   item.name ?? '',
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
+                  textColorInLight: TEXT_LIGHT_CHRONOMETER_COLOR,
                 ),
               );
             }).toList(),
@@ -155,7 +158,7 @@ class _SelectedLocationsState extends State<SelectedLocations> {
               ),
             ),
             iconStyleData: const IconStyleData(
-              icon: Icon(Icons.keyboard_arrow_down, color: Colors.black),
+              icon: Icon(Icons.keyboard_arrow_down, color: ICON_COLOR),
             ),
           );
         },

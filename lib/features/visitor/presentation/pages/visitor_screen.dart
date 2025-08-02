@@ -9,6 +9,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/common/constants.dart';
 import 'package:linchpin/core/common/empty_container.dart';
 import 'package:linchpin/core/common/spacing_widget.dart';
@@ -43,7 +44,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
   XFile? photo;
   Map<String, String> result = {};
   List<XFile?> photos = [];
-  List<String> address = [];
   Position? position;
   final List<LatLng> _positions = []; // لیست موقعیت‌ها
   List<CurrentLocationEntity>? options = [];
@@ -153,7 +153,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
               result = await bloc.loadLatLngMap();
               // address = result.entries.map((entry) => entry.value).toList();
               try {
-                address = result.entries.map((entry) {
+                bloc.list_address = result.entries.map((entry) {
                   if (entry.value.contains('خطا')) {
                     return "آدرسی یافت نشد";
                   } else {
@@ -161,13 +161,15 @@ class _VisitorScreenState extends State<VisitorScreen> {
                   }
                 }).toList();
               } catch (e) {
-                address = ["آدرسی یافت نشد"];
+                bloc.list_address = ["آدرسی یافت نشد"];
               }
             }
             options?.clear();
             for (var i = 0; i < bloc.visitTargets.length; i++) {
               final element = bloc.visitTargets[i];
-              final name = i < address.length ? address[i] : 'آدرس مشخص نشده';
+              final name = i < bloc.list_address.length
+                  ? bloc.list_address[i]
+                  : 'آدرس مشخص نشده';
               options?.add(
                 CurrentLocationEntity(
                   lat: element.lat.toString(),
@@ -269,7 +271,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: TEXT_LIGHT_CHRONOMETER_COLOR.withAlpha(10),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -281,11 +283,16 @@ class _VisitorScreenState extends State<VisitorScreen> {
                 ),
                 child: ListTile(
                   onTap: () {
-                    showModal(context, data, address[index]);
+                    showModal(context, data, bloc.list_address[index]);
                   },
-                  subtitle: SmallRegular(address[index]),
+                  subtitle: SmallRegular(
+                    bloc.list_address[index],
+                    textColorInLight: TEXT_LIGHT_CHRONOMETER_COLOR,
+                  ),
                   title: SmallBold(
-                      data.userCheckPoints?.createdAt?.toPersianDate() ?? ''),
+                    data.userCheckPoints?.createdAt?.toPersianDate() ?? '',
+                    textColorInLight: TEXT_LIGHT_CHRONOMETER_COLOR,
+                  ),
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: CachedNetworkImage(
@@ -341,9 +348,17 @@ class _VisitorScreenState extends State<VisitorScreen> {
                     ),
                   ],
                 ),
-                ShowText(text: SmallRegular(locationName)),
+                ShowText(
+                    text: SmallRegular(
+                  locationName,
+                  textColorInLight: TEXT_LIGHT_CHRONOMETER_COLOR,
+                )),
                 if (data.userCheckPoints?.report?.isNotEmpty ?? false)
-                  ShowText(text: SmallRegular(data.userCheckPoints!.report!)),
+                  ShowText(
+                      text: SmallRegular(
+                    data.userCheckPoints!.report!,
+                    textColorInLight: TEXT_LIGHT_CHRONOMETER_COLOR,
+                  )),
                 VerticalSpace(10),
                 Expanded(
                   child: GridView.builder(
@@ -387,6 +402,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: CachedNetworkImage(
+                            filterQuality: FilterQuality.low,
                             fit: BoxFit.cover,
                             imageUrl: element.fileUrl ?? '',
                             placeholder: (context, url) =>

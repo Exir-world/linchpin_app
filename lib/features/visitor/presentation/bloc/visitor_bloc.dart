@@ -37,6 +37,7 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   List<MultipartFile> multipartImages = [];
   List<UploadImageEntity> uploadImage = [];
   List<Attachments>? attachments = [];
+  List<String> list_address = [];
   CurrentLocationEntity? current_Location;
   SetLocationResponse visitors = SetLocationResponse();
   LatLng? currentLocation;
