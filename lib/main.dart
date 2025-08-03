@@ -1,7 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:http/http.dart' as http;
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
