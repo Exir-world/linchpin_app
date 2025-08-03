@@ -271,7 +271,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: TEXT_LIGHT_CHRONOMETER_COLOR.withAlpha(10),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -301,7 +301,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                               ''
                           : '',
                       width: 60,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                       placeholder: (context, url) =>
                           CupertinoActivityIndicator(),
                       errorWidget: (context, url, error) => Icon(
@@ -403,7 +403,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                           borderRadius: BorderRadius.circular(8),
                           child: CachedNetworkImage(
                             filterQuality: FilterQuality.low,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fill,
                             imageUrl: element.fileUrl ?? '',
                             placeholder: (context, url) =>
                                 CupertinoActivityIndicator(),

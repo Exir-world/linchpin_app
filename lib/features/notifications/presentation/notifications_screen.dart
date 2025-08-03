@@ -222,7 +222,7 @@ class ItemNotifList extends StatelessWidget {
             ),
           ],
         ),
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(12),
         child: Row(
           children: [
             Stack(
@@ -255,20 +255,24 @@ class ItemNotifList extends StatelessWidget {
               ],
             ),
             SizedBox(width: 16),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                NormalMedium(title),
-                SizedBox(
-                  width: context.screenWidth / 1.9,
-                  child: NormalRegular(
-                    desc,
-                    textColorInLight: Color(0xff88719B),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+            SizedBox(
+              width: context.screenWidth / 2,
+              child: Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    NormalMedium(
+                      title,
+                    ),
+                    NormalRegular(
+                      desc,
+                      textColorInLight: Color(0xff88719B),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
             Spacer(),
             Column(

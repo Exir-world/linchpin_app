@@ -82,8 +82,14 @@ class _SelectedLocationsState extends State<SelectedLocations> {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(VERTICAL_SPACING_1x),
-        border: Border.all(width: .5, color: Colors.grey.shade100),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 30,
+            offset: Offset(0, 3),
+            color: Color(0xff828282).withValues(alpha: .05),
+          ),
+        ],
       ),
       child: StreamBuilder<CurrentLocationEntity>(
         stream: bloc.selectedValue.stream,
@@ -119,20 +125,21 @@ class _SelectedLocationsState extends State<SelectedLocations> {
               currentLocation = widget.options?.firstWhere(
                 (element) => element.name == newValue,
               );
-              if (newValue == 'انتخاب موقعیت') {
-                LocationService locationService = LocationService();
-                var position = await locationService.getUserLocation();
-                if (position != null) {
-                  AccessLocationScreen.latitudeNotifire.value =
-                      position.latitude;
-                  AccessLocationScreen.longitudeNotifire.value =
-                      position.longitude;
-                  widget.mapController.move(
-                    LatLng(position.latitude, position.longitude),
-                    16.5,
-                  );
-                }
-              } else if (currentLocation != null && isEnableSendButton()) {
+              // if (newValue == 'انتخاب موقعیت') {
+              //   LocationService locationService = LocationService();
+              //   var position = await locationService.getUserLocation();
+              //   if (position != null) {
+              //     AccessLocationScreen.latitudeNotifire.value =
+              //         position.latitude;
+              //     AccessLocationScreen.longitudeNotifire.value =
+              //         position.longitude;
+              //     widget.mapController.move(
+              //       LatLng(position.latitude, position.longitude),
+              //       16.5,
+              //     );
+              //   }
+              // } else
+              if (currentLocation != null && isEnableSendButton()) {
                 AccessLocationScreen.latitudeNotifire.value =
                     double.parse(currentLocation.lat.toString());
                 AccessLocationScreen.longitudeNotifire.value =

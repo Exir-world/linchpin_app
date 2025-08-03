@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:linchpin/core/common/custom_text.dart';
+import 'package:linchpin/core/common/empty_container.dart';
 import 'package:linchpin/features/property/data/models/my_properties_model/property.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
 import 'package:linchpin/gen/assets.gen.dart';
@@ -89,15 +90,17 @@ class DetailPropertyScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-            Container(
-              height: 272,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              alignment: Alignment.center,
-              child: Image.network('${property.imageUrl}'),
-            ),
+            property.imageUrl != null
+                ? Container(
+                    height: 272,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    alignment: Alignment.center,
+                    child: Image.network('${property.imageUrl}'),
+                  )
+                : EmptyContainer(),
           ],
         ),
       ),
