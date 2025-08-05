@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -12,6 +13,7 @@ import 'package:linchpin/core/common/dimens.dart';
 import 'package:linchpin/core/common/empty_container.dart';
 import 'package:linchpin/core/common/progress_button.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:linchpin/features/visitor/domain/entity/current_location_entity.dart';
 import 'package:linchpin/features/visitor/presentation/bloc/visitor_bloc.dart';
@@ -97,8 +99,8 @@ class _SelectedLocationsState extends State<SelectedLocations> {
           return DropdownButton2<String>(
             underline: const EmptyContainer(),
             isExpanded: true,
-            hint: const Text(
-              'انتخاب موقعیت',
+            hint: Text(
+              LocaleKeys.selectposition.tr(),
               style:
                   TextStyle(fontSize: 14, color: TEXT_LIGHT_CHRONOMETER_COLOR),
             ),

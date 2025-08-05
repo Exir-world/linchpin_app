@@ -237,16 +237,16 @@ class _CircularTimerState extends State<CircularTimer> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Assets.icons.ringing.svg(),
-                  SizedBox(width: 5),
-                  NormalRegular(
-                      '${LocaleKeys.sound.tr()}: ${LocaleKeys.bright.tr()}'),
-                ],
-              ),
-              SizedBox(height: 8),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Assets.icons.ringing.svg(),
+              //     SizedBox(width: 5),
+              //     NormalRegular(
+              //         '${LocaleKeys.sound.tr()}: ${LocaleKeys.bright.tr()}'),
+              //   ],
+              // ),
+              // SizedBox(height: 8),
               MegaBold(
                 _formatDuration(elapsedDuration),
                 textColorInLight: TEXT_LIGHT_CHRONOMETER_COLOR,

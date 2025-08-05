@@ -46,6 +46,8 @@ import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart'
     as _i501;
 import 'package:linchpin/features/notifications/data/data_source/api_notifications.dart'
     as _i534;
+import 'package:linchpin/features/notifications/data/data_source/api_status_location.dart'
+    as _i846;
 import 'package:linchpin/features/notifications/data/repository/notifications_repository_impl.dart'
     as _i496;
 import 'package:linchpin/features/notifications/domain/repository/notifications_repository.dart'
@@ -143,6 +145,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i302.ApiGrowth>(() => _i302.ApiGrowth(gh<_i361.Dio>()));
     gh.singleton<_i534.ApiNotifications>(
         () => _i534.ApiNotifications(gh<_i361.Dio>()));
+    gh.singleton<_i846.ApiStatusLocation>(
+        () => _i846.ApiStatusLocation(gh<_i361.Dio>()));
     gh.singleton<_i765.ApiPaySlip>(() => _i765.ApiPaySlip(gh<_i361.Dio>()));
     gh.singleton<_i1071.ApiLastQuarterReport>(
         () => _i1071.ApiLastQuarterReport(gh<_i361.Dio>()));
@@ -171,10 +175,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i713.LastQuarterReportRepository>(
       () => _i896.LastQuarterReportRepositoryImpl(
           gh<_i1071.ApiLastQuarterReport>()),
-      registerFor: {_prod},
-    );
-    gh.singleton<_i127.NotificationsRepository>(
-      () => _i496.NotificationsRepositoryImpl(gh<_i534.ApiNotifications>()),
       registerFor: {_prod},
     );
     gh.singleton<_i474.PropertyRepository>(
@@ -239,6 +239,13 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i616.PropertyBloc(gh<_i761.PropertyUsecase>()));
     gh.factory<_i12.PaySlipBloc>(
         () => _i12.PaySlipBloc(gh<_i375.PaySlipUsecase>()));
+    gh.singleton<_i127.NotificationsRepository>(
+      () => _i496.NotificationsRepositoryImpl(
+        gh<_i534.ApiNotifications>(),
+        gh<_i846.ApiStatusLocation>(),
+      ),
+      registerFor: {_prod},
+    );
     gh.singleton<_i817.AuthUsecase>(
       () => _i817.AuthUsecaseImpl(gh<_i278.AuthRepository>()),
       registerFor: {_prod},

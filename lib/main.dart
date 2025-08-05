@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
@@ -11,10 +12,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin/core/locator/di/di.dart';
-import 'package:linchpin/features/background_service/background_service.dart';
 import 'package:linchpin/features/duties/presentation/bloc/duties_bloc.dart';
 import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:linchpin/features/notifications/presentation/background_service.dart';
 import 'package:linchpin/features/notifications/presentation/notificationService.dart';
 import 'package:linchpin/features/notifications/presentation/sse_service.dart';
 import 'package:linchpin/features/pay_slip/presentation/bloc/pay_slip_bloc.dart';
@@ -23,8 +24,6 @@ import 'package:linchpin/features/property/presentation/bloc/property_bloc.dart'
 import 'package:linchpin/features/root/presentation/root_screen.dart';
 import 'package:linchpin/firebase_options.dart';
 import 'package:workmanager/workmanager.dart';
-
-const taskName = "location_background_task";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,25 +51,29 @@ void main() async {
   );
   //! هندل نوتیف در فورگراند
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Foreground message received: ${message.notification?.title}');
     if (message.notification != null) {
       NotificationService.showNotification(message);
     }
   });
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid);
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   await Workmanager().initialize(
     callbackDispatcher,
     isInDebugMode: true,
   );
 
-  // هر 15 دقیقه یک‌بار (کمتر ممکن نیست)
+//! هر 15 دقیقه یک‌بار (کمتر ممکن نیست)
   await Workmanager().registerPeriodicTask(
-    "location-task",
+    "uniquePeriodicTaskId", // id یکتا برای تسک
     taskName,
     frequency: const Duration(minutes: 15),
-    constraints: Constraints(
-      networkType: NetworkType.connected,
-    ),
   );
 
   runApp(

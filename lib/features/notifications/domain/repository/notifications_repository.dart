@@ -8,4 +8,6 @@ abstract class NotificationsRepository {
 
   // علامت زدن اعلان
   Future<DataState<SuccessEntity>> markAsRead(int notifId);
+  // وضعیت موقعیت مکانی
+  Future<DataState<SuccessEntity>> statusLocation();
 }

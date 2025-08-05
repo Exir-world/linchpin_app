@@ -112,4 +112,5 @@ abstract class LocaleKeys {
   static const firstEntry = 'firstEntry';
   static const attendanceHours = 'attendanceHours';
   static const usefulHours = 'usefulHours';
+  static const selectposition = 'selectposition';
 }
