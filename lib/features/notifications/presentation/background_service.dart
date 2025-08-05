@@ -1,13 +1,17 @@
 // background_callback.dart
 
+import 'package:dio/dio.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:geolocator/geolocator.dart';
 
 const taskName = "location_background_task";
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+Dio httpclient = Dio();
 //! محدوده مجاز
 bool isNear(LatLng current, LatLng target) {
   final distance = Geolocator.distanceBetween(
@@ -23,6 +27,11 @@ bool isNear(LatLng current, LatLng target) {
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
+    PrefService prefService = PrefService();
+    String? token = await prefService.readCacheString(SharedKey.jwtToken);
+    String? language =
+        await prefService.readCacheString(SharedKey.selectedLanguageCode);
+
     if (task == taskName) {
       try {
         await flutterLocalNotificationsPlugin
@@ -39,33 +48,26 @@ void callbackDispatcher() {
         // check location service
         bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
         if (!serviceEnabled) {
-          // final response = await http.post(
-          //   Uri.parse("https://yourserver.com/api/location"),
-          //   headers: {'Content-Type': 'application/json'},
-          //   body: jsonEncode({
-          //     "latitude": null,
-          //     "longitude": null,
-          //     "status_location": false,
-          //   }),
-          // );
-          // if (response.statusCode == 200) {
-          //   print("Location sent successfully.");
-          // } else {
-          //   print("Failed to send location: ${response.statusCode}");
-          // }
-          await flutterLocalNotificationsPlugin.show(
-            0,
-            'خطا در دسترسی به موقعیت مکانی',
-            'لطفاً سرویس موقعیت مکانی را فعال کنید.',
-            const NotificationDetails(
-              android: AndroidNotificationDetails(
-                'location_channel',
-                'Location Notifications',
-                importance: Importance.high,
-                priority: Priority.high,
-              ),
+          final response = await httpclient.post(
+            "https://linchpin.ex.pro/api/attendance/check-location",
+            options: Options(
+              headers: {
+                "Authorization": "Bearer $token",
+                "Accept-Language": language ?? 'fa',
+                "Content-Type": "application/json",
+              },
             ),
+            data: {
+              "lat": 0.0,
+              "lng": 0.0,
+              "gpsIsOn": false,
+            },
           );
+          if (response.statusCode == 200) {
+            print("Location sent successfully.");
+          } else {
+            print("Failed to send location: ${response.statusCode}");
+          }
           return Future.value(true);
         } else {
           final position = await Geolocator.getCurrentPosition(
@@ -75,63 +77,27 @@ void callbackDispatcher() {
             ),
           );
 
-          if (isNear(
-            LatLng(position.latitude, position.longitude), // موقعیت فعلی
-            LatLng(36.2978647, 59.5906685), // موقعیت مورد نظر
-          )) {
-            await flutterLocalNotificationsPlugin.show(
-              0,
-              'Location Update',
-              'شما در موقعیت مورد نظر هستید.',
-              NotificationDetails(
-                android: AndroidNotificationDetails(
-                  'your_channel_id',
-                  'your_channel_name',
-                  importance: Importance.max,
-                  priority: Priority.high,
-                ),
-              ),
-            );
-            return Future.value(true);
+          final response = await httpclient.post(
+            "https://linchpin.ex.pro/api/attendance/check-location",
+            options: Options(
+              headers: {
+                "Authorization": "Bearer $token",
+                "Accept-Language": language ?? 'fa',
+                "Content-Type": "application/json",
+              },
+            ),
+            data: {
+              "lat": position.latitude,
+              "lng": position.longitude,
+              "gpsIsOn": true,
+            },
+          );
+          if (response.statusCode == 200) {
+            print("Location sent successfully.");
           } else {
-            // final body = jsonEncode({
-            //   "latitude": position?.latitude,
-            //   "longitude": position?.longitude,
-            // });
-            // final response = await http.post(
-            //   Uri.parse("https://yourserver.com/api/location"),
-            //   headers: {'Content-Type': 'application/json'},
-            //   body: body,
-            // );
-            // if (response.statusCode == 200) {
-            //   print("Location sent successfully.");
-            // } else {
-            //   print("Failed to send location: ${response.statusCode}");
-            // }
-            await flutterLocalNotificationsPlugin.show(
-              0,
-              'Location Update',
-              'شما در موقعیت مورد نظر نیستید.',
-              NotificationDetails(
-                android: AndroidNotificationDetails(
-                  'your_channel_id',
-                  'your_channel_name',
-                  importance: Importance.max,
-                  priority: Priority.high,
-                ),
-              ),
-            );
+            print("Failed to send location: ${response.statusCode}");
           }
         }
-        //! check permission
-        // LocationPermission permission = await Geolocator.checkPermission();
-        // if (permission == LocationPermission.denied ||
-        //     permission == LocationPermission.deniedForever) {
-        //   permission = await Geolocator.requestPermission();
-        // }
-
-        // LocationService locationService = LocationService();
-        // final position = await locationService.getUserLocation();
       } catch (e) {
         print("Error: $e");
       }
