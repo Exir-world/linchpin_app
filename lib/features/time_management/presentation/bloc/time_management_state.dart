@@ -2,6 +2,10 @@ part of 'time_management_bloc.dart';
 
 sealed class TimeManagementState {}
 
+final class StartEndWorkLoading extends TimeManagementState {}
+
+final class StartEndWorkSuccess extends TimeManagementState {}
+
 final class DailyLoadingState extends TimeManagementState {}
 
 final class DailyComplitedState extends TimeManagementState {

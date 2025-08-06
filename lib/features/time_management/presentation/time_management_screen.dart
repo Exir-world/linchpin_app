@@ -118,7 +118,7 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
 
-    _bloc = getIt<TimeManagementBloc>();
+    _bloc = getIt<TimeManagementBloc>()..add(StartEndWorkEvent());
     currentStatus = null;
     nameStatus = null;
     _bloc.add(DailyEvent(

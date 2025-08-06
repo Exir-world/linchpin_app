@@ -165,7 +165,7 @@ PreferredSize appBarRoot(
                               SizedBox(height: 24),
                               _ItemProfile(
                                 image: Assets.icons.box.svg(height: 24),
-                                title: 'لیست اموال',
+                                title: LocaleKeys.propertylist.tr(),
                                 onTap: () {
                                   navigateToScreen(
                                     context,

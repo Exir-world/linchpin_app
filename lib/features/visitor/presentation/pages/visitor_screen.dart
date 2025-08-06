@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:calendar_pro_farhad/core/text_widgets.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,8 +17,10 @@ import 'package:linchpin/core/common/spacing_widget.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:linchpin/features/time_management/presentation/bloc/time_management_bloc.dart';
 import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
 import 'package:linchpin/features/visitor/data/models/response/get_location_response.dart'
     hide Attachments;
@@ -155,13 +158,13 @@ class _VisitorScreenState extends State<VisitorScreen> {
               try {
                 bloc.list_address = result.entries.map((entry) {
                   if (entry.value.contains('خطا')) {
-                    return "آدرسی یافت نشد";
+                    return LocaleKeys.noaddressfound.tr();
                   } else {
                     return entry.value;
                   }
                 }).toList();
               } catch (e) {
-                bloc.list_address = ["آدرسی یافت نشد"];
+                bloc.list_address = [LocaleKeys.noaddressfound.tr()];
               }
             }
             options?.clear();

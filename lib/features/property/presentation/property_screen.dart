@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/customui/loading_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
+import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/property/presentation/bloc/property_bloc.dart';
 import 'package:linchpin/features/property/presentation/detail_property_screen.dart';
 import 'package:linchpin/features/root/presentation/app_bar_root.dart';
@@ -40,7 +42,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 24),
-                    BigDemiBold('لیست اموال'),
+                    BigDemiBold(LocaleKeys.propertylist.tr()),
                     SizedBox(height: 24),
                     state.myPropertiesEntity.isEmpty
                         ? Column(

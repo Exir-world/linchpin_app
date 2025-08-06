@@ -112,5 +112,7 @@
     "firstEntry": "اولین ورود",
     "attendanceHours": "ساعات حضور",
     "usefulHours": "ساعات کار مفید",
-    "selectposition": "انتخاب موقعیت"
+    "selectposition": "انتخاب موقعیت",
+    "noaddressfound": "آدرسی یافت نشد",
+    "propertylist": "لیست اموال"
 }

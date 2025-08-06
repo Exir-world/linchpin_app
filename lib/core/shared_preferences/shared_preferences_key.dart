@@ -5,4 +5,6 @@ class SharedKey {
   static const expires = "expires";
   static const selectedLanguage = "selectedLanguage";
   static const selectedLanguageCode = "selectedLanguageCode";
+  static const startTime = "startTime";
+  static const endTime = "endTime";
 }

@@ -9,3 +9,5 @@ final class DailyEvent extends TimeManagementEvent {
 
   DailyEvent({required this.actionType, required this.lat, required this.lng});
 }
+
+final class StartEndWorkEvent extends TimeManagementEvent {}

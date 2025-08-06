@@ -112,5 +112,7 @@
     "firstEntry": "first entry",
     "attendanceHours": "attendance hours",
     "usefulHours": "Useful working hours",
-    "selectposition": "Select position"
+    "selectposition": "Select position",
+    "noaddressfound": "No address found",
+    "propertylist": "Property list"
 }

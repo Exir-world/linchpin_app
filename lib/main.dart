@@ -66,15 +66,26 @@ void main() async {
 
   await Workmanager().initialize(
     callbackDispatcher,
-    isInDebugMode: true,
+    isInDebugMode: false,
   );
 
-//! هر 15 دقیقه یک‌بار (کمتر ممکن نیست)
-  await Workmanager().registerPeriodicTask(
-    "uniquePeriodicTaskId", // id یکتا برای تسک
+  await Future.delayed(Duration(seconds: 1));
+
+  await Workmanager().registerOneOffTask(
+    "uniquePeriodicTaskId",
     taskName,
-    frequency: const Duration(minutes: 15),
+    initialDelay: Duration(seconds: 2),
   );
+
+  // await Workmanager().registerPeriodicTask(
+  //   "uniquePeriodicTaskId",
+  //   taskName,
+  //   frequency: const Duration(minutes: 15),
+  //   initialDelay: Duration(seconds: 10),
+  //   constraints: Constraints(
+  //     networkType: NetworkType.connected,
+  //   ),
+  // );
 
   runApp(
     EasyLocalization(
@@ -115,7 +126,24 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    //! هر 15 دقیقه یک‌بار (کمتر ممکن نیست)
+    // Future.delayed(Duration.zero, () async {
+    //   await Workmanager().registerOneOffTask(
+    //     "uniquePeriodicTaskId",
+    //     taskName,
+    //     initialDelay: Duration(seconds: 2),
+    //   );
 
+    //   // await Workmanager().registerPeriodicTask(
+    //   //   "uniquePeriodicTaskId",
+    //   //   taskName,
+    //   //   frequency: const Duration(minutes: 15),
+    //   //   initialDelay: Duration(seconds: 10),
+    //   //   constraints: Constraints(
+    //   //     networkType: NetworkType.connected,
+    //   //   ),
+    //   // );
+    // });
     _homePageFuture = _getHomePage();
   }
 

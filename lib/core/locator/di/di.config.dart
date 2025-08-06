@@ -96,12 +96,16 @@ import 'package:linchpin/features/requests/domain/usecase/request_usecase.dart'
     as _i145;
 import 'package:linchpin/features/requests/presentation/bloc/requests_bloc.dart'
     as _i785;
+import 'package:linchpin/features/time_management/data/data_source/api_start_end_work.dart'
+    as _i657;
 import 'package:linchpin/features/time_management/data/data_source/api_time_mamagement.dart'
     as _i864;
 import 'package:linchpin/features/time_management/data/repository/time_management_repository_impl.dart'
     as _i762;
 import 'package:linchpin/features/time_management/domain/repository/time_management_repository.dart'
     as _i246;
+import 'package:linchpin/features/time_management/domain/use_case/start_end_work.dart'
+    as _i369;
 import 'package:linchpin/features/time_management/domain/use_case/time_management_usecase.dart'
     as _i436;
 import 'package:linchpin/features/time_management/presentation/bloc/time_management_bloc.dart'
@@ -159,6 +163,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i271.ApiUploadimage>(
         () => _i271.ApiUploadimage(gh<_i361.Dio>()));
     gh.singleton<_i406.ApiVisitor>(() => _i406.ApiVisitor(gh<_i361.Dio>()));
+    gh.singleton<_i657.ApiStartEndWork>(
+        () => _i657.ApiStartEndWork(gh<_i361.Dio>()));
     gh.lazySingleton<_i363.DeviceInfo>(() => _i363.DeviceInfoImpl());
     gh.singleton<_i1051.VisitorRepository>(
       () => _i1040.VisitorRepositoryImpl(
@@ -166,10 +172,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i639.ApiGetlocation>(),
         gh<_i271.ApiUploadimage>(),
       ),
-      registerFor: {_prod},
-    );
-    gh.singleton<_i246.TimeManagementRepository>(
-      () => _i762.TimeManagementRepositoryImpl(gh<_i864.ApiTimeMamagement>()),
       registerFor: {_prod},
     );
     gh.singleton<_i713.LastQuarterReportRepository>(
@@ -193,17 +195,8 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i375.AuthUsecaseImpl(gh<_i703.PaySlipRepository>()),
       registerFor: {_prod},
     );
-    gh.singleton<_i436.TimeManagementUsecase>(
-      () =>
-          _i436.TimeManagementUsecaseImpl(gh<_i246.TimeManagementRepository>()),
-      registerFor: {_prod},
-    );
     gh.singleton<_i443.GrowthRepository>(
       () => _i493.GrowthRepositoryImpl(gh<_i302.ApiGrowth>()),
-      registerFor: {_prod},
-    );
-    gh.singleton<_i278.AuthRepository>(
-      () => _i472.AuthRepositoryImpl(gh<_i675.ApiAuth>()),
       registerFor: {_prod},
     );
     gh.singleton<_i479.DutiesRepository>(
@@ -218,14 +211,26 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i122.SetLocationImpl(gh<_i1051.VisitorRepository>()),
       registerFor: {_prod},
     );
+    gh.singleton<_i278.AuthRepository>(
+      () => _i472.AuthRepositoryImpl(
+        gh<_i675.ApiAuth>(),
+        gh<_i657.ApiStartEndWork>(),
+      ),
+      registerFor: {_prod},
+    );
     gh.factoryAsync<_i361.Response<dynamic>>(
         () => dioProvider.refresh(gh<String>()));
     gh.singleton<_i761.PropertyUsecase>(
       () => _i761.PropertyUsecaseImpl(gh<_i474.PropertyRepository>()),
       registerFor: {_prod},
     );
-    gh.factory<_i658.TimeManagementBloc>(
-        () => _i658.TimeManagementBloc(gh<_i436.TimeManagementUsecase>()));
+    gh.singleton<_i246.TimeManagementRepository>(
+      () => _i762.TimeManagementRepositoryImpl(
+        gh<_i864.ApiTimeMamagement>(),
+        gh<_i657.ApiStartEndWork>(),
+      ),
+      registerFor: {_prod},
+    );
     gh.singleton<_i308.UploadImageUsecase>(
       () => _i308.UploadImageIpml(gh<_i1051.VisitorRepository>()),
       registerFor: {_prod},
@@ -277,14 +282,27 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i145.RequestUsecaseImpl(gh<_i1038.RequestRepository>()),
       registerFor: {_prod},
     );
+    gh.singleton<_i436.TimeManagementUsecase>(
+      () =>
+          _i436.TimeManagementUsecaseImpl(gh<_i246.TimeManagementRepository>()),
+      registerFor: {_prod},
+    );
     gh.factory<_i4.LastQuarterReportBloc>(
         () => _i4.LastQuarterReportBloc(gh<_i46.LastQuarterReportUsecase>()));
+    gh.singleton<_i369.StartEndWorkUseCase>(
+      () => _i369.StartEndWorkImpl(gh<_i246.TimeManagementRepository>()),
+      registerFor: {_prod},
+    );
     gh.factory<_i501.GrowthBloc>(
         () => _i501.GrowthBloc(gh<_i71.GrowthUsecase>()));
     gh.factory<_i785.RequestsBloc>(
         () => _i785.RequestsBloc(gh<_i145.RequestUsecase>()));
     gh.factory<_i377.NotificationsBloc>(
         () => _i377.NotificationsBloc(gh<_i106.NotificationsUsecase>()));
+    gh.factory<_i658.TimeManagementBloc>(() => _i658.TimeManagementBloc(
+          gh<_i436.TimeManagementUsecase>(),
+          gh<_i369.StartEndWorkUseCase>(),
+        ));
     return this;
   }
 }

@@ -112,5 +112,7 @@
     "firstEntry": "الإدخال الأول",
     "attendanceHours": "ساعات الحضور",
     "usefulHours": "ساعات عمل مفيدة",
-    "selectposition": "حدد الموقف"
+    "selectposition": "حدد الموقف",
+    "noaddressfound": "لم يتم العثور على عنوان",
+    "propertylist": "قائمة الممتلكات"
 }
