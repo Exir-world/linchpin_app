@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:linchpin/core/resources/data_state.dart';
@@ -22,6 +23,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _loginEvent(LoginEvent event, Emitter<AuthState> emit) async {
     PrefService prefService = PrefService();
     String firebaseToken = '';
+    // var device_info;
+
+    // if (!kIsWeb) {
     //! گرفتن توکن FCM
     await FirebaseMessaging.instance.getToken().then((token) async {
       firebaseToken = token ?? '';
@@ -30,13 +34,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         token ?? '',
       );
     });
+    // }
     final device_info = await deviceInfo.deviceInfo();
+
     emit(LoginLoadingState());
 
     DataState dataState = await authUsecase.login(
       event.phoneNumber,
       event.password,
-      device_info.id ?? '',
+      !kIsWeb ? device_info.id ?? '' : '123456',
       firebaseToken,
     );
 

@@ -62,12 +62,12 @@ void main() async {
   const InitializationSettings initializationSettings =
       InitializationSettings(android: initializationSettingsAndroid);
 
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-  await Workmanager().initialize(
-    callbackDispatcher,
-    isInDebugMode: false,
-  );
+  await Workmanager().initialize(callbackDispatcher);
 
   await Future.delayed(Duration(seconds: 1));
 
@@ -79,13 +79,15 @@ void main() async {
 
   // await Workmanager().registerPeriodicTask(
   //   "uniquePeriodicTaskId",
-  //   taskName,
+  //   fetchTask,
   //   frequency: const Duration(minutes: 15),
   //   initialDelay: Duration(seconds: 10),
   //   constraints: Constraints(
   //     networkType: NetworkType.connected,
   //   ),
   // );
+
+  // await LocationServiceHelper.startLocationService();
 
   runApp(
     EasyLocalization(
@@ -126,25 +128,12 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    //! هر 15 دقیقه یک‌بار (کمتر ممکن نیست)
-    // Future.delayed(Duration.zero, () async {
-    //   await Workmanager().registerOneOffTask(
-    //     "uniquePeriodicTaskId",
-    //     taskName,
-    //     initialDelay: Duration(seconds: 2),
-    //   );
-
-    //   // await Workmanager().registerPeriodicTask(
-    //   //   "uniquePeriodicTaskId",
-    //   //   taskName,
-    //   //   frequency: const Duration(minutes: 15),
-    //   //   initialDelay: Duration(seconds: 10),
-    //   //   constraints: Constraints(
-    //   //     networkType: NetworkType.connected,
-    //   //   ),
-    //   // );
-    // });
+    _batteryOptimization();
     _homePageFuture = _getHomePage();
+  }
+
+  Future<void> _batteryOptimization() async {
+    await requestIgnoreBatteryOptimizations();
   }
 
   // این متد بررسی موقعیت مکانی و تعیین صفحه خانگی را انجام می دهد
