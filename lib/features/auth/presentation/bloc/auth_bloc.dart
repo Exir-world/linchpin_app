@@ -23,18 +23,44 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _loginEvent(LoginEvent event, Emitter<AuthState> emit) async {
     PrefService prefService = PrefService();
     String firebaseToken = '';
+    String deviceId = '';
     // var device_info;
 
     // if (!kIsWeb) {
     //! گرفتن توکن FCM
-    await FirebaseMessaging.instance.getToken().then((token) async {
-      firebaseToken = token ?? '';
-      await prefService.createCacheString(
-        SharedKey.firebaseToken,
-        token ?? '',
-      );
-    });
+    // await FirebaseMessaging.instance.getToken().then((token) async {
+    //   firebaseToken = token ?? '';
+    //   await prefService.createCacheString(
+    //     SharedKey.firebaseToken,
+    //     token ?? '',
+    //   );
+    // });
     // }
+    //! گرفتن توکن FCM
+    if (!kIsWeb) {
+      // برای موبایل
+      try {
+        firebaseToken = await FirebaseMessaging.instance.getToken() ?? '';
+        await prefService.createCacheString(
+          SharedKey.firebaseToken,
+          firebaseToken,
+        );
+      } catch (e) {
+        firebaseToken = '';
+      }
+
+      try {
+        final info = await deviceInfo.deviceInfo();
+        deviceId = info.id ?? '';
+      } catch (e) {
+        deviceId = '';
+      }
+    } else {
+      // برای وب - mock values
+      firebaseToken = 'web-firebase-token';
+      deviceId = 'web-device-id';
+    }
+
     final device_info = await deviceInfo.deviceInfo();
 
     emit(LoginLoadingState());

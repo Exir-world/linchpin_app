@@ -1,14 +1,20 @@
 // background_callback.dart
 
+import 'dart:convert';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:linchpin/core/common/constants.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_key.dart';
 import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
-import 'package:workmanager/workmanager.dart' hide NetworkType;
+import 'package:linchpin/core/translate/locale_keys.dart';
+import 'package:workmanager/workmanager.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:android_intent_plus/android_intent.dart';
 
@@ -76,7 +82,7 @@ void callbackDispatcher() {
             // check location service
             bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
             if (!serviceEnabled) {
-              final response = await httpclient.post(
+              await httpclient.post(
                 "${Constants.baseUrl}attendance/check-location",
                 options: Options(
                   headers: {
@@ -91,22 +97,43 @@ void callbackDispatcher() {
                   "gpsIsOn": false,
                 },
               );
-              if (response.statusCode == 200) {
-                print("Location sent successfully.");
-              } else {
-                print("Failed to send location: ${response.statusCode}");
-              }
               return Future.value(true);
             } else {
               //! گرفتن آخرین موقعیت
+
+              double latitude = 0.0;
+              double longitude = 0.0;
               final position = await Geolocator.getCurrentPosition(
                 locationSettings: const LocationSettings(
                   accuracy: LocationAccuracy.low,
                   distanceFilter: 0,
                 ),
               );
+              if (!position.latitude.isNaN && !position.longitude.isNaN) {
+                latitude = position.latitude;
+                longitude = position.longitude;
+              } else {
+                String ip = '';
+                final response_ip = await http
+                    .get(Uri.parse('https://api.ipify.org?format=json'));
+                if (response_ip.statusCode == 200) {
+                  final data = await jsonDecode(response_ip.body);
+                  ip = data['ip'];
+                  final response =
+                      await http.get(Uri.parse('http://ip-api.com/json/$ip'));
+                  if (response.statusCode == 200) {
+                    final data = jsonDecode(response.body);
+                    latitude = data['lat'];
+                    longitude = data['lon'];
+                  } else {
+                    throw Exception('خطا در گرفتن لوکیشن از IP');
+                  }
+                } else {
+                  throw Exception('خطا در گرفتن IP');
+                }
+              }
 
-              final response = await httpclient.post(
+              await httpclient.post(
                 "${Constants.baseUrl}attendance/check-location",
                 options: Options(
                   headers: {
@@ -116,23 +143,18 @@ void callbackDispatcher() {
                   },
                 ),
                 data: {
-                  "lat": position.latitude,
-                  "lng": position.longitude,
+                  "lat": latitude,
+                  "lng": longitude,
                   // "lat": 0.0,
                   // "lng": 0.0,
                   "gpsIsOn": true,
                 },
               );
-              if (response.statusCode == 200 || response.statusCode == 201) {
-                await _showNotification(
-                  flutterLocalNotificationsPlugin,
-                  'Task started',
-                  'task name is : $task',
-                );
-                print("Location sent successfully.");
-              } else {
-                print("Failed to send location: ${response.statusCode}");
-              }
+              // if (response.statusCode == 200 || response.statusCode == 201) {
+              //   print("Location sent successfully.");
+              // } else {
+              //   print("Failed to send location: ${response.statusCode}");
+              // }
             }
           } catch (e) {
             print("Error: $e");
@@ -164,37 +186,97 @@ Future<void> requestIgnoreBatteryOptimizations() async {
   final deviceInfo = await DeviceInfoPlugin().androidInfo;
   if (deviceInfo.version.sdkInt >= 23) {
     // فقط برای اندروید 6 (مارشمالو) به بالا
-    const AndroidIntent intent = AndroidIntent(
-      action: 'android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS',
-      data: 'com.linchpinx.app.linchpinx', //  نام پکیج خود
-    );
+
     try {
+      const AndroidIntent intent = AndroidIntent(
+        // action: 'android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS',
+        action: 'android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS',
+
+        data: 'package:com.linchpinx.app.linchpinx', //  نام پکیج خود
+      );
       await intent.launch();
+
+      // await intent.launch();
     } catch (e) {
+      AndroidIntent backupIntent = AndroidIntent(
+        action: 'android.settings.BATTERY_SAVER_SETTINGS',
+      );
+      await backupIntent.launch();
       print('خطا در باز کردن تنظیمات: $e');
     }
   }
 }
 
-Future<void> _showNotification(
-  FlutterLocalNotificationsPlugin notificationsPlugin,
-  String title,
-  String body,
-) async {
-  const androidDetails = AndroidNotificationDetails(
-    'backup_channel',
-    'Backup Notifications',
-    channelDescription: 'Notifications for backup operations',
-    importance: Importance.high,
-    priority: Priority.high,
-    showWhen: true,
-  );
+Future<void> showBatteryOptimizationDialog(BuildContext context) async {
+  showCupertinoDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CupertinoAlertDialog(
+        title: Text(LocaleKeys.batteryoptimization.tr()),
+        content: Text(
+          LocaleKeys.descriptionOptimasion.tr(),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            child: Text(LocaleKeys.cancel.tr()),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await Workmanager().initialize(callbackDispatcher);
 
-  const notificationDetails = NotificationDetails(android: androidDetails);
-  await notificationsPlugin.show(
-    0, // شناسه نوتیفیکیشن
-    title,
-    body,
-    notificationDetails,
+              await Future.delayed(Duration(seconds: 1));
+
+              await Workmanager().registerPeriodicTask(
+                "uniquePeriodicTaskId",
+                taskName,
+                frequency: const Duration(minutes: 15),
+                initialDelay: Duration(seconds: 10),
+                constraints: Constraints(
+                  networkType: NetworkType.connected,
+                ),
+              );
+            },
+          ),
+          CupertinoDialogAction(
+            child: Text(LocaleKeys.settings.tr()),
+            onPressed: () {
+              Navigator.of(context).pop();
+              requestIgnoreBatteryOptimizations().then(
+                (value) async {
+                  await Workmanager().initialize(callbackDispatcher);
+
+                  await Future.delayed(Duration(seconds: 1));
+
+                  await Workmanager().registerPeriodicTask(
+                    "uniquePeriodicTaskId",
+                    taskName,
+                    frequency: const Duration(minutes: 15),
+                    initialDelay: Duration(seconds: 10),
+                    constraints: Constraints(
+                      networkType: NetworkType.connected,
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      );
+    },
   );
+}
+
+class BatteryOptimization {
+  static const MethodChannel _channel =
+      MethodChannel('samples.flutter.dev/battery');
+
+  static Future<bool> isIgnoringBatteryOptimizations() async {
+    try {
+      final bool isIgnoring =
+          await _channel.invokeMethod('isIgnoringBatteryOptimizations');
+      return isIgnoring;
+    } on PlatformException catch (e) {
+      print("خطا در دریافت وضعیت: ${e.message}");
+      return false;
+    }
+  }
 }

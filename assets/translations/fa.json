@@ -114,5 +114,10 @@
     "usefulHours": "ساعات کار مفید",
     "selectposition": "انتخاب موقعیت",
     "noaddressfound": "آدرسی یافت نشد",
-    "propertylist": "لیست اموال"
+    "propertylist": "لیست اموال",
+    "errorgettingaddress": "خطا در دریافت آدرس",
+    "unauthorizedposition": "موقعیت مجاز نیست",
+    "cancel": "لغو",
+    "batteryoptimization": "بهینه‌سازی باتری",
+    "descriptionOptimasion": "برای عملکرد بهتر برنامه، لطفاً بهینه‌سازی باتری را غیرفعال کنید."
 }

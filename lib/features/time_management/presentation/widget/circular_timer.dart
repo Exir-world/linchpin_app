@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:linchpin/core/common/colors.dart';
 import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';
-import 'package:linchpin/gen/assets.gen.dart';
 
 class CircularTimer extends StatefulWidget {
   final int? initTime; // مقدار زمان شروع (TimeStamp بر حسب میلی‌ثانیه)

@@ -34,6 +34,7 @@ class VisitorBloc extends Bloc<VisitorEvent, VisitorState> {
   bool isDeleted = false;
   XFile? photo;
   List<File> capturedImages = [];
+  final photos = BehaviorSubject<List<XFile?>?>();
   List<MultipartFile> multipartImages = [];
   List<UploadImageEntity> uploadImage = [];
   List<Attachments>? attachments = [];

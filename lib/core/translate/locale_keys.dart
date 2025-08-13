@@ -115,4 +115,9 @@ abstract class LocaleKeys {
   static const selectposition = 'selectposition';
   static const noaddressfound = 'noaddressfound';
   static const propertylist = 'propertylist';
+  static const errorgettingaddress = 'errorgettingaddress';
+  static const unauthorizedposition = 'unauthorizedposition';
+  static const batteryoptimization = 'batteryoptimization';
+  static const descriptionOptimasion = 'descriptionOptimasion';
+  static const cancel = 'cancel';
 }

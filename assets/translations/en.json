@@ -114,5 +114,10 @@
     "usefulHours": "Useful working hours",
     "selectposition": "Select position",
     "noaddressfound": "No address found",
-    "propertylist": "Property list"
+    "propertylist": "Property list",
+    "errorgettingaddress": "Error getting address",
+    "unauthorizedposition": "Unauthorized position",
+    "batteryoptimization": "Battery optimization",
+    "descriptionOptimasion": "For better app performance, please disable battery optimization..",
+    "cancel": "Cancel"
 }

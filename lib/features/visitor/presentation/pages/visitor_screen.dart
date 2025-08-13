@@ -17,10 +17,10 @@ import 'package:linchpin/core/common/spacing_widget.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/core/extension/context_extension.dart';
 import 'package:linchpin/core/locator/di/di.dart';
+import 'package:linchpin/core/shared_preferences/shared_preferences_service.dart';
 import 'package:linchpin/core/translate/locale_keys.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:linchpin/features/time_management/presentation/bloc/time_management_bloc.dart';
 import 'package:linchpin/features/visitor/data/models/request/set_location_request.dart';
 import 'package:linchpin/features/visitor/data/models/response/get_location_response.dart'
     hide Attachments;
@@ -65,7 +65,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
       target.latitude,
       target.longitude,
     );
-    return distance < 50; // متر
+    return distance < 150; // متر
   }
 
   //! نمایش پیام خطا
@@ -101,11 +101,18 @@ class _VisitorScreenState extends State<VisitorScreen> {
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
-        bloc.address.sink.add(data['formatted_address'] ?? 'آدرس یافت نشد');
+        for (final target in bloc.visitTargets) {
+          if (bloc.currentLocation != null &&
+              isNear(
+                  bloc.currentLocation!, target.latLng ?? LatLng(0.0, 0.0))) {
+            bloc.address.sink.add(
+                data['formatted_address'] ?? LocaleKeys.noaddressfound.tr());
+          }
+        }
       } else {
-        bloc.address.sink.add("خطا در دریافت آدرس");
+        bloc.address.sink.add(LocaleKeys.errorgettingaddress.tr());
       }
     } catch (e) {
       bloc.address.sink.add("خطا: $e");

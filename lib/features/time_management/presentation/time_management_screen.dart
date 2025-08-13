@@ -2,6 +2,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:linchpin/core/common/custom_text.dart';
 import 'package:linchpin/core/customui/error_ui_widget.dart';
 import 'package:linchpin/features/access_location/access_location.dart';
+import 'package:linchpin/features/notifications/presentation/background_service.dart';
 import 'package:linchpin/features/time_management/presentation/widget/box_entry_exit.dart';
 import 'package:linchpin/features/time_management/presentation/widget/button_status.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -114,9 +115,16 @@ class _TimeManagementScreenState extends State<TimeManagementScreen>
     return "${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}";
   }
 
+  Future<void> _batteryOptimization() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showBatteryOptimizationDialog(context);
+    });
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    _batteryOptimization();
 
     _bloc = getIt<TimeManagementBloc>()..add(StartEndWorkEvent());
     currentStatus = null;

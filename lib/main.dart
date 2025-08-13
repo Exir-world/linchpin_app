@@ -15,7 +15,6 @@ import 'package:linchpin/core/locator/di/di.dart';
 import 'package:linchpin/features/duties/presentation/bloc/duties_bloc.dart';
 import 'package:linchpin/features/growth/presentation/bloc/growth_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:linchpin/features/notifications/presentation/background_service.dart';
 import 'package:linchpin/features/notifications/presentation/notificationService.dart';
 import 'package:linchpin/features/notifications/presentation/sse_service.dart';
 import 'package:linchpin/features/pay_slip/presentation/bloc/pay_slip_bloc.dart';
@@ -23,7 +22,6 @@ import 'package:linchpin/features/performance_report/presentation/bloc/last_quar
 import 'package:linchpin/features/property/presentation/bloc/property_bloc.dart';
 import 'package:linchpin/features/root/presentation/root_screen.dart';
 import 'package:linchpin/firebase_options.dart';
-import 'package:workmanager/workmanager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,28 +65,6 @@ void main() async {
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-  await Workmanager().initialize(callbackDispatcher);
-
-  await Future.delayed(Duration(seconds: 1));
-
-  await Workmanager().registerOneOffTask(
-    "uniquePeriodicTaskId",
-    taskName,
-    initialDelay: Duration(seconds: 2),
-  );
-
-  // await Workmanager().registerPeriodicTask(
-  //   "uniquePeriodicTaskId",
-  //   fetchTask,
-  //   frequency: const Duration(minutes: 15),
-  //   initialDelay: Duration(seconds: 10),
-  //   constraints: Constraints(
-  //     networkType: NetworkType.connected,
-  //   ),
-  // );
-
-  // await LocationServiceHelper.startLocationService();
-
   runApp(
     EasyLocalization(
       supportedLocales: [Locale('en'), Locale('fa'), Locale('ar')],
@@ -128,12 +104,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _batteryOptimization();
     _homePageFuture = _getHomePage();
-  }
-
-  Future<void> _batteryOptimization() async {
-    await requestIgnoreBatteryOptimizations();
   }
 
   // این متد بررسی موقعیت مکانی و تعیین صفحه خانگی را انجام می دهد

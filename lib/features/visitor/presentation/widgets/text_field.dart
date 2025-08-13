@@ -12,11 +12,11 @@ class TextFieldWedget extends StatelessWidget {
     required this.bloc,
     super.key,
   });
-  final List<XFile?> photos;
+  final List<XFile?>? photos;
   final VisitorBloc bloc;
   @override
   Widget build(BuildContext context) {
-    return photos.isNotEmpty
+    return photos != null && photos!.isNotEmpty
         ? SizedBox(
             width: context.screenWidth * .9,
             // height: 40,

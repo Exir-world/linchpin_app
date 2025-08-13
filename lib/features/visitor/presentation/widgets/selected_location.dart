@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -40,7 +41,7 @@ class _SelectedLocationsState extends State<SelectedLocations> {
   final ImagePicker picker = ImagePicker();
   ValueNotifier<bool> isLoadingNotifire = ValueNotifier(false);
   XFile? photo;
-  List<XFile?> photos = [];
+  // List<XFile?> photos = [];
   Position? position;
 
   //! نمایش پیام خطا
@@ -127,20 +128,6 @@ class _SelectedLocationsState extends State<SelectedLocations> {
               currentLocation = widget.options?.firstWhere(
                 (element) => element.name == newValue,
               );
-              // if (newValue == 'انتخاب موقعیت') {
-              //   LocationService locationService = LocationService();
-              //   var position = await locationService.getUserLocation();
-              //   if (position != null) {
-              //     AccessLocationScreen.latitudeNotifire.value =
-              //         position.latitude;
-              //     AccessLocationScreen.longitudeNotifire.value =
-              //         position.longitude;
-              //     widget.mapController.move(
-              //       LatLng(position.latitude, position.longitude),
-              //       16.5,
-              //     );
-              //   }
-              // } else
               if (currentLocation != null && isEnableSendButton()) {
                 AccessLocationScreen.latitudeNotifire.value =
                     double.parse(currentLocation.lat.toString());
@@ -151,9 +138,9 @@ class _SelectedLocationsState extends State<SelectedLocations> {
                       double.parse(currentLocation.lng.toString())),
                   16.5,
                 );
-                showModal(context, currentLocation);
+                showModal(context, currentLocation, bloc);
               } else {
-                _showSnackbar('موقعیت غیر مجاز');
+                _showSnackbar(LocaleKeys.unauthorizedposition.tr());
               }
             },
             buttonStyleData: ButtonStyleData(
@@ -175,8 +162,8 @@ class _SelectedLocationsState extends State<SelectedLocations> {
     );
   }
 
-  Future<dynamic> showModal(
-      BuildContext context, CurrentLocationEntity currentLocation) {
+  Future<dynamic> showModal(BuildContext context,
+      CurrentLocationEntity currentLocation, VisitorBloc bloc) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -199,41 +186,57 @@ class _SelectedLocationsState extends State<SelectedLocations> {
             ),
             child: SafeArea(
               top: false,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          photo = null;
-                          photos.clear();
-                        },
-                        icon: const Icon(Icons.close, size: 28),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Center(child: buttonWidgets(context, currentLocation)),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: Center(
-                      child: ShowImage(photos: photos),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: TextFieldWedget(
-                      photos: photos,
-                      bloc: widget.bloc,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: StreamBuilder<List<XFile?>?>(
+                    stream: bloc.photos.stream,
+                    builder: (context, asyncSnapshot) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              NormalBold(
+                                  currentLocation.name?.substring(3) ?? ''),
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  photo = null;
+                                  asyncSnapshot.data?.clear();
+                                },
+                                icon: const Icon(Icons.close, size: 28),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Center(
+                            child: buttonWidgets(
+                              context,
+                              currentLocation,
+                              bloc,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Expanded(
+                            child: Center(
+                              child: ShowImage(
+                                photos: asyncSnapshot.data ?? [],
+                                currentLocation: currentLocation,
+                                bloc: bloc,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          TextFieldWedget(
+                            photos: asyncSnapshot.data,
+                            bloc: widget.bloc,
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      );
+                    }),
               ),
             ),
           ),
@@ -242,68 +245,100 @@ class _SelectedLocationsState extends State<SelectedLocations> {
     );
   }
 
-  Padding buttonWidgets(
-      BuildContext context, CurrentLocationEntity? currentLocation) {
+  Padding buttonWidgets(BuildContext context,
+      CurrentLocationEntity? currentLocation, VisitorBloc bloc) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          ProgressButton(
-            width: context.screenWidth * .45,
-            height: 40,
-            label: photos.isEmpty ? 'گرفتن عکس' : 'اضافه کردن عکس',
-            onTap: () async {
-              if (isEnableSendButton()) {
-                photo = await picker.pickImage(
-                  source: ImageSource.camera,
-                  imageQuality: 30,
-                );
-                setState(() {
-                  photos.add(photo);
-                });
-              } else {
-                Navigator.of(context).pop();
-                _showSnackbar('موقعیت غیر مجاز');
-              }
-            },
-          ),
-          ProgressButton(
-            width: context.screenWidth * .25,
-            height: 40,
-            isEnabled:
-                photo != null && photos.isNotEmpty && isEnableSendButton(),
-            label: 'ارسال',
-            onTap: () async {
-              if (isEnableSendButton()) {
-                FormData formData = FormData();
+      child: StreamBuilder<List<XFile?>?>(
+          stream: bloc.photos.stream,
+          builder: (context, asyncSnapshot) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ProgressButton(
+                  width: context.screenWidth * .45,
+                  height: 40,
+                  label: asyncSnapshot.hasData ? 'اضافه کردن عکس' : 'گرفتن عکس',
+                  onTap: () async {
+                    if (isEnableSendButton()) {
+                      if (kIsWeb) {
+                        photo = await picker.pickImage(
+                          source: ImageSource.gallery,
+                          imageQuality: 30,
+                        );
+                        // گرفتن لیست فعلی
+                        final currentPhotos =
+                            widget.bloc.photos.valueOrNull ?? [];
 
-                for (XFile? image in photos) {
-                  if (image != null) {
-                    formData.files.add(
-                      MapEntry(
-                        "files",
-                        await MultipartFile.fromFile(
-                          image.path,
-                          filename: image.path.split('/').last,
-                        ),
-                      ),
-                    );
-                  }
-                }
+                        // اضافه کردن عکس جدید
+                        final updatedPhotos = List<XFile?>.from(currentPhotos)
+                          ..add(photo);
 
-                widget.bloc.add(UploadImage(formData));
-                photo = null;
-                photos.clear();
-                Navigator.pop(context);
-                //! ثبت در دیتابیس یا تغییر UI
-              } else {
-                _showSnackbar('محدوه غیر مجاز');
-              }
-            },
-          ),
-        ],
-      ),
+                        // ارسال به BehaviorSubject
+                        widget.bloc.photos.sink.add(updatedPhotos);
+                      } else {
+                        photo = await picker.pickImage(
+                          source: ImageSource.camera,
+                          imageQuality: 30,
+                        );
+                        // گرفتن لیست فعلی
+                        final currentPhotos =
+                            widget.bloc.photos.valueOrNull ?? [];
+
+                        // اضافه کردن عکس جدید
+                        final updatedPhotos = List<XFile?>.from(currentPhotos)
+                          ..add(photo);
+
+                        // ارسال به BehaviorSubject
+                        widget.bloc.photos.sink.add(updatedPhotos);
+                        // setState(() {
+                        // widget.bloc.photos.sink.add([photo]);
+                        // });
+                      }
+                    } else {
+                      Navigator.of(context).pop();
+                      _showSnackbar(LocaleKeys.unauthorizedposition.tr());
+                    }
+                  },
+                ),
+                ProgressButton(
+                  width: context.screenWidth * .25,
+                  height: 40,
+                  isEnabled: photo != null &&
+                      asyncSnapshot.hasData &&
+                      isEnableSendButton(),
+                  label: 'ارسال',
+                  onTap: () async {
+                    if (isEnableSendButton()) {
+                      FormData formData = FormData();
+
+                      for (XFile? image in asyncSnapshot.data ?? []) {
+                        if (image != null) {
+                          formData.files.add(
+                            MapEntry(
+                              "files",
+                              await MultipartFile.fromFile(
+                                image.path,
+                                filename: image.path.split('/').last,
+                              ),
+                            ),
+                          );
+                        }
+                      }
+
+                      widget.bloc.add(UploadImage(formData));
+                      photo = null;
+                      bloc.photos.value?.clear();
+                      Navigator.pop(context);
+                      //! ثبت در دیتابیس یا تغییر UI
+                    } else {
+                      _showSnackbar(LocaleKeys.unauthorizedposition.tr());
+                    }
+                  },
+                ),
+              ],
+            );
+          }),
     );
   }
 }

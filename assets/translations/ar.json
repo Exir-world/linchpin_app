@@ -114,5 +114,10 @@
     "usefulHours": "ساعات عمل مفيدة",
     "selectposition": "حدد الموقف",
     "noaddressfound": "لم يتم العثور على عنوان",
-    "propertylist": "قائمة الممتلكات"
+    "propertylist": "قائمة الممتلكات",
+    "errorgettingaddress": "خطأ في الحصول على العنوان",
+    "unauthorizedposition": "الموقف غير مصرح به",
+    "batteryoptimization": "تحسين البطارية",
+    "descriptionOptimasion": "للحصول على أداء أفضل للتطبيق، يرجى تعطيل تحسين البطارية.",
+    "cancel": "إلغاء"
 }
